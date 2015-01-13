@@ -1,0 +1,134 @@
+# XBMC Media Center language file
+# Addon Name: Fritzbox Callmonitor
+# Addon id: service.fritzbox.callmonitor
+# Addon version: 1.3.0
+# Addon Provider: Birger Jesch, thanks to Frank Epperlein, Alex Knöbel
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"POT-Creation-Date: 2014-06-27 06:46+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgctxt "Addon Summary"
+msgid "Fritzbox Callmonitor"
+msgstr "Fritzbox Aanroepmonitor"
+
+msgctxt "Addon Description"
+msgid "This addon displays incoming and outgoing calls from a Fritzbox connecting on port 1012. To enable the listen port in your Fritzbox enter the following code into your telephone.\n\n#96*5* Callmonitor-Support enabled.\n#96*4* Callmonitor-Support disabled."
+msgstr "Deze Addon toont de binnenkomende/uitgaande oproepen van een Fritzbox op port 1012. Om de port aan te zetten, toets de volgende code in op je telefoon.\n\n#96*5* Oproepmonitor-Support activeren.\n#96*4* Oproepmonitor-Support deactivieren."
+
+msgctxt "Addon Disclaimer"
+msgid "Use at your own risk"
+msgstr "Gebruik op eigen risico"
+
+msgctxt "#30000"
+msgid "Fritz!Box Callmonitor IP or Name"
+msgstr "Fritz!Box Oproepmonitor IP of Naam"
+
+msgctxt "#30001"
+msgid "Exlcude these number(s) from monitoring (separated by comma or space)"
+msgstr "Deze nummers van monitoren uitsluiten (door komma's gescheiden)"
+
+msgctxt "#30002"
+msgid "Display Time for Message Annotations"
+msgstr "Duur van berichten"
+
+msgctxt "#30003"
+msgid "Mute Audio while incoming Call"
+msgstr "Geluid uit bij binnenkomende oproep"
+
+msgctxt "#30004"
+msgid "Use Fritz!Box Phonebook for showing Name of Caller"
+msgstr "Gebruik Fritz!Box Telefoonboek om naam van beller te tonen"
+
+msgctxt "#30005"
+msgid "Fritz!Box Username"
+msgstr "Fritz!Box Gebruikersnaam"
+
+msgctxt "#30006"
+msgid "Fritz!Box Password"
+msgstr "Fritz!Box Wachtwoord"
+
+msgctxt "#30007"
+msgid "Pause Video and Audio while calling"
+msgstr "Video en Audio pauzeren tijdens oproep"
+
+msgctxt "#30008"
+msgid "Also pause Live-TV"
+msgstr "Live-TV ook pauzeren"
+
+msgctxt "#30009"
+msgid "Use reverse search for unknown numbers (klicktel.de)"
+msgstr "Gebruik omgekeerd zoeken bij onbekende nummers (klicktel.de)"
+
+msgctxt "#30010"
+msgid "Incoming Call"
+msgstr "Binnenkomende oproep"
+
+msgctxt "#30011"
+msgid "Recieving Call from %s (%s)"
+msgstr "Oproep van %s (%s)"
+
+msgctxt "#30012"
+msgid "unknown"
+msgstr "onbekend"
+
+msgctxt "#30013"
+msgid "Outgoing Call"
+msgstr "Uitgaande oproep"
+
+msgctxt "#30014"
+msgid "%s is called by %s"
+msgstr "%s word opgeroepen door %s"
+
+msgctxt "#30015"
+msgid "Show outgoing calls also"
+msgstr "Uitgaande oproepen ook tonen"
+
+msgctxt "#30016"
+msgid "no number"
+msgstr "geen nummer"
+
+msgctxt "#30017"
+msgid "Count of Entries"
+msgstr "Aantal inschrijvingen"
+
+msgctxt "#30018"
+msgid "Connected with %s"
+msgstr "Verbonden met %s"
+
+msgctxt "#30019"
+msgid "Disconnected from %s"
+msgstr "Verbroken met %s"
+
+msgctxt "#30020"
+msgid "General"
+msgstr "Algemeen"
+
+msgctxt "#30021"
+msgid "Phone"
+msgstr "Telefoon"
+
+msgctxt "#30022"
+msgid "Info"
+msgstr "Info"
+
+msgctxt "#30030"
+msgid "Connection Error"
+msgstr "Verbindingsfout"
+
+msgctxt "#30031"
+msgid "Fritz!Box not available on %s:%s"
+msgstr "Fritz!Box niet beschikbaar op %s:%s"
+
+msgctxt "#30032"
+msgid "klicktel.de not available"
+msgstr "klicktel.de niet beschikbaar"

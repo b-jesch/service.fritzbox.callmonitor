@@ -1,0 +1,37 @@
+CHANGELOG
+
+1.3.3:
+- Bugfixes
+
+1.3.2:
+- some enhancements. Phonebook is read at start of the service
+
+1.3.1:
+- some enhancements in settings
+- new option to enable notification for outgoing calls (show only incoming
+  calls by default now)
+  
+1.3.0:
+- new Fritz!Box Callmonitor API (Thanks to Alex Knöbel)
+- Notification shows picture of caller if available and stored in Fritz!Box
+- Search now over all books of Fritz!Box
+- Show search results in 'Level-Colors' of notification icon:
+  Picture or green: FB phonebook, yellow: Klicktel, red: no result
+  
+1.2.0:
+- Implement reverse search of unknown numbers using openapi.klicktel.de
+
+1.1.2:
+- Implement xbmc.Monitor of Frodo/Gotham addition
+
+1.1.1:
+- Add complete user login with username/password if required from box
+
+1.1.0:
+- Add an option to exclude numbers from monitoring
+
+1.02:
+- Gotham/Frodo extensions
+
+1.01:
+- Initial Release
