@@ -1,4 +1,7 @@
 CHANGELOG
+1.3.7
+- better exception handling implemented (traceback calls)
+- unicode/decode exception fixed
 
 1.3.3:
 - Bugfixes
