@@ -39,7 +39,7 @@ OSD = xbmcgui.Dialog()
 
 # CLASSES
 
-class PlayerProps():
+class PlayerProperties():
     
     def __init__(self):
         self.getConditions()
@@ -49,6 +49,14 @@ class PlayerProps():
         self.isPlayMedia = xbmc.getCondVisibility('Player.HasMedia') and xbmc.getCondVisibility('Player.Playing')
         self.isPause = xbmc.getCondVisibility('Player.Paused')
         self.isMute = xbmc.getCondVisibility('Player.Muted')
+
+    def getConnectConditions(self):
+        self.isConnectPause = xbmc.getCondVisibility('Player.Paused')
+        self.isConnectMute = xbmc.getCondVisibility('Player.Muted')
+
+    def getDisconnectConditions(self):
+        self.isDisconnectPause = xbmc.getCondVisibility('Player.Paused')
+        self.isDisconnectMute = xbmc.getCondVisibility('Player.Muted')
 
 class XBMCMonitor(xbmc.Monitor):
 
@@ -65,7 +73,7 @@ class XBMCMonitor(xbmc.Monitor):
     def onScreensaverDeactivated(self):
         self.ScreensaverActive = False
 
-class FritzCallmonitor(PlayerProps, XBMCMonitor):
+class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     __pytzbox = None
     __fb_phonebook = None
     __klicktel = None
@@ -74,8 +82,7 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
 
     def __init__(self):
 
-        self.PlayerProps = PlayerProps()
-        self.PlayerOnIC = None
+        self.PlayerProperties = PlayerProperties()
         XBMCMonitor.__init__(self)
         self.getSettings()
         self.getPhonebook()
@@ -89,12 +96,8 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
 
         def __init__(self, line, **kwargs):
             if isinstance(line, str) or isinstance(line, unicode):
-                token = line.split(';')
-                try:
-                    self['date'] = datetime.datetime.strptime(token[0].strip(), '%d.%m.%y %H:%M:%S')
-                except TypeError:
-                    self['date'] = datetime.datetime(*(time.strptime(token[0].strip(), '%d.%m.%y %H:%M:%S')[0:6]))
 
+                token = line.split(';')
                 self.command = token[1]
                 self['connection_id'] = token[2]
 
@@ -222,6 +225,10 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
         return self.__hide
 
     def handleOutgoingCall(self, line):
+        self.PlayerProperties.getConditions()
+        self.connectionEstablished = False
+        self.userActionPlay = False
+        self.userActionMute = False
         if not self.isExcludedNumber(line.number_used):
             if self.__optShowOutgoing:
                 record = self.getRecordByNumber(line.number_called)
@@ -231,6 +238,10 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
             self.notifyLog('Outgoing call from %s to %s' % (line.number_used, line.number_called))
 
     def handleIncomingCall(self, line):
+        self.PlayerProperties.getConditions()
+        self.connectionEstablished = False
+        self.userActionPlay = False
+        self.userActionMute = False
         if not self.isExcludedNumber(line.number_called):
             if len(line.number_caller) > 0:
                 caller_num = line.number_caller
@@ -250,47 +261,69 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
                 caller_num = __LS__(30016)
                 icon = __IconUnknown__
 
-            self.PlayerOnIC = self.PlayerProps
-            self.PlayerOnIC.getConditions()
             self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
 
     def handleConnected(self, line):
         self.notifyLog('Line connected')
         if not self.__hide:
-            if self.PlayerOnIC is not None:           
-                if self.__optPause and not self.PlayerOnIC.isPause:
-                    if self.__optPauseTV and self.PlayerOnIC.isPlayTV:
-                        self.notifyLog('Player is playing TV, pausing...')
-                        PLAYER.pause()
-                    elif self.PlayerOnIC.isPlayMedia and not self.PlayerOnIC.isPlayTV:
-                        self.notifyLog('Player is playing Video/Audio, pausing...')
-                        PLAYER.pause()
-    
-                if self.__optMute and not self.PlayerOnIC.isMute:
-                    if not self.__optPause or (not self.__optPauseTV and self.PlayerOnIC.isPlayTV):
-                        self.notifyLog('Muting Volume...')
-                        xbmc.executebuiltin('Mute')
+            self.PlayerProperties.getConnectConditions()
+            if self.PlayerProperties.isPause != self.PlayerProperties.isConnectPause:
+                self.userActionPlay = True
+            if self.PlayerProperties.isMute != self.PlayerProperties.isConnectMute:
+                self.userActionMute = True
+            #
+            # Save connection for handleDisconnected:
+            # this condition determines whether the play and mute commands has to be executed again
+            #
+            self.connectionEstablished = True
+            # Extra condition: only do this if the user hasn't changed the status of the player
+            if self.__optPause and not self.PlayerProperties.isPause and not self.userActionPlay:
+                if self.__optPauseTV and self.PlayerProperties.isPlayTV:
+                    self.notifyLog('Player is playing TV, pausing...')
+                    xbmc.executebuiltin('PlayerControl(Play)')
+                    # Save the status of the player for later comparison
+                    self.PlayerProperties.isConnectPause = True
+                elif self.PlayerProperties.isPlayMedia and not self.PlayerProperties.isPlayTV:
+                    self.notifyLog('Player is playing Media, pausing...')
+                    xbmc.executebuiltin('PlayerControl(Play)')
+                    # Save the status of the player for later comparison
+                    self.PlayerProperties.isConnectPause = True
+
+            if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
+                if not self.__optPause or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                    self.notifyLog('Muting Volume...')
+                    xbmc.executebuiltin('Mute')
+                    # Save the status of the player for later comparison
+                    self.PlayerProperties.isConnectMute = True
 
     def handleDisconnected(self, line):
-        self.notifyLog('Line disconnected')
         if not self.__hide:
-            if self.PlayerOnIC is not None:
-                self.PlayerProps.getConditions()
-                if self.__optPause and self.PlayerProps.isPause and (self.PlayerOnIC.isPlayMedia or self.PlayerOnIC.isPlayTV):
-                    self.notifyLog('Resume Play...')
-                    PLAYER.pause()
-                elif self.PlayerOnIC.isPause and not self.PlayerProps.isPause:
-                    self.notifyLog('Play Property changed between connect and disconnect, do nothing...')
-                if self.__optMute and self.PlayerProps.isMute:
-                    self.notifyLog('Unmute...')
+            # Use the conditions before connect. These are the real conditions to give back.
+            # Check whether the status of the player has changed in the meantime by the user
+
+            self.PlayerProperties.getDisconnectConditions()
+            if self.connectionEstablished and self.PlayerProperties.isConnectPause != self.PlayerProperties.isDisconnectPause:
+                self.userActionPlay = True
+            if self.connectionEstablished and self.PlayerProperties.isConnectMute != self.PlayerProperties.isDisconnectMute:
+                self.userActionMute = True
+            # Use condition before connect.
+            # Also, only do this if connection was established and user hasn't changed the status of the player
+            if self.__optPause and not self.PlayerProperties.isPause and self.connectionEstablished and not self.userActionPlay:
+                self.notifyLog('Player was not pausing, resume...')
+                xbmc.executebuiltin('PlayerControl(Play)')
+
+            # Use condition before connect.
+            # Also, only do this if connection was established and user hasn't changed the condition of the player
+            if self.__optMute and not self.PlayerProperties.isMute and self.connectionEstablished and not self.userActionMute:
+                # Extra condition: You don't want another condition to unmute than to mute.
+                if not self.__optPause or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                    self.notifyLog('Volume was not muted, unmute...')
                     xbmc.executebuiltin('Mute')
-                elif self.PlayerOnIC.isMute and not self.PlayerProps.isMute:
-                    self.notifyLog('Mute Property changed between connect and disconnect, do nothing...')
         else:
             self.notifyLog('excluded number seems disconnected, reset status of callmonitor')
             self.__hide = False
-        
+
     def notifyOSD(self, header, message, icon=__IconDefault__):
         OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, self.__dispMsgTime)
 
@@ -315,10 +348,8 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
         except Exception, e:
             self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
             self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), xbmc.LOGERROR)
-            self.traceError(e, sys.exc_traceback)
-            # self.notifyLog(pformat(e), xbmc.LOGERROR)
-            # __s.close()
             self.notifyLog('Monitoring aborted')
+            self.traceError(e, sys.exc_traceback)
         else:
             self.notifyLog('listen to %s on port %s' % (self.__server, LISTENPORT))
             __s.settimeout(0.2)
@@ -344,11 +375,9 @@ class FritzCallmonitor(PlayerProps, XBMCMonitor):
                     self.notifyLog('Something went wrong with messages from Fritzbox...', xbmc.LOGERROR)
                 except socket.error, e:
                     self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), xbmc.LOGERROR)
-                    self.notifyLog(pformat(e), xbmc.LOGERROR)
                     xbmc.sleep(10000)
                 except Exception, e:
                     self.traceError(e, sys.exc_traceback)
-                    # self.notifyLog(pformat(e), xbmc.LOGERROR)
 
                 if self.SettingsChanged:
                     self.notifyLog('Settings changed, perform update')

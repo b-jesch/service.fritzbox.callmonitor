@@ -40,13 +40,13 @@ class KlickTelReverseSearch:
             elif self.data['response']['results']:
                 __total = self.data['response']['results'][0]['total']
                 if __total > 1:
-        			raise self.ResultException('more than one match (%s in total)' % (__total))
+                    raise self.ResultException('more than one match (%s in total)' % (__total))
                 else:
                     record = self.data['response']['results'][0]['entries'][0]
                     if  record['entrytype'] == 'private':
-                    	return '%s %s' %(record['firstname'], record['lastname'])
+                        return '%s %s' %(record['firstname'], record['lastname'])
                     else:
-                    	return '%s' % (record['lastname'])
+                        return '%s' % (record['lastname'])
             else:
                 raise self.ResultException('no matches')
         except urllib2.URLError as e:
