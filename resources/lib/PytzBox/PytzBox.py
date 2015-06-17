@@ -148,7 +148,7 @@ class PytzBox:
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
         try:
-            response = requests.get(phonbook_urls[0])
+            response = requests.get(phonbook_urls[0], verify=self.__sslverify)
         except socket, e:
             raise self.BoxUnreachableException(str(e))
         except IOError, e:
