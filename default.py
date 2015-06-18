@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from pprint import pformat
 import socket
 import os
 import re
-import time
-import datetime
-
 import traceback
 import sys
 
@@ -328,7 +324,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, self.__dispMsgTime)
 
     def notifyLog(self, message, level=xbmc.LOGNOTICE):
-        xbmc.log('%s: %s' % (__addonname__, message.encode('utf-8')), level)
+        xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
 
     def traceError(self, e, exc_tb):
         while exc_tb:

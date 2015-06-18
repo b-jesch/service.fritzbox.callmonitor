@@ -2,7 +2,7 @@
 <addon id="service.fritzbox.callmonitor"
        name="Fritzbox Callmonitor"
        version="1.3.9"
-       provider-name="Birger Jesch, thanks to F. Epperlein, A. Knöbel">
+       provider-name="Birger Jesch, thanks to F. Epperlein">
   <requires>
     <import addon="script.module.requests" version="2.3.0" />
   </requires>
