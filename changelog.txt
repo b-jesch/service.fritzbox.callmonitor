@@ -1,5 +1,8 @@
 CHANGELOG
 
+1.3.9:
+- Bug in Module PytzBox fixed (avoid SSL-Communication in some circumstances)
+
 1.3.8:
 - merge from Ruud Bakker, improved condition handling
 
