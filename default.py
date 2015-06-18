@@ -382,7 +382,6 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.getPhonebook()
                     
                 xbmc.sleep(200)
-                
 
             __s.close()
             self.notifyLog('Monitoring finished')
