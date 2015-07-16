@@ -67,7 +67,7 @@ msgid "Also pause Live-TV"
 msgstr ""
 
 msgctxt "#30009"
-msgid "Use reverse search for unknown numbers (klicktel.de)"
+msgid "Use reverse search for unknown numbers (Powered by klicktel)"
 msgstr ""
 
 msgctxt "#30010"

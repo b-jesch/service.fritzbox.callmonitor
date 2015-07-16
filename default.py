@@ -191,7 +191,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     if self.__kt_name is None: self.__kt_name = self.__klicktel.search(request_number)
                     return self.__kt_name
                 except Exception, e:
-                    self.notifyLog(str(e), xbmc.LOGERROR)
+                    self.notifyLog(str(e), level=xbmc.LOGERROR)
         return False
             
     def getRecordByNumber(self, request_number):
@@ -204,10 +204,11 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                             if self.compareNumbers(number, request_number):
                                 self.notifyLog('Match an entry in database for %s' % (request_number))
                                 if 'imageHttpURL' in self.__fb_phonebook[item]:
-                                    self.notifyLog('There\'s an icon in database, getting it')
-                                    self.notifyLog('Force login to prevent session timeouts', xbmc.LOGNOTICE)
+                                    self.notifyLog('There\'s an image in database, getting it')
+                                    self.notifyLog('Force login to prevent session timeouts')
                                     self.getPhonebook(force = True)
                                     image = self.__fb_phonebook[item]['imageHttpURL']
+                                    self.notifyLog('Read image from %s' % (self.__fb_phonebook[item]['imageHttpURL'] or '<empty>'))
                                 else:
                                     image = ''
                                 return {'name': item, 'imageURL': image}
@@ -329,10 +330,10 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     def traceError(self, e, exc_tb):
         while exc_tb:
             tb = traceback.format_tb(exc_tb)
-            self.notifyLog('%s' % e, xbmc.LOGERROR)
-            self.notifyLog('In module: %s' % sys.argv[0].strip() or '<not defined>', xbmc.LOGERROR)
-            self.notifyLog('At line:   %s' % traceback.tb_lineno(exc_tb), xbmc.LOGERROR)
-            self.notifyLog('In file:   %s' % tb[0].split(",")[0].strip()[6:-1],xbmc.LOGERROR)
+            self.notifyLog('%s' % e, level=xbmc.LOGERROR)
+            self.notifyLog('In module: %s' % sys.argv[0].strip() or '<not defined>', level=xbmc.LOGERROR)
+            self.notifyLog('At line:   %s' % traceback.tb_lineno(exc_tb), level=xbmc.LOGERROR)
+            self.notifyLog('In file:   %s' % tb[0].split(",")[0].strip()[6:-1], level=xbmc.LOGERROR)
             exc_tb = exc_tb.tb_next
         
     def start(self):
@@ -343,8 +344,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             __s.connect((self.__server, LISTENPORT))
         except Exception, e:
             self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
-            self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), xbmc.LOGERROR)
-            self.notifyLog('Monitoring aborted')
+            self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
+            self.notifyLog('Monitoring aborted', level=xbmc.LOGERROR)
             self.traceError(e, sys.exc_traceback)
         else:
             self.notifyLog('listen to %s on port %s' % (self.__server, LISTENPORT))
@@ -368,9 +369,9 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 except socket.timeout:
                     pass
                 except IndexError:
-                    self.notifyLog('Something went wrong with messages from Fritzbox...', xbmc.LOGERROR)
+                    self.notifyLog('Something went wrong with messages from Fritzbox...', level=xbmc.LOGERROR)
                 except socket.error, e:
-                    self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), xbmc.LOGERROR)
+                    self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
                     xbmc.sleep(10000)
                 except Exception, e:
                     self.traceError(e, sys.exc_traceback)
