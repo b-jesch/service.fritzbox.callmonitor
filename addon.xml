@@ -8,8 +8,8 @@
   </requires>
   <extension point="xbmc.service"
         library="default.py" start="login" />
-  <extension point="xbmc.python.script"
-	    library="default.py" />
+  <!-- <extension point="xbmc.python.script"
+	    library="default.py" /> -->
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en">Fritzbox Callmonitor</summary>
