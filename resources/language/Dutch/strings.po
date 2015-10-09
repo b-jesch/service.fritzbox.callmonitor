@@ -57,13 +57,9 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr "Fritz!Box Wachtwoord"
 
-msgctxt "#30007"
-msgid "Pause Video and Audio while calling"
-msgstr "Video en Audio pauzeren tijdens oproep"
-
 msgctxt "#30008"
-msgid "Also pause Live-TV"
-msgstr "Live-TV ook pauzeren"
+msgid "Also pause Live-TV (only if Timeshift available)"
+msgstr "Live-TV ook pauzeren (alleen als Timeshift beschikbaar)"
 
 msgctxt "#30009"
 msgid "Use reverse search for unknown numbers (Powered by klicktel)"
@@ -97,18 +93,6 @@ msgctxt "#30016"
 msgid "no number"
 msgstr "geen nummer"
 
-msgctxt "#30017"
-msgid "Count of Entries"
-msgstr "Aantal inschrijvingen"
-
-msgctxt "#30018"
-msgid "Connected with %s"
-msgstr "Verbonden met %s"
-
-msgctxt "#30019"
-msgid "Disconnected from %s"
-msgstr "Verbroken met %s"
-
 msgctxt "#30020"
 msgid "General"
 msgstr "Algemeen"
@@ -116,10 +100,6 @@ msgstr "Algemeen"
 msgctxt "#30021"
 msgid "Phone"
 msgstr "Telefoon"
-
-msgctxt "#30022"
-msgid "Info"
-msgstr "Info"
 
 msgctxt "#30030"
 msgid "Connection Error"
@@ -132,3 +112,11 @@ msgstr "Fritz!Box niet beschikbaar op %s:%s"
 msgctxt "#30032"
 msgid "klicktel.de not available"
 msgstr "klicktel.de niet beschikbaar"
+
+msgctxt "#30040"
+msgid "Pause Audio while Calling"
+msgstr "Audio pauzeren tijdens gesprek"
+
+msgctxt "#30041"
+msgid "Pause Video while Calling"
+msgstr "Video pauzeren tijdens gesprek"

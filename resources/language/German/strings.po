@@ -57,13 +57,9 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr "Fritz!Box Passwort"
 
-msgctxt "#30007"
-msgid "Pause Video and Audio while calling"
-msgstr "Video und Audio bei Anruf pausieren"
-
 msgctxt "#30008"
-msgid "Also pause Live-TV"
-msgstr "Live-TV ebenfalls pausieren"
+msgid "Also pause Live-TV (only if Timeshift available)"
+msgstr "Live-TV ebenfalls pausieren (Timeshift muss unterstützt werden)"
 
 msgctxt "#30009"
 msgid "Use reverse search for unknown numbers (Powered by klicktel)"
@@ -91,23 +87,11 @@ msgstr "%s wird auf %s angerufen"
 
 msgctxt "#30015"
 msgid "Show outgoing calls also"
-msgstr "Auch ausgehende Anrufe anzeigen"
+msgstr "Ausgehende Anrufe anzeigen"
 
 msgctxt "#30016"
 msgid "no number"
 msgstr "keine Nummer"
-
-msgctxt "#30017"
-msgid "Count of Entries"
-msgstr "Anzahl der Einträge"
-
-msgctxt "#30018"
-msgid "Connected with %s"
-msgstr "Verbunden mit %s"
-
-msgctxt "#30019"
-msgid "Disconnected from %s"
-msgstr "Getrennt von %s"
 
 msgctxt "#30020"
 msgid "General"
@@ -116,10 +100,6 @@ msgstr "Allgemein"
 msgctxt "#30021"
 msgid "Phone"
 msgstr "Telefon"
-
-msgctxt "#30022"
-msgid "Info"
-msgstr "Info"
 
 msgctxt "#30030"
 msgid "Connection Error"
@@ -132,3 +112,12 @@ msgstr "Fritz!Box unter %s:%s nicht erreichbar"
 msgctxt "#30032"
 msgid "klicktel.de not available"
 msgstr "klicktel.de nicht erreichbar"
+
+
+msgctxt "#30040"
+msgid "Pause Audio while Calling"
+msgstr "Audio während des Telefonats anhalten"
+
+msgctxt "#30041"
+msgid "Pause Video while Calling"
+msgstr "Video während des Telefonats anhalten"

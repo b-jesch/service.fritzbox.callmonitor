@@ -4,7 +4,8 @@
         <setting id="separator" type="sep" />
         <setting id="dispTime" type="labelenum" label="30002" values="3 sec|4 sec|5 sec|6 sec|7 sec|8 sec|9 sec|10 sec" default="5 sec" />
         <setting id="showOutgoingCalls" type="bool" label="30015" default="true" />
-        <setting id="optPause" type="bool" label="30007" default="false" />
+        <setting id="optPauseAudio" type="bool" label="30040" default="false" />
+        <setting id="optPauseVideo" type="bool" label="30041" default="false" />
         <setting id="optPauseTV" type="bool" label="30008" default="false" enable="eq(-1,true)" />
         <setting id="optMute" type="bool" label="30003" default="true" />
     </category>

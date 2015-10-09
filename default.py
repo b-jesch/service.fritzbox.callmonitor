@@ -42,7 +42,8 @@ class PlayerProperties():
         
     def getConditions(self):
         self.isPlayTV = xbmc.getCondVisibility('Pvr.isPlayingTv')
-        self.isPlayMedia = xbmc.getCondVisibility('Player.HasMedia') and xbmc.getCondVisibility('Player.Playing')
+        self.isPlayVideo = xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing')
+        self.isPlayAudio = xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing')
         self.isPause = xbmc.getCondVisibility('Player.Paused')
         self.isMute = xbmc.getCondVisibility('Player.Muted')
 
@@ -148,7 +149,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
         self.__optShowOutgoing = True if __addon__.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
         self.__optMute = True if __addon__.getSetting('optMute').upper() == 'TRUE' else False
-        self.__optPause = True if __addon__.getSetting('optPause').upper() == 'TRUE' else False
+        self.__optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
+        self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
         self.__usePhoneBook = True if __addon__.getSetting('usePhonebook').upper() == 'TRUE' else False
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
@@ -275,20 +277,25 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             #
             self.connectionEstablished = True
             # Extra condition: only do this if the user hasn't changed the status of the player
-            if self.__optPause and not self.PlayerProperties.isPause and not self.userActionPlay:
+            if (self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
                 if self.__optPauseTV and self.PlayerProperties.isPlayTV:
                     self.notifyLog('Player is playing TV, pausing...')
                     xbmc.executebuiltin('PlayerControl(Play)')
                     # Save the status of the player for later comparison
                     self.PlayerProperties.isConnectPause = True
-                elif self.PlayerProperties.isPlayMedia and not self.PlayerProperties.isPlayTV:
-                    self.notifyLog('Player is playing Media, pausing...')
+                elif self.__optPauseVideo and self.PlayerProperties.isPlayVideo and not self.PlayerProperties.isPlayTV:
+                    self.notifyLog('Player is playing Video, pausing...')
+                    xbmc.executebuiltin('PlayerControl(Play)')
+                    # Save the status of the player for later comparison
+                    self.PlayerProperties.isConnectPause = True
+                elif self.__optPauseAudio and self.PlayerProperties.isPlayAudio and not self.PlayerProperties.isPlayTV:
+                    self.notifyLog('Player is playing Audio, pausing...')
                     xbmc.executebuiltin('PlayerControl(Play)')
                     # Save the status of the player for later comparison
                     self.PlayerProperties.isConnectPause = True
 
             if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
-                if not self.__optPause or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                if not (self.__optPauseAudio or self.__optPauseVideo) or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Muting Volume...')
                     xbmc.executebuiltin('Mute')
                     # Save the status of the player for later comparison
@@ -296,6 +303,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
     def handleDisconnected(self, line):
         if not self.__hide:
+            self.notifyLog('Line disconnected')
+
             # Use the conditions before connect. These are the real conditions to give back.
             # Check whether the status of the player has changed in the meantime by the user
 
@@ -304,17 +313,23 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 self.userActionPlay = True
             if self.connectionEstablished and self.PlayerProperties.isConnectMute != self.PlayerProperties.isDisconnectMute:
                 self.userActionMute = True
+
             # Use condition before connect.
             # Also, only do this if connection was established and user hasn't changed the status of the player
-            if self.__optPause and not self.PlayerProperties.isPause and self.connectionEstablished and not self.userActionPlay:
-                self.notifyLog('Player was not pausing, resume...')
+
+            if self.__optPauseAudio and self.PlayerProperties.isPlayAudio and not self.PlayerProperties.isPause and self.connectionEstablished and not self.userActionPlay:
+                self.notifyLog('Player was not pausing Audio, resume...')
+                xbmc.executebuiltin('PlayerControl(Play)')
+            elif self.__optPauseVideo and self.PlayerProperties.isPlayVideo and not self.PlayerProperties.isPause and self.connectionEstablished and not self.userActionPlay:
+                self.notifyLog('Player was not playing Video, resume...')
                 xbmc.executebuiltin('PlayerControl(Play)')
 
             # Use condition before connect.
             # Also, only do this if connection was established and user hasn't changed the condition of the player
+
             if self.__optMute and not self.PlayerProperties.isMute and self.connectionEstablished and not self.userActionMute:
                 # Extra condition: You don't want another condition to unmute than to mute.
-                if not self.__optPause or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                if not (self.__optPauseAudio or self.__optPauseVideo) or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Volume was not muted, unmute...')
                     xbmc.executebuiltin('Mute')
         else:
@@ -342,10 +357,11 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             __s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             __s.settimeout(60)
             __s.connect((self.__server, LISTENPORT))
-        except Exception, e:
+        except socket.error, e:
             self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
             self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
-            self.notifyLog('Monitoring aborted', level=xbmc.LOGERROR)
+            self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
+        except Exception, e:
             self.traceError(e, sys.exc_traceback)
         else:
             self.notifyLog('listen to %s on port %s' % (self.__server, LISTENPORT))
@@ -372,9 +388,10 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.notifyLog('Something went wrong with messages from Fritzbox...', level=xbmc.LOGERROR)
                 except socket.error, e:
                     self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
-                    xbmc.sleep(10000)
+                    # xbmc.sleep(10000)
                 except Exception, e:
                     self.traceError(e, sys.exc_traceback)
+                    break
 
                 if self.SettingsChanged:
                     self.notifyLog('Settings changed, perform update')
@@ -382,13 +399,12 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.SettingsChanged = False
                     self.getPhonebook()
                     
-                xbmc.sleep(200)
+                # xbmc.sleep(200)
 
             __s.close()
-            self.notifyLog('Monitoring finished')
-
 # START
 
 CallMon = FritzCallmonitor()
 CallMon.start()
+CallMon.notifyLog('Monitoring finished')
 del CallMon

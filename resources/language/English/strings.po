@@ -58,12 +58,8 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr ""
 
-msgctxt "#30007"
-msgid "Pause Video and Audio while calling"
-msgstr ""
-
 msgctxt "#30008"
-msgid "Also pause Live-TV"
+msgid "Also pause Live-TV (only if Timeshift available)"
 msgstr ""
 
 msgctxt "#30009"
@@ -98,28 +94,12 @@ msgctxt "#30016"
 msgid "no number"
 msgstr ""
 
-msgctxt "#30017"
-msgid "Count of Entries"
-msgstr ""
-
-msgctxt "#30018"
-msgid "Connected with %s"
-msgstr ""
-
-msgctxt "#30019"
-msgid "Disconnected from %s"
-msgstr ""
-
 msgctxt "#30020"
 msgid "General"
 msgstr ""
 
 msgctxt "#30021"
 msgid "Phone"
-msgstr ""
-
-msgctxt "#30022"
-msgid "Info"
 msgstr ""
 
 msgctxt "#30030"
@@ -132,4 +112,12 @@ msgstr ""
 
 msgctxt "#30032"
 msgid "klicktel.de not available"
+msgstr ""
+
+msgctxt "#30040"
+msgid "Pause Audio while Calling"
+msgstr ""
+
+msgctxt "#30041"
+msgid "Pause Video while Calling"
 msgstr ""
