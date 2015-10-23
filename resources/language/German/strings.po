@@ -57,6 +57,10 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr "Fritz!Box Passwort"
 
+msgctxt "#30007"
+msgid "Use SSL Encryption for Information Interchange"
+msgstr "Datenaustausch verschlüsseln (SSL)"
+
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
 msgstr "Live-TV ebenfalls pausieren (Timeshift muss unterstützt werden)"
@@ -92,6 +96,10 @@ msgstr "Ausgehende Anrufe anzeigen"
 msgctxt "#30016"
 msgid "no number"
 msgstr "keine Nummer"
+
+msgctxt "#30017"
+msgid "Country code (four digits)"
+msgstr "Landesvorwahl (vierstellig)"
 
 msgctxt "#30020"
 msgid "General"

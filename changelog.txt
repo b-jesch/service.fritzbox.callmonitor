@@ -1,5 +1,9 @@
 CHANGELOG
 
+1.4.1
+- Improved search and more accurate comparison of numbers
+- Selection of encrypted (SSL) and normal data transfer between box and addon
+
 1.4.0
 - Pausing Audio and Video splitted into separate options (Audio only, Video only)
 

@@ -85,7 +85,12 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.getPhonebook()
 
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
-        
+
+        self.connectionEstablished = None
+        self.userActionPlay = None
+        self.userActionMute = None
+
+
     def error(*args, **kwargs):
         xbmc.log('%s %s' % (args, kwargs), xbmc.LOGERROR)
 
@@ -144,6 +149,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group())*1000
         self.__fbUserName = False if len(__addon__.getSetting('fbUsername')) == 0 else __addon__.getSetting('fbUsername')
         self.__fbPasswd = False if len(__addon__.getSetting('fbPasswd')) == 0 else __addon__.getSetting('fbPasswd')
+        self.__fbSSL = True if __addon__.getSetting('fbSSL').upper() == 'TRUE' else False
+        self.__cCode = __addon__.getSetting('cCode')
 
         # BOOLEAN CONVERSIONS
 
@@ -160,28 +167,10 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     def getPhonebook(self, force = False):
 
         if self.__usePhoneBook:
-            if self.__pytzbox is None or force: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server, username=self.__fbUserName)
+            if self.__pytzbox is None or force: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server, username=self.__fbUserName, encrypt=self.__fbSSL)
             if self.__fb_phonebook is None:
                 self.__fb_phonebook = self.__pytzbox.getPhonebook(id = -1)
                 self.notifyLog('Getting %s entries from %s' % (len(self.__fb_phonebook), self.__server))
-
-    def compareNumbers(self, a, b):
-        a = unicode(a).strip()
-        b = unicode(b).strip()
-
-        a = unicode(re.sub('[^0-9]*', '', a))
-        b = unicode(re.sub('[^0-9]*', '', b))
-
-        if a.startswith('00'): a = a[4:]
-        a = a.lstrip('0')
-
-        if b.startswith('00'): b = b[4:]
-        b = b.lstrip('0')
-
-        a = a[-len(b):]
-        b = b[-len(a):]
-
-        return (a == b)
 
     def getNameByKlickTel(self, request_number):
     
@@ -203,7 +192,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 for item in self.__fb_phonebook:
                     if 'numbers' in self.__fb_phonebook[item]:
                         for number in self.__fb_phonebook[item]['numbers']:
-                            if self.compareNumbers(number, request_number):
+                            if self.__pytzbox.compareNumbers(number, request_number, ccode=self.__cCode):
                                 self.notifyLog('Match an entry in database for %s' % (request_number))
                                 if 'imageHttpURL' in self.__fb_phonebook[item]:
                                     self.notifyLog('There\'s an image in database, getting it')

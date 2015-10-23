@@ -60,14 +60,14 @@ if __name__ == '__main__':
 
     args = defaultdict(list)
     try:
-        for par, value in ((par.lstrip('-'), value) for par, value in (arg.split('=') for arg in sys.argv[1:])):
-            args[par].append(value)
-        kt = KlickTelReverseSearch()
-        result = kt.search(args)
-        if result: print result
+        if sys.argv[1]:
+            for par, value in ((par.lstrip('-'), value) for par, value in (arg.split('=') for arg in sys.argv[1:])):
+                args[par].append(value)
+            kt = KlickTelReverseSearch()
+            result = kt.search(args)
+            if result: print result
         
-    except ValueError, e:
-        print e
+    except IndexError:
         print 'use KlickTel.py --number=004903008154711 [--dump=0|1]'
     except Exception, e:
         print e

@@ -57,6 +57,10 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr "Fritz!Box Wachtwoord"
 
+msgctxt "#30007"
+msgid "Use SSL Encryption for Information Interchange"
+msgstr "Versleutelen gegevensuitwisseling (SSL)"
+
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
 msgstr "Live-TV ook pauzeren (alleen als Timeshift beschikbaar)"
@@ -92,6 +96,10 @@ msgstr "Uitgaande oproepen ook tonen"
 msgctxt "#30016"
 msgid "no number"
 msgstr "geen nummer"
+
+msgctxt "#30017"
+msgid "Country code (four digits)"
+msgstr "Viercijferige landcode"
 
 msgctxt "#30020"
 msgid "General"

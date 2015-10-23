@@ -58,6 +58,10 @@ msgctxt "#30006"
 msgid "Fritz!Box Password"
 msgstr ""
 
+msgctxt "#30007"
+msgid "Use SSL Encryption for Information Interchange"
+msgstr ""
+
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
 msgstr ""
@@ -92,6 +96,10 @@ msgstr ""
 
 msgctxt "#30016"
 msgid "no number"
+msgstr ""
+
+msgctxt "#30017"
+msgid "Country code (four digits)"
 msgstr ""
 
 msgctxt "#30020"
