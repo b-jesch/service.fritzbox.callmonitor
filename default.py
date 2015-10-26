@@ -11,6 +11,7 @@ import xbmcaddon
 import xbmcgui
 from resources.lib.PytzBox import PytzBox
 from resources.lib.KlickTel import KlickTel
+import hashlib
 
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
@@ -23,6 +24,9 @@ __IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 
 __IconUnknown__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'unknown.png'))
 __IconKlickTel__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'klicktel.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
+
+__ImageCache__ = xbmc.translatePath(os.path.join('special://temp', __addonname__, 'cache'))
+if not os.path.exists(__ImageCache__) : os.makedirs(__ImageCache__)
 
 # Fritz!Box
 
@@ -74,7 +78,6 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     __pytzbox = None
     __fb_phonebook = None
     __klicktel = None
-    __kt_name = None
     __hide = None
 
     def __init__(self):
@@ -164,47 +167,45 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         
     # Get the Phonebook
 
-    def getPhonebook(self, force = False):
+    def getPhonebook(self):
 
         if self.__usePhoneBook:
-            if self.__pytzbox is None or force: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server, username=self.__fbUserName, encrypt=self.__fbSSL)
+            if self.__pytzbox is None: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server,
+                                                                        username=self.__fbUserName, encrypt=self.__fbSSL,
+                                                                        imagepath=__ImageCache__)
             if self.__fb_phonebook is None:
                 self.__fb_phonebook = self.__pytzbox.getPhonebook(id = -1)
-                self.notifyLog('Getting %s entries from %s' % (len(self.__fb_phonebook), self.__server))
+                self.notifyLog('%s entries from %s loaded, %s images cached' % (len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
 
     def getNameByKlickTel(self, request_number):
     
         if self.__useKlickTelReverse:
-            if self.__klicktel is None:
-            
-                self.__klicktel = KlickTel.KlickTelReverseSearch()
-                try:
-                    if self.__kt_name is None: self.__kt_name = self.__klicktel.search(request_number)
-                    return self.__kt_name
-                except Exception, e:
-                    self.notifyLog(str(e), level=xbmc.LOGERROR)
+            if self.__klicktel is None: self.__klicktel = KlickTel.KlickTelReverseSearch()
+            try:
+                return self.__klicktel.search(request_number)
+            except Exception, e:
+                self.notifyLog(str(e), level=xbmc.LOGERROR)
         return False
             
     def getRecordByNumber(self, request_number):
 
-        if self.__usePhoneBook:
-            if isinstance(self.__fb_phonebook, dict):
-                for item in self.__fb_phonebook:
-                    if 'numbers' in self.__fb_phonebook[item]:
-                        for number in self.__fb_phonebook[item]['numbers']:
-                            if self.__pytzbox.compareNumbers(number, request_number, ccode=self.__cCode):
-                                self.notifyLog('Match an entry in database for %s' % (request_number))
-                                if 'imageHttpURL' in self.__fb_phonebook[item]:
-                                    self.notifyLog('There\'s an image in database, getting it')
-                                    self.notifyLog('Force login to prevent session timeouts')
-                                    self.getPhonebook(force = True)
-                                    image = self.__fb_phonebook[item]['imageHttpURL']
-                                    self.notifyLog('Read image from %s' % (self.__fb_phonebook[item]['imageHttpURL'] or '<empty>'))
-                                else:
-                                    image = ''
-                                return {'name': item, 'imageURL': image}
-        return {'name': '', 'imageURL': ''}
-        
+        name = ''
+        imageBMP = None
+
+        if self.__usePhoneBook and isinstance(self.__fb_phonebook, dict):
+
+            for item in self.__fb_phonebook:
+                for number in self.__fb_phonebook[item]['numbers']:
+                    if self.__pytzbox.compareNumbers(number, request_number, ccode=self.__cCode):
+                        self.notifyLog('Match an entry in database for %s: %s' % (request_number, item))
+                        name = item
+                        fname = os.path.join(__ImageCache__, hashlib.md5(item).hexdigest() + '.jpg')
+                        if os.path.isfile(fname):
+                            self.notifyLog('Load image from cache: %s' % (os.path.basename(fname)))
+                            imageBMP = fname
+
+        return {'name': name, 'imageBMP': imageBMP}
+
     def isExcludedNumber(self, exnum):
         self.__hide = False
         if exnum in self.__exnum_list:
@@ -221,7 +222,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             if self.__optShowOutgoing:
                 record = self.getRecordByNumber(line.number_called)
                 name = __LS__(30012) if record['name'] == '' else record['name']
-                icon = __IconDefault__ if record['imageURL'] == '' else record['imageURL']
+                icon = __IconDefault__ if record['imageBMP'] == '' else record['imageBMP']
                 self.notifyOSD(__LS__(30013), __LS__(30014) % (name, line.number_called), icon)
             self.notifyLog('Outgoing call from %s to %s' % (line.number_used, line.number_called))
 
@@ -236,7 +237,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 self.notifyLog('trying to resolve name from incoming number %s' % (caller_num))
                 record = self.getRecordByNumber(caller_num)
                 name = record['name']
-                icon = __IconOk__ if record['imageURL'] == '' else record['imageURL']
+                icon = __IconOk__ if record['imageBMP'] == '' else record['imageBMP']
                 if not name:
                     name = self.getNameByKlickTel(caller_num)
                     if name:

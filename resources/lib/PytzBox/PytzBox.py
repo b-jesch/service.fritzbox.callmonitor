@@ -6,6 +6,10 @@ import socket
 import xml.sax
 import requests
 from requests.auth import HTTPDigestAuth
+from PIL import Image
+from StringIO import StringIO
+import hashlib
+import os
 
 class PytzBox:
     __password = False
@@ -14,6 +18,8 @@ class PytzBox:
     __sid = None
     __sslverify = False
     __encrypt = None
+    __imagepath = None
+    __imagecount = None
 
     __url_contact = ['https://{host}:49443/upnp/control/x_contact', 'http://{host}:49000/upnp/control/x_contact']
     __url_file_download = ['https://{host}:49443{imageurl}&sid={sid}', 'http://{host}:49000{imageurl}&sid={sid}']
@@ -26,7 +32,7 @@ class PytzBox:
     class LoginFailedException(Exception): pass
     class RequestFailedException(Exception): pass
 
-    def __init__(self, password=False, host="fritz.box", username=False, encrypt=True):
+    def __init__(self, password=False, host="fritz.box", username=False, encrypt=True, imagepath=None):
 
         socket.setdefaulttimeout(10)
 
@@ -34,11 +40,16 @@ class PytzBox:
         self.__host = host
         self.__user = username
         self.__encrypt = 0 if encrypt else 1
+        self.__imagepath = imagepath
+        self.__imagecount = 0
+
+    def imagecount(self):
+        return self.__imagecount
 
     def compareNumbers(self, a, b, ccode='0049'):
 
-        a = unicode(re.sub('[^0-9\+]|((?<!\A)\+)', '', a))
-        b = unicode(re.sub('[^0-9\+]|((?<!\A)\+)', '', b))
+        a = unicode(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', a))
+        b = unicode(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', b))
 
         if a.startswith(ccode): a = '0' + a[len(ccode):]
         if a.startswith('+'): a = '0' + a[3:]
@@ -81,8 +92,8 @@ class PytzBox:
                         self.phone_book[self.contact_name]['numbers'].append(content)
                 if self.key == "imageURL":
                     if self.contact_name in self.phone_book:
-                        self.phone_book[self.contact_name]['imageURL'] = content
-                        self.phone_book[self.contact_name]['imageHttpURL'] = self.parent.getDownloadUrl(content)
+                        self.phone_book[self.contact_name]['imageURL'] = self.parent.getDownloadUrl(content)
+                        self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content, self.contact_name)
 
         handler = FbAbHandler(self)
 
@@ -93,13 +104,29 @@ class PytzBox:
 
         return handler.phone_book
 
-    def getDownloadUrl(self, imageurl):
+    def getDownloadUrl(self, url):
+
+        return self.__url_file_download[self.__encrypt].format(
+            host=self.__host,
+            imageurl=url,
+            sid=self.__sid
+        )
+
+    def getImage(self, url, caller_name):
+        if self.__imagepath is None: return
         try:
-            return self.__url_file_download[self.__encrypt].format(
+            response = requests.get(self.__url_file_download[self.__encrypt].format(
                 host=self.__host,
-                imageurl=imageurl,
+                imageurl=url,
                 sid=self.__sid
-            )
+            ))
+            caller_image = Image.open(StringIO(response.content))
+            if caller_image is not None:
+                imagepath = os.path.join(self.__imagepath, hashlib.md5(caller_name).hexdigest() + '.jpg')
+                caller_image.save(imagepath)
+                self.__imagecount += 1
+                return imagepath
+
         except Exception, e:
             print e
 
@@ -134,7 +161,7 @@ class PytzBox:
             else:
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
-    def getPhonebook(self, id=0):
+    def getPhonebook(self, id=0, imgpath=None):
 
         if id == -1:
             result = dict()
@@ -188,7 +215,7 @@ if __name__ == '__main__':
     import sys
     import pprint
 
-    args = {'action':None, 'number':None, 'host':'fritz.box', 'user':None, 'pw':None, 'encrypt':True, 'id':None}
+    args = {'action':None, 'number':None, 'host':'fritz.box', 'user':None, 'pw':None, 'encrypt':'1', 'id':None, 'imagepath':None}
     try:
         if sys.argv[1]:
             for par in sys.argv[1:]:
@@ -197,7 +224,7 @@ if __name__ == '__main__':
 
             if args['encrypt']:
                 args['encrypt'] = True if args['encrypt'].upper() == '1' else False
-            box = PytzBox(username=args['user'], password=args['pw'], host=args['host'], encrypt=args['encrypt'])
+            box = PytzBox(username=args['user'], password=args['pw'], host=args['host'], encrypt=args['encrypt'], imagepath=args['imagepath'])
             po = pprint.PrettyPrinter(indent=4)
             phone_book_id = 0
 
@@ -213,11 +240,10 @@ if __name__ == '__main__':
             elif args['action'] == 'getentry' and args['number']:
                 entries = box.getPhonebook(id=phone_book_id)
                 for item in entries:
-                    if 'numbers' in entries[item]:
-                        for number in entries[item]['numbers']:
-                            if box.compareNumbers(args['number'], number):
-                                po.pprint(item)
-                                po.pprint(entries[item])
+                    for number in entries[item]['numbers']:
+                        if box.compareNumbers(args['number'], number):
+                            po.pprint(item)
+                            po.pprint(entries[item])
     except IndexError:
         print """
 PytzBox
