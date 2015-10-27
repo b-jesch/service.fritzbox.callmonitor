@@ -5,7 +5,7 @@
        provider-name="Birger Jesch, thanks to F. Epperlein">
   <requires>
     <import addon="script.module.requests" version="2.3.0" />
-    <import addon="script.module.pil" version="2.1.0" />
+    <import addon="script.module.pil" version="1.1.7" />
   </requires>
   <extension point="xbmc.service"
         library="default.py" start="login" />
