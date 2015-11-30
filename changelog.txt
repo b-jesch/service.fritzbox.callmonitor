@@ -1,4 +1,10 @@
 CHANGELOG
+1.4.3
+- Bugfixes
+
+1.4.2
+- Reading images of Callers from Phonebook at startup and store them
+  separatly in Cache
 
 1.4.1
 - Improved search and more accurate comparison of numbers

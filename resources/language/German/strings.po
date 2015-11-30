@@ -101,6 +101,10 @@ msgctxt "#30017"
 msgid "Country code (four digits)"
 msgstr "Landesvorwahl (vierstellig)"
 
+msgctxt "#30018"
+msgid "Use all available Phonebooks of Fritz!Box"
+msgstr "Verwende alle verfügbaren Telefonbücher der Fritz!Box"
+
 msgctxt "#30020"
 msgid "General"
 msgstr "Allgemein"

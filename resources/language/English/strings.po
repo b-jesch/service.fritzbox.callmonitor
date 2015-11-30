@@ -102,6 +102,10 @@ msgctxt "#30017"
 msgid "Country code (four digits)"
 msgstr ""
 
+msgctxt "#30018"
+msgid "Use all available Phonebooks of Fritz!Box"
+msgstr ""
+
 msgctxt "#30020"
 msgid "General"
 msgstr ""

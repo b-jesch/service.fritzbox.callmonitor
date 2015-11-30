@@ -57,8 +57,8 @@ class PytzBox:
         if b.startswith(ccode): b = '0' + b[len(ccode):]
         if b.startswith('+'): b = '0' + b[3:]
 
-        a = a[-len(b):]
-        b = b[-len(a):]
+        # a = a[-len(b):]
+        # b = b[-len(a):]
 
         return (a == b)
 
@@ -122,7 +122,7 @@ class PytzBox:
             ))
             caller_image = Image.open(StringIO(response.content))
             if caller_image is not None:
-                imagepath = os.path.join(self.__imagepath, hashlib.md5(caller_name).hexdigest() + '.jpg')
+                imagepath = os.path.join(self.__imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
                 caller_image.save(imagepath)
                 self.__imagecount += 1
                 return imagepath

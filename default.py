@@ -163,6 +163,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
         self.__usePhoneBook = True if __addon__.getSetting('usePhonebook').upper() == 'TRUE' else False
+        self.__phoneBookID = -1 if __addon__.getSetting('phoneBookID').upper() == 'TRUE' else 0
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
         
     # Get the Phonebook
@@ -174,7 +175,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                                                                         username=self.__fbUserName, encrypt=self.__fbSSL,
                                                                         imagepath=__ImageCache__)
             if self.__fb_phonebook is None:
-                self.__fb_phonebook = self.__pytzbox.getPhonebook(id = -1)
+                self.__fb_phonebook = self.__pytzbox.getPhonebook(id = self.__phoneBookID)
                 self.notifyLog('%s entries from %s loaded, %s images cached' % (len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
 
     def getNameByKlickTel(self, request_number):
@@ -199,7 +200,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     if self.__pytzbox.compareNumbers(number, request_number, ccode=self.__cCode):
                         self.notifyLog('Match an entry in database for %s: %s' % (request_number, item))
                         name = item
-                        fname = os.path.join(__ImageCache__, hashlib.md5(item).hexdigest() + '.jpg')
+                        fname = os.path.join(__ImageCache__, hashlib.md5(item.encode('utf-8')).hexdigest() + '.jpg')
                         if os.path.isfile(fname):
                             self.notifyLog('Load image from cache: %s' % (os.path.basename(fname)))
                             imageBMP = fname
