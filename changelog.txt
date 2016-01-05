@@ -1,4 +1,8 @@
 CHANGELOG
+
+1.4.4
+- improved reconnect handling if Fritz!Box disconnects, avoid message flooding in xbmc.log
+
 1.4.3
 - Bugfixes
 

@@ -79,6 +79,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     __fb_phonebook = None
     __klicktel = None
     __hide = None
+    __s = None
 
     def __init__(self):
 
@@ -341,29 +342,38 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.notifyLog('At line:   %s' % traceback.tb_lineno(exc_tb), level=xbmc.LOGERROR)
             self.notifyLog('In file:   %s' % tb[0].split(",")[0].strip()[6:-1], level=xbmc.LOGERROR)
             exc_tb = exc_tb.tb_next
+
+    def connect(self, notify=False):
+        if self.__s is not None:
+            self.__s.close()
+            self.__s = None
+        try:
+            self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.__s.settimeout(60)
+            self.__s.connect((self.__server, LISTENPORT))
+        except socket.error, e:
+            if notify: self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
+            self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
+            self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
+            return False
+        except Exception, e:
+            self.traceError(e, sys.exc_traceback)
+            return False
+        else:
+            self.notifyLog('Connected, listen to %s on port %s' % (self.__server, LISTENPORT))
+            self.__s.settimeout(0.2)
+            return True
         
     def start(self):
 
-        try:
-            __s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            __s.settimeout(60)
-            __s.connect((self.__server, LISTENPORT))
-        except socket.error, e:
-            self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
-            self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
-            self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
-        except Exception, e:
-            self.traceError(e, sys.exc_traceback)
-        else:
-            self.notifyLog('listen to %s on port %s' % (self.__server, LISTENPORT))
-            __s.settimeout(0.2)
+        if self.connect(notify=True):
 
             # MAIN SERVICE
-            
+
             while not xbmc.abortRequested:
 
                 try:
-                    fbdata = __s.recv(512)
+                    fbdata = self.__s.recv(512)
                     line = self.CallMonitorLine(fbdata)
 
                     {
@@ -376,10 +386,11 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 except socket.timeout:
                     pass
                 except IndexError:
-                    self.notifyLog('Something went wrong with messages from Fritzbox...', level=xbmc.LOGERROR)
+                    self.notifyLog('Communication failure', level=xbmc.LOGERROR)
+                    self.connect()
                 except socket.error, e:
-                    self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
-                    # xbmc.sleep(10000)
+                    self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
+                    self.connect()
                 except Exception, e:
                     self.traceError(e, sys.exc_traceback)
                     break
@@ -389,10 +400,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.getSettings()
                     self.SettingsChanged = False
                     self.getPhonebook()
-                    
-                # xbmc.sleep(200)
 
-            __s.close()
+            self.__s.close()
 # START
 
 CallMon = FritzCallmonitor()
