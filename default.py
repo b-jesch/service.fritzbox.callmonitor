@@ -176,8 +176,15 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                                                                         username=self.__fbUserName, encrypt=self.__fbSSL,
                                                                         imagepath=__ImageCache__)
             if self.__fb_phonebook is None:
-                self.__fb_phonebook = self.__pytzbox.getPhonebook(id = self.__phoneBookID)
-                self.notifyLog('%s entries from %s loaded, %s images cached' % (len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
+                try:
+                    self.__fb_phonebook = self.__pytzbox.getPhonebook(id = self.__phoneBookID)
+                    self.notifyLog('%s entries from %s loaded, %s images cached' % (len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
+                except self.__pytzbox.BoxUnreachableException:
+                   self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
+                except self.__pytzbox.LoginFailedException:
+                    self.notifyOSD(__LS__(30033), __LS__(30034), __IconError__)
+                except self.__pytzbox.InternalServerErrorException:
+                    self.notifyOSD(__LS__(30035), __LS__(30036), __IconError__)
 
     def getNameByKlickTel(self, request_number):
     
@@ -252,7 +259,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 caller_num = __LS__(30016)
                 icon = __IconUnknown__
 
-            self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon)
+            self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon, self.__dispMsgTime)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
 
     def handleConnected(self, line):
@@ -328,8 +335,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.notifyLog('excluded number seems disconnected, reset status of callmonitor')
             self.__hide = False
 
-    def notifyOSD(self, header, message, icon=__IconDefault__):
-        OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, self.__dispMsgTime)
+    def notifyOSD(self, header, message, icon=__IconDefault__, dispTime=5000):
+        OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
 
     def notifyLog(self, message, level=xbmc.LOGNOTICE):
         xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)

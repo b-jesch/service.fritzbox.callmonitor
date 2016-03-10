@@ -31,6 +31,7 @@ class PytzBox:
     class BoxUnreachableException(Exception): pass
     class LoginFailedException(Exception): pass
     class RequestFailedException(Exception): pass
+    class InternalServerErrorException(Exception): pass
 
     def __init__(self, password=False, host="fritz.box", username=False, encrypt=True, imagepath=None):
 
@@ -194,6 +195,8 @@ class PytzBox:
                 self.__sid = sids[0]
             elif response.status_code == 401:
                 raise self.LoginFailedException()
+            elif response.status_code == 500:
+                raise self.InternalServerErrorException()
             else:
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 

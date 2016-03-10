@@ -125,6 +125,21 @@ msgctxt "#30032"
 msgid "klicktel.de not available"
 msgstr "klicktel.de nicht erreichbar"
 
+msgctxt "#30033"
+msgid "Login failed"
+msgstr "Anmeldung fehlgeschlagen"
+
+msgctxt "#30034"
+msgid "Check Username and/or Password Settings"
+msgstr "Überprüfe Nutzername und/oder Passwort Einstellungen"
+
+msgctxt "#30035"
+msgid "Internal Server Error"
+msgstr "Interner Server Fehler"
+
+msgctxt "#30036"
+msgid "Check Network Settings of Fritz!Box"
+msgstr "Überprüfe die Netzwerkeinstellungen der Fritz!Box"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"

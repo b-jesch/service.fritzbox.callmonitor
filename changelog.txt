@@ -1,5 +1,8 @@
 CHANGELOG
 
+1.4.5
+- improved message and notification handling
+
 1.4.4
 - improved reconnect handling if Fritz!Box disconnects, avoid message flooding in xbmc.log
 
