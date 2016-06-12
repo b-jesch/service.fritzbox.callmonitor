@@ -9,7 +9,7 @@ import sys
 import xbmc
 import xbmcaddon
 import xbmcgui
-from resources.lib.PytzBox import PytzBox
+from resources.lib.PhoneBooks import PytzBox
 from resources.lib.KlickTel import KlickTel
 import hashlib
 
@@ -182,7 +182,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.__fb_phonebook = self.__pytzbox.getPhonebook(id=self.__phoneBookID)
                     self.notifyLog('%s entries from %s loaded, %s images cached' % (
                     len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
-                except self.__pytzbox.BoxUnreachableException:
+                except self.__pytzbox.HostUnreachableException:
                     self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
                 except self.__pytzbox.LoginFailedException:
                     self.notifyOSD(__LS__(30033), __LS__(30034), __IconError__)

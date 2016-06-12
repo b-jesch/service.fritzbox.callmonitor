@@ -1,28 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import hashlib
+import os
 import re
 import socket
 import xml.sax
-import requests
-from requests.auth import HTTPDigestAuth
-from PIL import Image
-from io import StringIO
-import hashlib
-import os
 from builtins import str
+from io import StringIO
+
+import requests
+from PIL import Image
+from requests.auth import HTTPDigestAuth
+
+from PhoneBookBase import PhoneBookBase
 
 
-class PytzBox:
-    __password = False
-    __host = False
-    __user = False
+class PytzBox(PhoneBookBase):
     __sid = None
     __sslverify = False
-    __encrypt = None
-    __imagepath = None
-    __imagecount = None
-
     __url_contact = ['https://{host}:49443/upnp/control/x_contact', 'http://{host}:49000/upnp/control/x_contact']
     __url_file_download = ['https://{host}:49443{imageurl}&sid={sid}', 'http://{host}:49000{imageurl}&sid={sid}']
     __soapaction_phonebooklist = 'urn:dslforum-org:service:X_AVM-DE_OnTel:1#GetPhonebookList'
@@ -30,31 +26,12 @@ class PytzBox:
     __soapaction_phonebook = 'urn:dslforum-org:service:X_AVM-DE_OnTel:1#GetPhonebook'
     __soapenvelope_phonebook = '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPhonebook xmlns:u="urn:dslforum-org:service:X_AVM-DE_OnTel:1"><NewPhonebookId>{NewPhonebookId}</NewPhonebookId></u:GetPhonebook></s:Body></s:Envelope>'
 
-    class BoxUnreachableException(Exception):
-        pass
-
-    class LoginFailedException(Exception):
-        pass
-
-    class RequestFailedException(Exception):
-        pass
-
-    class InternalServerErrorException(Exception):
-        pass
-
     def __init__(self, password=False, host="fritz.box", username=False, encrypt=True, imagepath=None):
-
+        PhoneBookBase.__init__(self, password, host, username, encrypt, imagepath)
         socket.setdefaulttimeout(10)
 
-        self.__password = password
-        self.__host = host
-        self.__user = username
-        self.__encrypt = 0 if encrypt else 1
-        self.__imagepath = imagepath
-        self.__imagecount = 0
-
     def imagecount(self):
-        return self.__imagecount
+        return self._imagecount
 
     def compareNumbers(self, a, b, ccode='0049'):
 
@@ -117,26 +94,26 @@ class PytzBox:
 
     def getDownloadUrl(self, url):
 
-        return self.__url_file_download[self.__encrypt].format(
-            host=self.__host,
+        return self.__url_file_download[self._encrypt].format(
+            host=self._host,
             imageurl=url,
             sid=self.__sid
         )
 
     def getImage(self, url, caller_name):
-        if self.__imagepath is None: return
+        if self._imagepath is None: return
         try:
-            response = requests.get(self.__url_file_download[self.__encrypt].format(
-                host=self.__host,
+            response = requests.get(self.__url_file_download[self._encrypt].format(
+                host=self._host,
                 imageurl=url,
                 sid=self.__sid
             ))
             caller_image = Image.open(StringIO(response.content))
             if caller_image is not None:
-                imagepath = os.path.join(self.__imagepath,
+                imagepath = os.path.join(self._imagepath,
                                          hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
                 caller_image.save(imagepath)
-                self.__imagecount += 1
+                self._imagecount += 1
                 return imagepath
 
         except Exception as e:
@@ -145,17 +122,17 @@ class PytzBox:
     def getPhonebookList(self):
 
         try:
-            response = requests.post(self.__url_contact[self.__encrypt].format(host=self.__host),
-                                     auth=HTTPDigestAuth(self.__user, self.__password),
+            response = requests.post(self.__url_contact[self._encrypt].format(host=self._host),
+                                     auth=HTTPDigestAuth(self._user, self._password),
                                      data=self.__soapenvelope_phonebooklist,
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebooklist},
                                      verify=self.__sslverify)
 
-        except socket as e:
-            raise self.BoxUnreachableException(str(e))
+        except socket.error as e:
+            raise self.HostUnreachableException(str(e))
         except requests.exceptions.ConnectionError as e:
-            raise self.BoxUnreachableException(str(e))
+            raise self.HostUnreachableException(str(e))
         except Exception as e:
             raise self.RequestFailedException(str(e))
         else:
@@ -184,16 +161,16 @@ class PytzBox:
             return result
 
         try:
-            response = requests.post(self.__url_contact[self.__encrypt].format(host=self.__host),
-                                     auth=HTTPDigestAuth(self.__user, self.__password),
+            response = requests.post(self.__url_contact[self._encrypt].format(host=self._host),
+                                     auth=HTTPDigestAuth(self._user, self._password),
                                      data=self.__soapenvelope_phonebook.format(NewPhonebookId=id),
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebook},
                                      verify=self.__sslverify)
-        except socket as e:
-            raise self.BoxUnreachableException(str(e))
+        except socket.error as e:
+            raise self.HostUnreachableException(str(e))
         except requests.exceptions.ConnectionError as e:
-            raise self.BoxUnreachableException(str(e))
+            raise self.HostUnreachableException(str(e))
         except Exception as e:
             raise self.RequestFailedException(str(e))
         else:
@@ -213,10 +190,10 @@ class PytzBox:
 
         try:
             response = requests.get(phonbook_urls[0], verify=self.__sslverify)
-        except socket as e:
-            raise self.BoxUnreachableException(str(e))
+        except socket.error as e:
+            raise self.HostUnreachableException(str(e))
         except IOError as e:
-            raise self.BoxUnreachableException(str(e))
+            raise self.HostUnreachableException(str(e))
         except Exception as e:
             raise self.RequestFailedException(str(e))
         else:
@@ -288,11 +265,11 @@ options:
   --encrypt=<0|1>               use SSL encryption [0: No, 1: Yes, default: Yes]
 
         """)
-    except box.BoxUnreachableException:
+    except box.HostUnreachableException:
         print('Box unreachable')
     except box.LoginFailedException:
         print('Login failed')
     except box.RequestFailedException:
         print('Request failed')
-    # except Exception as e:
-    # print (e)
+    except Exception as e:
+        print(e)
