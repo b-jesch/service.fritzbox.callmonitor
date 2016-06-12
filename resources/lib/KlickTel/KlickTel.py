@@ -2,23 +2,29 @@
 # -*- coding: utf-8 -*-
 
 import json
-import urllib, urllib2
+import urllib
+import urllib2
 
 APIKEY = 'NDM2MDg5Yjc4YmI2MWIzZTI0NDQyYzI4YzY2NGJkMjI=\n'
 APIURL = 'http://openapi.klicktel.de/searchapi/invers'
 
-class KlickTelReverseSearch:
 
-    class ResultException(Exception): pass
-    class HostCommException(Exception): pass
-    class KlickTelModuleException(Exception): pass
+class KlickTelReverseSearch:
+    class ResultException(Exception):
+        pass
+
+    class HostCommException(Exception):
+        pass
+
+    class KlickTelModuleException(Exception):
+        pass
 
     def __init__(self):
         self.data = None
         self.__apikey = APIKEY
         self.__apiurl = APIURL
         self.__number = None
-        
+
     def search(self, arg):
         if 'number' in arg:
             self.__number = arg['number'][0]
@@ -31,9 +37,9 @@ class KlickTelReverseSearch:
             self.data = json.loads(response.read())
 
             if __o:
-                print '>>>>'
-                print json.dumps(self.data, sort_keys=False, indent=4)
-                print '<<<<'
+                print('>>>>')
+                print(json.dumps(self.data, sort_keys=False, indent=4))
+                print('<<<<')
 
             if self.data['response'] and 'error' in self.data['response']:
                 raise self.ResultException(self.data['response']['error']['message'])
@@ -43,8 +49,8 @@ class KlickTelReverseSearch:
                     raise self.ResultException('more than one match (%s in total)' % (__total))
                 else:
                     record = self.data['response']['results'][0]['entries'][0]
-                    if  record['entrytype'] == 'private':
-                        return '%s %s' %(record['firstname'], record['lastname'])
+                    if record['entrytype'] == 'private':
+                        return '%s %s' % (record['firstname'], record['lastname'])
                     else:
                         return '%s' % (record['lastname'])
             else:
@@ -52,6 +58,7 @@ class KlickTelReverseSearch:
         except urllib2.URLError as e:
             raise self.HostCommException(e.reason)
         return False
+
 
 if __name__ == '__main__':
 
@@ -65,9 +72,9 @@ if __name__ == '__main__':
                 args[par].append(value)
             kt = KlickTelReverseSearch()
             result = kt.search(args)
-            if result: print result
-        
+            if result: print(result)
+
     except IndexError:
-        print 'use KlickTel.py --number=004903008154711 [--dump=0|1]'
-    except Exception, e:
-        print e
+        print('use KlickTel.py --number=004903008154711 [--dump=0|1]')
+    except Exception as e:
+        print(e)

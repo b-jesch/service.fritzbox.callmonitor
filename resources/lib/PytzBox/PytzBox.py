@@ -7,9 +7,11 @@ import xml.sax
 import requests
 from requests.auth import HTTPDigestAuth
 from PIL import Image
-from StringIO import StringIO
+from io import StringIO
 import hashlib
 import os
+from builtins import str
+
 
 class PytzBox:
     __password = False
@@ -28,10 +30,17 @@ class PytzBox:
     __soapaction_phonebook = 'urn:dslforum-org:service:X_AVM-DE_OnTel:1#GetPhonebook'
     __soapenvelope_phonebook = '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPhonebook xmlns:u="urn:dslforum-org:service:X_AVM-DE_OnTel:1"><NewPhonebookId>{NewPhonebookId}</NewPhonebookId></u:GetPhonebook></s:Body></s:Envelope>'
 
-    class BoxUnreachableException(Exception): pass
-    class LoginFailedException(Exception): pass
-    class RequestFailedException(Exception): pass
-    class InternalServerErrorException(Exception): pass
+    class BoxUnreachableException(Exception):
+        pass
+
+    class LoginFailedException(Exception):
+        pass
+
+    class RequestFailedException(Exception):
+        pass
+
+    class InternalServerErrorException(Exception):
+        pass
 
     def __init__(self, password=False, host="fritz.box", username=False, encrypt=True, imagepath=None):
 
@@ -49,8 +58,8 @@ class PytzBox:
 
     def compareNumbers(self, a, b, ccode='0049'):
 
-        a = unicode(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', a))
-        b = unicode(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', b))
+        a = str(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', a))
+        b = str(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', b))
 
         if a.startswith(ccode): a = '0' + a[len(ccode):]
         if a.startswith('+'): a = '0' + a[3:]
@@ -94,13 +103,14 @@ class PytzBox:
                 if self.key == "imageURL":
                     if self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name]['imageURL'] = self.parent.getDownloadUrl(content)
-                        self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content, self.contact_name)
+                        self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content,
+                                                                                              self.contact_name)
 
         handler = FbAbHandler(self)
 
         try:
             xml.sax.parseString(xml_phonebook, handler=handler)
-        except Exception, e:
+        except Exception as e:
             raise ValueError('could not parse phonebook data (are you logged in?): %s' % str(e))
 
         return handler.phone_book
@@ -123,13 +133,14 @@ class PytzBox:
             ))
             caller_image = Image.open(StringIO(response.content))
             if caller_image is not None:
-                imagepath = os.path.join(self.__imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
+                imagepath = os.path.join(self.__imagepath,
+                                         hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
                 caller_image.save(imagepath)
                 self.__imagecount += 1
                 return imagepath
 
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
     def getPhonebookList(self):
 
@@ -143,7 +154,7 @@ class PytzBox:
 
         except socket as e:
             raise self.BoxUnreachableException(str(e))
-        except requests.exceptions.ConnectionError, e:
+        except requests.exceptions.ConnectionError as e:
             raise self.BoxUnreachableException(str(e))
         except Exception as e:
             raise self.RequestFailedException(str(e))
@@ -152,7 +163,7 @@ class PytzBox:
                 response = response.content
                 phonbook_ids = []
 
-                for this_line in re.findall(r'<NewPhonebookList>([\d,]*)</NewPhonebookList>', response):
+                for this_line in re.findall(r'<NewPhonebookList>([\d,]*)</NewPhonebookList>', response.decode('utf-8')):
                     for this_id in this_line.split(','):
                         phonbook_ids.append(int(this_id))
 
@@ -181,15 +192,15 @@ class PytzBox:
                                      verify=self.__sslverify)
         except socket as e:
             raise self.BoxUnreachableException(str(e))
-        except requests.exceptions.ConnectionError, e:
+        except requests.exceptions.ConnectionError as e:
             raise self.BoxUnreachableException(str(e))
-        except Exception, e:
+        except Exception as e:
             raise self.RequestFailedException(str(e))
         else:
             if response.status_code == 200:
                 response = response.content
-                phonbook_urls = re.findall(r'<NewPhonebookURL>(.*)</NewPhonebookURL>', response)
-                sids = re.findall(r'sid=([0-9a-fA-F]*)', response)
+                phonbook_urls = re.findall(r'<NewPhonebookURL>(.*)</NewPhonebookURL>', response.decode('utf-8'))
+                sids = re.findall(r'sid=([0-9a-fA-F]*)', response.decode('utf-8'))
                 if not len(sids):
                     raise self.LoginFailedException()
                 self.__sid = sids[0]
@@ -213,12 +224,14 @@ class PytzBox:
 
         return self.__analyzeFritzboxPhonebook(xml_phonebook)
 
+
 if __name__ == '__main__':
 
     import sys
     import pprint
 
-    args = {'action':None, 'number':None, 'host':'fritz.box', 'user':None, 'pw':None, 'encrypt':'1', 'id':None, 'imagepath':None}
+    args = {'action': None, 'number': None, 'host': 'fritz.box', 'user': None, 'pw': None, 'encrypt': '1', 'id': None,
+            'imagepath': None}
     try:
         if sys.argv[1]:
             for par in sys.argv[1:]:
@@ -227,7 +240,8 @@ if __name__ == '__main__':
 
             if args['encrypt']:
                 args['encrypt'] = True if args['encrypt'].upper() == '1' else False
-            box = PytzBox(username=args['user'], password=args['pw'], host=args['host'], encrypt=args['encrypt'], imagepath=args['imagepath'])
+            box = PytzBox(username=args['user'], password=args['pw'], host=args['host'], encrypt=args['encrypt'],
+                          imagepath=args['imagepath'])
             po = pprint.PrettyPrinter(indent=4)
             phone_book_id = 0
 
@@ -248,7 +262,7 @@ if __name__ == '__main__':
                             po.pprint(item)
                             po.pprint(entries[item])
     except IndexError:
-        print """
+        print("""
 PytzBox
 
 usage:
@@ -273,9 +287,12 @@ options:
   --id=<int>|all                use only phonebook with selected id or all
   --encrypt=<0|1>               use SSL encryption [0: No, 1: Yes, default: Yes]
 
-        """
-    except box.BoxUnreachableException(Exception): print 'Box unreachable'
-    except box.LoginFailedException(Exception): print 'Login failed'
-    except box.RequestFailedException(Exception): print 'Request failed'
-    except Exception, e:
-        print e
+        """)
+    except box.BoxUnreachableException:
+        print('Box unreachable')
+    except box.LoginFailedException:
+        print('Login failed')
+    except box.RequestFailedException:
+        print('Request failed')
+    # except Exception as e:
+    # print (e)

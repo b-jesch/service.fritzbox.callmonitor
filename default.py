@@ -19,14 +19,14 @@ __path__ = __addon__.getAddonInfo('path')
 __version__ = __addon__.getAddonInfo('version')
 __LS__ = __addon__.getLocalizedString
 
-__IconOk__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'incoming.png'))
-__IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'error.png'))
-__IconUnknown__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'unknown.png'))
-__IconKlickTel__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'klicktel.png'))
-__IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
+__IconOk__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'incoming.png'))
+__IconError__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'error.png'))
+__IconUnknown__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'unknown.png'))
+__IconKlickTel__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'klicktel.png'))
+__IconDefault__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'default.png'))
 
 __ImageCache__ = xbmc.translatePath(os.path.join('special://temp', __addonname__, 'cache'))
-if not os.path.exists(__ImageCache__) : os.makedirs(__ImageCache__)
+if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__)
 
 # Fritz!Box
 
@@ -37,13 +37,13 @@ LISTENPORT = 1012
 PLAYER = xbmc.Player()
 OSD = xbmcgui.Dialog()
 
+
 # CLASSES
 
-class PlayerProperties():
-    
+class PlayerProperties:
     def __init__(self):
         self.getConditions()
-        
+
     def getConditions(self):
         self.isPlayTV = xbmc.getCondVisibility('Pvr.isPlayingTv')
         self.isPlayVideo = xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing')
@@ -59,8 +59,8 @@ class PlayerProperties():
         self.isDisconnectPause = xbmc.getCondVisibility('Player.Paused')
         self.isDisconnectMute = xbmc.getCondVisibility('Player.Muted')
 
-class XBMCMonitor(xbmc.Monitor):
 
+class XBMCMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
         xbmc.Monitor.__init__(self)
         self.SettingsChanged = False
@@ -70,9 +70,10 @@ class XBMCMonitor(xbmc.Monitor):
 
     def onScreensaverActivated(self):
         self.ScreensaverActive = True
-        
+
     def onScreensaverDeactivated(self):
         self.ScreensaverActive = False
+
 
 class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     __pytzbox = None
@@ -94,14 +95,13 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.userActionPlay = None
         self.userActionMute = None
 
-
     def error(*args, **kwargs):
         xbmc.log('%s %s' % (args, kwargs), xbmc.LOGERROR)
 
     class CallMonitorLine(dict):
 
         def __init__(self, line, **kwargs):
-            if isinstance(line, str) or isinstance(line, unicode):
+            if isinstance(line, str):
 
                 token = line.split(';')
                 self.command = token[1]
@@ -133,7 +133,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 return self[item]
             else:
                 return False
-                
+
     # END OF CLASS CallMonitorLine #
 
     # Get the Addon-Settings
@@ -150,8 +150,9 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         __exnums = __exnums.join(' '.join(line.split()) for line in __exnums.splitlines())
         self.__exnum_list = __exnums.split(' ')
 
-        self.__dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group())*1000
-        self.__fbUserName = False if len(__addon__.getSetting('fbUsername')) == 0 else __addon__.getSetting('fbUsername')
+        self.__dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group()) * 1000
+        self.__fbUserName = False if len(__addon__.getSetting('fbUsername')) == 0 else __addon__.getSetting(
+            'fbUsername')
         self.__fbPasswd = False if len(__addon__.getSetting('fbPasswd')) == 0 else __addon__.getSetting('fbPasswd')
         self.__fbSSL = True if __addon__.getSetting('fbSSL').upper() == 'TRUE' else False
         self.__cCode = __addon__.getSetting('cCode')
@@ -166,36 +167,38 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__usePhoneBook = True if __addon__.getSetting('usePhonebook').upper() == 'TRUE' else False
         self.__phoneBookID = -1 if __addon__.getSetting('phoneBookID').upper() == 'TRUE' else 0
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
-        
+
     # Get the Phonebook
 
     def getPhonebook(self):
 
         if self.__usePhoneBook:
             if self.__pytzbox is None: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server,
-                                                                        username=self.__fbUserName, encrypt=self.__fbSSL,
+                                                                        username=self.__fbUserName,
+                                                                        encrypt=self.__fbSSL,
                                                                         imagepath=__ImageCache__)
             if self.__fb_phonebook is None:
                 try:
-                    self.__fb_phonebook = self.__pytzbox.getPhonebook(id = self.__phoneBookID)
-                    self.notifyLog('%s entries from %s loaded, %s images cached' % (len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
+                    self.__fb_phonebook = self.__pytzbox.getPhonebook(id=self.__phoneBookID)
+                    self.notifyLog('%s entries from %s loaded, %s images cached' % (
+                    len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
                 except self.__pytzbox.BoxUnreachableException:
-                   self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
+                    self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
                 except self.__pytzbox.LoginFailedException:
                     self.notifyOSD(__LS__(30033), __LS__(30034), __IconError__)
                 except self.__pytzbox.InternalServerErrorException:
                     self.notifyOSD(__LS__(30035), __LS__(30036), __IconError__)
 
     def getNameByKlickTel(self, request_number):
-    
+
         if self.__useKlickTelReverse:
             if self.__klicktel is None: self.__klicktel = KlickTel.KlickTelReverseSearch()
             try:
                 return self.__klicktel.search(request_number)
-            except Exception, e:
+            except Exception as e:
                 self.notifyLog(str(e), level=xbmc.LOGERROR)
         return False
-            
+
     def getRecordByNumber(self, request_number):
 
         name = ''
@@ -276,7 +279,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             #
             self.connectionEstablished = True
             # Extra condition: only do this if the user hasn't changed the status of the player
-            if (self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
+            if (
+                self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
                 if self.__optPauseTV and self.PlayerProperties.isPlayTV:
                     self.notifyLog('Player is playing TV, pausing...')
                     xbmc.executebuiltin('PlayerControl(Play)')
@@ -294,7 +298,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.PlayerProperties.isConnectPause = True
 
             if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
-                if not (self.__optPauseAudio or self.__optPauseVideo) or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                if not (self.__optPauseAudio or self.__optPauseVideo) or (
+                    not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Muting Volume...')
                     xbmc.executebuiltin('Mute')
                     # Save the status of the player for later comparison
@@ -328,7 +333,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
             if self.__optMute and not self.PlayerProperties.isMute and self.connectionEstablished and not self.userActionMute:
                 # Extra condition: You don't want another condition to unmute than to mute.
-                if not (self.__optPauseAudio or self.__optPauseVideo) or (not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                if not (self.__optPauseAudio or self.__optPauseVideo) or (
+                    not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Volume was not muted, unmute...')
                     xbmc.executebuiltin('Mute')
         else:
@@ -358,19 +364,19 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__s.settimeout(60)
             self.__s.connect((self.__server, LISTENPORT))
-        except socket.error, e:
+        except socket.error as e:
             if notify: self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
             self.notifyLog('Could not connect to %s:%s' % (self.__server, LISTENPORT), level=xbmc.LOGERROR)
             self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
             return False
-        except Exception, e:
+        except Exception as e:
             self.traceError(e, sys.exc_traceback)
             return False
         else:
             self.notifyLog('Connected, listen to %s on port %s' % (self.__server, LISTENPORT))
             self.__s.settimeout(0.2)
             return True
-        
+
     def start(self):
 
         if self.connect(notify=True):
@@ -395,10 +401,10 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 except IndexError:
                     self.notifyLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
-                except socket.error, e:
+                except socket.error as e:
                     self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
                     self.connect()
-                except Exception, e:
+                except Exception as e:
                     self.traceError(e, sys.exc_traceback)
                     break
 
@@ -409,6 +415,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.getPhonebook()
 
             self.__s.close()
+
+
 # START
 
 CallMon = FritzCallmonitor()
