@@ -9,7 +9,7 @@ import sys
 import xbmc
 import xbmcaddon
 import xbmcgui
-from resources.lib.PhoneBooks import PytzBox
+from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import hashlib
 
@@ -76,8 +76,8 @@ class XBMCMonitor(xbmc.Monitor):
 
 
 class FritzCallmonitor(PlayerProperties, XBMCMonitor):
-    __pytzbox = None
-    __fb_phonebook = None
+    __phoneBookFacade = None
+    __phonebook = None
     __klicktel = None
     __hide = None
     __s = None
@@ -151,43 +151,35 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__exnum_list = __exnums.split(' ')
 
         self.__dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group()) * 1000
-        self.__fbUserName = False if len(__addon__.getSetting('fbUsername')) == 0 else __addon__.getSetting(
-            'fbUsername')
-        self.__fbPasswd = False if len(__addon__.getSetting('fbPasswd')) == 0 else __addon__.getSetting('fbPasswd')
-        self.__fbSSL = True if __addon__.getSetting('fbSSL').upper() == 'TRUE' else False
         self.__cCode = __addon__.getSetting('cCode')
-
-        # BOOLEAN CONVERSIONS
-
         self.__optShowOutgoing = True if __addon__.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
         self.__optMute = True if __addon__.getSetting('optMute').upper() == 'TRUE' else False
         self.__optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
         self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
-        self.__usePhoneBook = True if __addon__.getSetting('usePhonebook').upper() == 'TRUE' else False
-        self.__phoneBookID = -1 if __addon__.getSetting('phoneBookID').upper() == 'TRUE' else 0
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
     # Get the Phonebook
 
     def getPhonebook(self):
 
-        if self.__usePhoneBook:
-            if self.__pytzbox is None: self.__pytzbox = PytzBox.PytzBox(password=self.__fbPasswd, host=self.__server,
-                                                                        username=self.__fbUserName,
-                                                                        encrypt=self.__fbSSL,
-                                                                        imagepath=__ImageCache__)
-            if self.__fb_phonebook is None:
-                try:
-                    self.__fb_phonebook = self.__pytzbox.getPhonebook(id=self.__phoneBookID)
-                    self.notifyLog('%s entries from %s loaded, %s images cached' % (
-                    len(self.__fb_phonebook), self.__server, self.__pytzbox.imagecount()))
-                except self.__pytzbox.HostUnreachableException:
-                    self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
-                except self.__pytzbox.LoginFailedException:
-                    self.notifyOSD(__LS__(30033), __LS__(30034), __IconError__)
-                except self.__pytzbox.InternalServerErrorException:
-                    self.notifyOSD(__LS__(30035), __LS__(30036), __IconError__)
+        if self.__phoneBookFacade is None:
+            self.__phoneBookFacade = PhoneBookFacade(imagepath=__ImageCache__)
+            setting_keys = self.__phoneBookFacade.get_setting_keys()
+            for key in setting_keys: setting_keys[key] = __addon__.getSetting(key)
+            self.__phoneBookFacade.set_settings(setting_keys)
+
+        if self.__phonebook is None:
+            try:
+                self.__phonebook = self.__phoneBookFacade.getPhonebook()
+                self.notifyLog('%s entries from %s loaded, %s images cached' % (
+                    len(self.__phonebook), self.__server, self.__phoneBookFacade.imagecount()))
+            except self.__phoneBookFacade.HostUnreachableException:
+                self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
+            except self.__phoneBookFacade.LoginFailedException:
+                self.notifyOSD(__LS__(30033), __LS__(30034), __IconError__)
+            except self.__phoneBookFacade.InternalServerErrorException:
+                self.notifyOSD(__LS__(30035), __LS__(30036), __IconError__)
 
     def getNameByKlickTel(self, request_number):
 
@@ -204,11 +196,10 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         name = ''
         imageBMP = None
 
-        if self.__usePhoneBook and isinstance(self.__fb_phonebook, dict):
-
-            for item in self.__fb_phonebook:
-                for number in self.__fb_phonebook[item]['numbers']:
-                    if self.__pytzbox.compareNumbers(number, request_number, ccode=self.__cCode):
+        if isinstance(self.__phonebook, dict):
+            for item in self.__phonebook:
+                for number in self.__phonebook[item]['numbers']:
+                    if self.__phoneBookFacade.compareNumbers(number, request_number, ccode=self.__cCode):
                         self.notifyLog('Match an entry in database for %s: %s' % (request_number, item))
                         name = item
                         fname = os.path.join(__ImageCache__, hashlib.md5(item.encode('utf-8')).hexdigest() + '.jpg')
@@ -280,7 +271,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.connectionEstablished = True
             # Extra condition: only do this if the user hasn't changed the status of the player
             if (
-                self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
+                        self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
                 if self.__optPauseTV and self.PlayerProperties.isPlayTV:
                     self.notifyLog('Player is playing TV, pausing...')
                     xbmc.executebuiltin('PlayerControl(Play)')
@@ -299,7 +290,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
             if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
                 if not (self.__optPauseAudio or self.__optPauseVideo) or (
-                    not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                            not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Muting Volume...')
                     xbmc.executebuiltin('Mute')
                     # Save the status of the player for later comparison
@@ -334,7 +325,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             if self.__optMute and not self.PlayerProperties.isMute and self.connectionEstablished and not self.userActionMute:
                 # Extra condition: You don't want another condition to unmute than to mute.
                 if not (self.__optPauseAudio or self.__optPauseVideo) or (
-                    not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                            not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Volume was not muted, unmute...')
                     xbmc.executebuiltin('Mute')
         else:

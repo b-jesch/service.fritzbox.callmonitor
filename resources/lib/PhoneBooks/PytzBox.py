@@ -6,7 +6,6 @@ import os
 import re
 import socket
 import xml.sax
-from builtins import str
 from io import StringIO
 
 import requests
@@ -17,6 +16,13 @@ from PhoneBookBase import PhoneBookBase
 
 
 class PytzBox(PhoneBookBase):
+    _password = False
+    _host = False
+    _user = False
+    _encrypt = None
+    _usePhoneBook = None
+    _phoneBookId = None
+
     __sid = None
     __sslverify = False
     __url_contact = ['https://{host}:49443/upnp/control/x_contact', 'http://{host}:49000/upnp/control/x_contact']
@@ -26,28 +32,36 @@ class PytzBox(PhoneBookBase):
     __soapaction_phonebook = 'urn:dslforum-org:service:X_AVM-DE_OnTel:1#GetPhonebook'
     __soapenvelope_phonebook = '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:GetPhonebook xmlns:u="urn:dslforum-org:service:X_AVM-DE_OnTel:1"><NewPhonebookId>{NewPhonebookId}</NewPhonebookId></u:GetPhonebook></s:Body></s:Envelope>'
 
-    def __init__(self, password=False, host="fritz.box", username=False, encrypt=True, imagepath=None):
-        PhoneBookBase.__init__(self, password, host, username, encrypt, imagepath)
+    def __init__(self, imagepath, password=False, host="fritz.box", username=False, encrypt=True):
+        PhoneBookBase.__init__(self, imagepath)
         socket.setdefaulttimeout(10)
+        self._password = password
+        self._host = host
+        self._user = username
+        self._encrypt = 0 if encrypt else 1
+        self._usePhoneBook = True
+        self._phoneBookId = -1
+
+    def set_settings(self, settings):
+        self._password = False if len(settings['fbPasswd']) == 0 else settings['fbPasswd']
+        self._host = settings['phoneserver']
+        self._user = False if len(settings['fbUsername']) == 0 else settings['fbUsername']
+        self._encrypt = True if settings['fbSSL'].upper() == 'TRUE' else False
+        self._usePhoneBook = True if settings['usePhonebook'].upper() == 'TRUE' else False
+        self._phoneBookId = -1 if settings['phoneBookID'].upper() == 'TRUE' else 0
+
+    def get_setting_keys(self):
+        return {
+            'fbPasswd': None,
+            'fbSSL': None,
+            'phoneserver': None,
+            'fbUsername': None,
+            'usePhonebook': None,
+            'phoneBookID': None
+        }
 
     def imagecount(self):
-        return self._imagecount
-
-    def compareNumbers(self, a, b, ccode='0049'):
-
-        a = str(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', a))
-        b = str(re.sub('[^0-9\+\*]|((?<!\A)\+)', '', b))
-
-        if a.startswith(ccode): a = '0' + a[len(ccode):]
-        if a.startswith('+'): a = '0' + a[3:]
-
-        if b.startswith(ccode): b = '0' + b[len(ccode):]
-        if b.startswith('+'): b = '0' + b[3:]
-
-        # a = a[-len(b):]
-        # b = b[-len(a):]
-
-        return (a == b)
+        return 0 if not self._usePhoneBook else self._imagecount
 
     def __analyzeFritzboxPhonebook(self, xml_phonebook):
 
@@ -150,7 +164,12 @@ class PytzBox(PhoneBookBase):
             else:
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
-    def getPhonebook(self, id=0, imgpath=None):
+    def getPhonebook(self, id=None):
+        if not self._usePhoneBook:
+            return {}
+
+        if id is None:
+            id = self._phoneBookId
 
         if id == -1:
             result = dict()

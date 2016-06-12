@@ -1,13 +1,14 @@
 from abc import ABCMeta, abstractmethod
+from six import with_metaclass
 
 
-class PhoneBookBase(metaclass=ABCMeta):
-    _password = False
-    _host = False
-    _user = False
-    _encrypt = None
+class PhoneBookBase(with_metaclass(ABCMeta)):
     _imagepath = None
     _imagecount = None
+
+    def __init__(self, imagepath):
+        self._imagepath = imagepath
+        self._imagecount = 0
 
     class HostUnreachableException(Exception):
         pass
@@ -21,22 +22,21 @@ class PhoneBookBase(metaclass=ABCMeta):
     class InternalServerErrorException(Exception):
         pass
 
-    def __init__(self, password=False, host="", username=False, encrypt=True, imagepath=None):
-        self._password = password
-        self._host = host
-        self._user = username
-        self._encrypt = 0 if encrypt else 1
-        self._imagepath = imagepath
-        self._imagecount = 0
+    @abstractmethod
+    def set_settings(self, settings):
+        pass
+
+    @abstractmethod
+    def get_setting_keys(self):
+        pass
 
     @abstractmethod
     def imagecount(self):
         pass
 
     @abstractmethod
-    def compareNumbers(self, a, b, ccode):
-        pass
-
-    @abstractmethod
-    def getPhonebook(self, id, imgpath):
+    def getPhonebook(self):
+        """resultformat: #
+        {'contact name': {'numbers': ['123', '456'], 'imageURL': 'http...', 'imageBMP': 'imagepath'}, ...}
+        """
         pass
