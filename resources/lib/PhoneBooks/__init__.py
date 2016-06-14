@@ -1,2 +1,5 @@
-### This is a dummy file but is needed for some initialisation purposes.
-### Do not delete this file!
+import os
+import sys
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(base_dir))

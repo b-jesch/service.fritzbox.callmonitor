@@ -4,14 +4,13 @@
 import hashlib
 import os
 import re
+import sys
 import socket
 import xml.sax
 from io import StringIO
-
 import requests
 from PIL import Image
 from requests.auth import HTTPDigestAuth
-
 from PhoneBookBase import PhoneBookBase
 
 

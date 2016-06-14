@@ -149,3 +149,15 @@ msgstr ""
 msgctxt "#30041"
 msgid "Pause Video while Calling"
 msgstr ""
+
+msgctxt "#30050"
+msgid "Use Apple iCloud Phonebook for showing Name of Caller"
+msgstr ""
+
+msgctxt "#30051"
+msgid "Apple iCloud Username"
+msgstr ""
+
+msgctxt "#30052"
+msgid "Apple iCloud Password"
+msgstr ""

@@ -5,7 +5,7 @@ import inspect
 import os
 import re
 
-from .PhoneBookBase import PhoneBookBase
+from PhoneBookBase import PhoneBookBase
 
 
 def _find_phone_book_classes():
