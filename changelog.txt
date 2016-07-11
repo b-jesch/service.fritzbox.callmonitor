@@ -1,5 +1,12 @@
 CHANGELOG
 
+2.0.0
+- major changes from Lutz Leonhardt:
+- extracted abstract PhoneBookBase class
+- introduced PhoneBookFacade as an interface to all available Phonebooks
+- add new phonebook (Apple iCloud)
+- add feature to download caller images for phonebook Apple iCloud
+
 1.4.5
 - improved message and notification handling
 
