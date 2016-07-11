@@ -12,11 +12,17 @@
     <category label="30021">
         <setting id="cCode" type="text" label="30017" default="0049" />
         <setting id="excludeNums" type="text" label="30001" default="" />
+        <setting id="separator" type="sep" />
         <setting id="usePhonebook" type="bool" label="30004" default="false" />
         <setting id="phoneBookID" type="bool" label="30018" default="true" enable="eq(-1,true)" />
         <setting id="fbUsername" type="text" label="30005" enable="eq(-2,true)" />
         <setting id="fbPasswd" type="text" option="hidden" label="30006" enable="eq(-3,true)" />
         <setting id="fbSSL" type="bool" label="30007" default="true" enable="eq(-4,true)" />
+        <setting id="separator" type="sep" />
+        <setting id="use_icloud" type="bool" label="30050" default="false" />
+        <setting id="icloud_user" type="text" label="30051" enable="eq(-1,true)" />
+        <setting id="icloud_password" type="text" option="hidden" label="30052" enable="eq(-2,true)" />
+        <setting id="separator" type="sep" />
         <setting id="useKlickTelReverse" type="bool" label="30009" default="true" />
     </category>
 </settings>

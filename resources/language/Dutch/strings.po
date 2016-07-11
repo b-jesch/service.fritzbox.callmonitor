@@ -148,3 +148,15 @@ msgstr "Audio pauzeren tijdens gesprek"
 msgctxt "#30041"
 msgid "Pause Video while Calling"
 msgstr "Video pauzeren tijdens gesprek"
+
+msgctxt "#30050"
+msgid "Use Apple iCloud Phonebook for showing Name of Caller"
+msgstr "Gebruik Apple iCloud Telefoonboek om naam van beller te tonen"
+
+msgctxt "#30051"
+msgid "Apple iCloud Username"
+msgstr "Apple iCloud Gebruikersnaam"
+
+msgctxt "#30052"
+msgid "Apple iCloud Password"
+msgstr "Apple iCloud Wachtwoord"
