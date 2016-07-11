@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 # This code uses a slight modified of pyicloud
 # https://github.com/picklepete/pyicloud
@@ -7,6 +7,8 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(base_dir, "pyicloud"))
 sys.path.append(os.path.join(base_dir, "pyicloud", "vendorlibs"))
+
+import hashlib
 
 from PhoneBookBase import PhoneBookBase
 from pyicloud import PyiCloudService
@@ -38,26 +40,38 @@ class AppleCloud(PhoneBookBase):
         api = PyiCloudService(self._user, self._password)
         for contact in api.contacts.all():
             numbers = []
-            phones = contact.get('phones')
+            phones = contact.phones
             if phones is None: continue
             for number in phones:
                 numbers.append(number['field'])
-            result[self._getName(contact)] = {'numbers': numbers}
-            self._count = len(result)
+            key = self._getName(contact)
+            result[key] = {'numbers': numbers}
+            self._download_image(contact, result, key)
         return result
+
+    def _download_image(self, contact, phone_entry, key):
+        if contact.hasPicture and self._imagepath is not None:
+            stream = contact.download()
+            imagepath = os.path.join(self._imagepath,
+                                     hashlib.md5(key.encode('utf-8')).hexdigest() + '.jpg')
+            with open(imagepath, 'wb') as f:
+                for chunk in stream.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+            phone_entry[key]['imageBMP'] = imagepath
+            self._count += 1
 
     def _getName(self, contact):
         result = ""
-        if contact.get('firstName') is not None:
-            result += contact.get('firstName') + " "
-        if contact.get('lastName') is not None:
-            result += contact.get('lastName')
+        if contact.firstName is not None:
+            result += contact.firstName + " "
+        if contact.lastName is not None:
+            result += contact.lastName
         return result
 
     def imagecount(self):
         if not self._useAppleCloud: return 0
         return self._count
-
 
 if __name__ == '__main__':
     args = {'user': None, 'pw': None}
@@ -69,8 +83,10 @@ if __name__ == '__main__':
             phone_book = AppleCloud(imagepath='', user=args['user'], password=args['pw'])
             result = phone_book.getPhonebook()
             for p in result:
-                print(p + " - " + str(result[p]['numbers']))
-            print(str(phone_book.imagecount()) + " numbers")
+                entry = result[p]
+                print("%s - %s %s" % (p, entry['numbers'],
+                                      entry['imageBMP'] if 'imageBMP' in entry else ''))
+            print(str(phone_book.imagecount()) + " caller images")
 
     except IndexError:
         print("python AppleCloud.py --user=<user> --pw=<password>")

@@ -142,8 +142,7 @@ class PyiCloudService(object):
         self.session.verify = verify
         self.session.headers.update({
             'Origin': self._home_endpoint,
-            'Referer': '%s/' % self._home_endpoint,
-            'User-Agent': 'Opera/9.52 (X11; Linux i686; U; en)'
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
         })
 
         cookiejar_path = self._get_cookiejar_path()

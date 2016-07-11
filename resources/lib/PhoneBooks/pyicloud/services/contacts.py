@@ -5,10 +5,50 @@ from datetime import datetime
 from calendar import monthrange
 
 
+class Contact(object):
+    def __init__(self, contact, session, params):
+        self.contact = contact
+        self.session = session
+        self.params = params
+
+    @property
+    def id(self):
+        return self.contact.contactId;
+
+    @property
+    def firstName(self):
+        return self.contact.get('firstName')
+
+    @property
+    def lastName(self):
+        return self.contact.get('lastName')
+
+    @property
+    def phones(self):
+        return self.contact.get('phones')
+
+    @property
+    def photo_url(self):
+        photo = self.contact.get('photo')
+        return None if photo is None else photo.get('url')
+
+    @property
+    def hasPicture(self):
+        return self.photo_url is not None
+
+    def download(self):
+        if self.photo_url is None: return None
+        return self.session.get(
+            self.photo_url,
+            stream=True
+        )
+
+
 class ContactsService(object):
     """
     The 'Contacts' iCloud service, connects to iCloud and returns contacts.
     """
+
     def __init__(self, service_root, session, params):
         self.session = session
         self.params = params
@@ -50,4 +90,4 @@ class ContactsService(object):
         Retrieves all contacts.
         """
         self.refresh_client()
-        return self.response['contacts']
+        return [Contact(c, self.session, self.params) for c in self.response['contacts']]
