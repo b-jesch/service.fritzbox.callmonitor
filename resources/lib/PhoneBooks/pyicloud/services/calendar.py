@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 import time
 
-from ..vendorlibs.tzlocal import get_localzone
+from tzlocal import get_localzone
 
 
 class CalendarService(object):
