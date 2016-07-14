@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.1
+- several bugfixes
+
 2.0.0
 - major changes from Lutz Leonhardt:
 - extracted abstract PhoneBookBase class
