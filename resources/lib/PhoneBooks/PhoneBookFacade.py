@@ -4,18 +4,31 @@
 import inspect
 import os
 import re
+import xbmc
+import xbmcaddon
 
 from PhoneBookBase import PhoneBookBase
+
+__addon__ = xbmcaddon.Addon()
+__addonname__ = __addon__.getAddonInfo('id')
+
+def notifyLog(message, level=xbmc.LOGNOTICE):
+    xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
 
 
 def _find_phone_book_classes():
     directory = os.path.dirname(os.path.abspath(__file__))
-    for module in os.listdir(directory):
+    notifyLog("Looking for all phonebook modules in %s" % directory)
+    dir_list = os.listdir(directory)
+    for module in dir_list:
         if module in ('__init__.py', 'PhoneBookFacade.py', 'PhoneBookBase.py') \
                 or module[-3:] != '.py':
             continue
-        imported_module = __import__('resources.lib.PhoneBooks.'+module[:-3], locals(), globals(), ['object'])
-        return _find_phone_book_classes_in_module(imported_module)
+        module_name = 'resources.lib.PhoneBooks.'+module[:-3]
+        notifyLog("Found module %s - try to dynamic import %s" % (module, module_name))
+        imported_module = __import__(module_name, locals(), globals(), ['object'])
+        for clazz in _find_phone_book_classes_in_module(imported_module):
+            yield clazz
 
 
 def _find_phone_book_classes_in_module(module):
@@ -25,6 +38,7 @@ def _find_phone_book_classes_in_module(module):
             if symbol != PhoneBookBase \
                     and issubclass(symbol, PhoneBookBase) \
                     and not inspect.isabstract(symbol):
+                notifyLog("Use phonebook class %s" % name)
                 yield symbol
         except TypeError:
             pass
