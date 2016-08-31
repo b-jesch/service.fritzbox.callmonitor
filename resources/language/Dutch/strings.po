@@ -149,6 +149,10 @@ msgctxt "#30041"
 msgid "Pause Video while Calling"
 msgstr "Video pauzeren tijdens gesprek"
 
+msgctxt "#30042"
+msgid "Stop active Screensaver on incoming Call"
+msgstr "Screensavers uit bij inkomende oproep"
+
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
 msgstr "Gebruik Apple iCloud Telefoonboek om naam van beller te tonen"

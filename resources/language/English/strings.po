@@ -150,6 +150,10 @@ msgctxt "#30041"
 msgid "Pause Video while Calling"
 msgstr ""
 
+msgctxt "#30042"
+msgid "Stop active Screensaver on incoming Call"
+msgstr ""
+
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
 msgstr ""

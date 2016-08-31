@@ -3,12 +3,11 @@
 import socket
 import os
 import re
-import traceback
-import sys
 
 import xbmc
 import xbmcaddon
 import xbmcgui
+import json
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import hashlib
@@ -36,7 +35,6 @@ LISTENPORT = 1012
 
 PLAYER = xbmc.Player()
 OSD = xbmcgui.Dialog()
-
 
 # CLASSES
 
@@ -90,6 +88,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.getPhonebook()
 
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
+        self.screensaver = None
 
         self.connectionEstablished = None
         self.userActionPlay = None
@@ -157,6 +156,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
         self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
+        self.__handleScreenSaver = True if __addon__.getSetting('handleSS').upper() == 'TRUE' else False
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
     # Get the Phonebook
@@ -253,6 +253,26 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 caller_num = __LS__(30016)
                 icon = __IconUnknown__
 
+            # TODO: read actual screensaver via JSON, set screensaver to None
+            query = {
+                "jsonrpc": "2.0",
+                "method": "Settings.getSettingValue",
+                "params": {"setting": "screensaver.mode"},
+                "id": 0
+            }
+            res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+            if 'result' in res:
+                self.screensaver = res['result']['value']
+                query = {
+                    "jsonrpc": "2.0",
+                    "method": "Settings.setSettingValue",
+                    "params": {"setting": "screensaver.mode", "value": ""},
+                    "id": 0
+                }
+                res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+                self.notifyLog(res)
+                self.notifyLog('Setting Screensaver %s to None' % (self.screensaver))
+
             self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon, self.__dispMsgTime)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
 
@@ -328,6 +348,9 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                             not self.__optPauseTV and self.PlayerProperties.isPlayTV):
                     self.notifyLog('Volume was not muted, unmute...')
                     xbmc.executebuiltin('Mute')
+
+            # TODO: set screensaver to default module
+
         else:
             self.notifyLog('excluded number seems disconnected, reset status of callmonitor')
             self.__hide = False
@@ -337,15 +360,6 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
     def notifyLog(self, message, level=xbmc.LOGNOTICE):
         xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
-
-    def traceError(self, e, exc_tb):
-        while exc_tb:
-            tb = traceback.format_tb(exc_tb)
-            self.notifyLog('%s' % e, level=xbmc.LOGERROR)
-            self.notifyLog('In module: %s' % sys.argv[0].strip() or '<not defined>', level=xbmc.LOGERROR)
-            self.notifyLog('At line:   %s' % traceback.tb_lineno(exc_tb), level=xbmc.LOGERROR)
-            self.notifyLog('In file:   %s' % tb[0].split(",")[0].strip()[6:-1], level=xbmc.LOGERROR)
-            exc_tb = exc_tb.tb_next
 
     def connect(self, notify=False):
         if self.__s is not None:
@@ -361,7 +375,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
             return False
         except Exception as e:
-            self.traceError(e, sys.exc_traceback)
+            self.notifyLog('%s' % e, level=xbmc.LOGERROR)
             return False
         else:
             self.notifyLog('Connected, listen to %s on port %s' % (self.__server, LISTENPORT))
@@ -396,7 +410,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
                     self.connect()
                 except Exception as e:
-                    self.traceError(e, sys.exc_traceback)
+                    self.notifyLog('%s' % e, level=xbmc.LOGERROR)
                     break
 
                 if self.SettingsChanged:
@@ -406,7 +420,6 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     self.getPhonebook()
 
             self.__s.close()
-
 
 # START
 

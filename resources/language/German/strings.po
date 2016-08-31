@@ -149,6 +149,10 @@ msgctxt "#30041"
 msgid "Pause Video while Calling"
 msgstr "Video während des Telefonats anhalten"
 
+msgctxt "#30042"
+msgid "Stop active Screensaver on incoming Call"
+msgstr "Bei eingehendem Anruf Bildschirmschoner abschalten"
+
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
 msgstr "Apple iCloud Telefonbuch zur Anzeige des Anrufers benutzen"
