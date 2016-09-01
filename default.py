@@ -254,6 +254,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 icon = __IconUnknown__
 
             # TODO: read actual screensaver via JSON, set screensaver to None
+            '''
             query = {
                 "jsonrpc": "2.0",
                 "method": "Settings.getSettingValue",
@@ -261,20 +262,19 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 "id": 0
             }
             res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
-            if 'result' in res:
-                self.screensaver = res['result']['value']
-                query = {
-                    "jsonrpc": "2.0",
-                    "method": "Settings.setSettingValue",
-                    "params": {"setting": "screensaver.mode", "value": ""},
-                    "id": 0
-                }
-                res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
-                self.notifyLog(res)
-                self.notifyLog('Setting Screensaver %s to None' % (self.screensaver))
+            self.screensaver = res['result']['value']
+            query = {
+                "jsonrpc": "2.0",
+                "method": "Settings.setSettingValue",
+                "params": {"setting": "screensaver.mode", "value": ""},
+                "id": 0
+            }
+            res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+            self.notifyLog('Setting Screensaver %s to None' % (self.screensaver))
 
             self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon, self.__dispMsgTime)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
+            '''
 
     def handleConnected(self, line):
         self.notifyLog('Line connected')
@@ -350,6 +350,16 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     xbmc.executebuiltin('Mute')
 
             # TODO: set screensaver to default module
+            '''
+            query = {
+                "jsonrpc": "2.0",
+                "method": "Settings.setSettingValue",
+                "params": {"setting": "screensaver.mode", "value": self.screensaver},
+                "id": 0
+            }
+            res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+            self.notifyLog('Setting Screensaver back to %s' % (self.screensaver))
+            '''
 
         else:
             self.notifyLog('excluded number seems disconnected, reset status of callmonitor')
