@@ -10,4 +10,4 @@ Some notes
 * If you want to exclude numbers from monitoring enter these numbers (only numbers, no spaces or special chars within are allowed) separated by comma and/or space in the provided field. Leave this field blank if you don't want to exclude any numbers.
   Example: 08154711, 08154712
    
-* A full authentication against the box (user, password) is strongly recommended.
+* A full qualified authentication against the box (user, password) is strongly recommended.
