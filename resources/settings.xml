@@ -8,9 +8,9 @@
         <setting id="optPauseVideo" type="bool" label="30041" default="false" />
         <setting id="optPauseTV" type="bool" label="30008" default="false" enable="eq(-1,true)" />
         <setting id="optMute" type="bool" label="30003" default="true" />
-        <setting if="optEarlyPause" type="bool" label="" default="false" />
-        <setting type="sep" />
-        <setting id="handleSS" type="bool" label="" default="true" />
+        <setting id="optEarlyPause" type="bool" label="30019" default="false" />
+        <!-- <setting type="sep" />
+        <setting id="handleSS" type="bool" label="" default="true" /> -->
     </category>
     <category label="30021">
         <setting id="cCode" type="text" label="30017" default="0049" />

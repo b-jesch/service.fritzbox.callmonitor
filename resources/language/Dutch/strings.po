@@ -106,8 +106,8 @@ msgid "Use all available Phonebooks of Fritz!Box"
 msgstr "Gebruik alle bestaande telefoonboeken van de Fritz!Box"
 
 msgctxt "#30019"
-msgid "Already pause in Call Signaling"
-msgstr "Pauze vroeg in call signalering"
+msgid "Already pause/mute in Call Signaling"
+msgstr "Pauze/mute vroeg in call signalering"
 
 msgctxt "#30020"
 msgid "General"

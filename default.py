@@ -157,7 +157,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
         self.__optEarlyPause = True if __addon__.getSetting('optEarlyPause').upper() == 'TRUE' else False
-        self.__handleScreenSaver = True if __addon__.getSetting('handleSS').upper() == 'TRUE' else False
+        # self.__handleScreenSaver = True if __addon__.getSetting('handleSS').upper() == 'TRUE' else False
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
     # Get the Phonebook
