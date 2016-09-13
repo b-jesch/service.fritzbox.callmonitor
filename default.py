@@ -317,10 +317,11 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             }
             res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
             self.notifyLog('Setting Screensaver %s to None' % (self.screensaver))
+            '''
 
             self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon, self.__dispMsgTime)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
-            '''
+
 
     def handleConnected(self, line):
         self.notifyLog('Line connected')
