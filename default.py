@@ -156,6 +156,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         self.__optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
         self.__optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.__optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
+        self.__optEarlyPause = True if __addon__.getSetting('optEarlyPause').upper() == 'TRUE' else False
         self.__handleScreenSaver = True if __addon__.getSetting('handleSS').upper() == 'TRUE' else False
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
@@ -216,6 +217,46 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
             self.__hide = True
         return self.__hide
 
+    def handlePlayerProperties(self):
+        self.PlayerProperties.getConnectConditions()
+        if self.PlayerProperties.isPause != self.PlayerProperties.isConnectPause:
+            self.userActionPlay = True
+        if self.PlayerProperties.isMute != self.PlayerProperties.isConnectMute:
+            self.userActionMute = True
+        #
+        # Save connection for handleDisconnected:
+        # this condition determines whether the play and mute commands has to be executed again
+        #
+        self.connectionEstablished = True
+
+        # Extra condition: only do this if the user hasn't changed the status of the player
+
+        if (
+            self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
+            if self.__optPauseTV and self.PlayerProperties.isPlayTV:
+                self.notifyLog('Player is playing TV, pausing...')
+                xbmc.executebuiltin('PlayerControl(Play)')
+                # Save the status of the player for later comparison
+                self.PlayerProperties.isConnectPause = True
+            elif self.__optPauseVideo and self.PlayerProperties.isPlayVideo and not self.PlayerProperties.isPlayTV:
+                self.notifyLog('Player is playing Video, pausing...')
+                xbmc.executebuiltin('PlayerControl(Play)')
+                # Save the status of the player for later comparison
+                self.PlayerProperties.isConnectPause = True
+            elif self.__optPauseAudio and self.PlayerProperties.isPlayAudio and not self.PlayerProperties.isPlayTV:
+                self.notifyLog('Player is playing Audio, pausing...')
+                xbmc.executebuiltin('PlayerControl(Play)')
+                # Save the status of the player for later comparison
+                self.PlayerProperties.isConnectPause = True
+
+        if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
+            if not (self.__optPauseAudio or self.__optPauseVideo) or (
+                        not self.__optPauseTV and self.PlayerProperties.isPlayTV):
+                self.notifyLog('Muting Volume...')
+                xbmc.executebuiltin('Mute')
+                # Save the status of the player for later comparison
+                self.PlayerProperties.isConnectMute = True
+
     def handleOutgoingCall(self, line):
         self.PlayerProperties.getConditions()
         self.connectionEstablished = False
@@ -253,6 +294,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                 caller_num = __LS__(30016)
                 icon = __IconUnknown__
 
+            if self.__optEarlyPause: self.handlePlayerProperties()
+
             # TODO: read actual screensaver via JSON, set screensaver to None
             '''
             query = {
@@ -279,42 +322,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     def handleConnected(self, line):
         self.notifyLog('Line connected')
         if not self.__hide:
-            self.PlayerProperties.getConnectConditions()
-            if self.PlayerProperties.isPause != self.PlayerProperties.isConnectPause:
-                self.userActionPlay = True
-            if self.PlayerProperties.isMute != self.PlayerProperties.isConnectMute:
-                self.userActionMute = True
-            #
-            # Save connection for handleDisconnected:
-            # this condition determines whether the play and mute commands has to be executed again
-            #
-            self.connectionEstablished = True
-            # Extra condition: only do this if the user hasn't changed the status of the player
-            if (
-                        self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
-                if self.__optPauseTV and self.PlayerProperties.isPlayTV:
-                    self.notifyLog('Player is playing TV, pausing...')
-                    xbmc.executebuiltin('PlayerControl(Play)')
-                    # Save the status of the player for later comparison
-                    self.PlayerProperties.isConnectPause = True
-                elif self.__optPauseVideo and self.PlayerProperties.isPlayVideo and not self.PlayerProperties.isPlayTV:
-                    self.notifyLog('Player is playing Video, pausing...')
-                    xbmc.executebuiltin('PlayerControl(Play)')
-                    # Save the status of the player for later comparison
-                    self.PlayerProperties.isConnectPause = True
-                elif self.__optPauseAudio and self.PlayerProperties.isPlayAudio and not self.PlayerProperties.isPlayTV:
-                    self.notifyLog('Player is playing Audio, pausing...')
-                    xbmc.executebuiltin('PlayerControl(Play)')
-                    # Save the status of the player for later comparison
-                    self.PlayerProperties.isConnectPause = True
-
-            if self.__optMute and not self.PlayerProperties.isMute and not self.userActionMute:
-                if not (self.__optPauseAudio or self.__optPauseVideo) or (
-                            not self.__optPauseTV and self.PlayerProperties.isPlayTV):
-                    self.notifyLog('Muting Volume...')
-                    xbmc.executebuiltin('Mute')
-                    # Save the status of the player for later comparison
-                    self.PlayerProperties.isConnectMute = True
+            if not self.__optEarlyPause: self.handlePlayerProperties()
 
     def handleDisconnected(self, line):
         if not self.__hide:

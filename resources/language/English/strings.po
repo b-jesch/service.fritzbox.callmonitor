@@ -106,6 +106,10 @@ msgctxt "#30018"
 msgid "Use all available Phonebooks of Fritz!Box"
 msgstr ""
 
+msgctxt "#30019"
+msgid "Already pause in Call Signaling"
+msgstr ""
+
 msgctxt "#30020"
 msgid "General"
 msgstr ""
