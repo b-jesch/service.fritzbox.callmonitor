@@ -160,6 +160,8 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
         # self.__handleScreenSaver = True if __addon__.getSetting('handleSS').upper() == 'TRUE' else False
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
+        self.notifyLog('Settings (re)loaded', level=xbmc.LOGDEBUG)
+
     # Get the Phonebook
 
     def getPhonebook(self):
@@ -207,6 +209,7 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                         if os.path.isfile(fname):
                             self.notifyLog('Load image from cache: %s' % (os.path.basename(fname)))
                             imageBMP = fname
+                            break
 
         return {'name': name, 'imageBMP': imageBMP}
 
@@ -432,11 +435,9 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
                     break
 
                 if self.SettingsChanged:
-                    self.notifyLog('Settings changed, perform update')
                     self.getSettings()
-                    self.SettingsChanged = False
                     self.getPhonebook()
-
+                    self.SettingsChanged = False
             self.__s.close()
 
 # START
