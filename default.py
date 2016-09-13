@@ -61,19 +61,21 @@ class PlayerProperties:
 class XBMCMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
         xbmc.Monitor.__init__(self)
-        self.SettingsChanged = False
+        self.settingsChanged = False
 
     def onSettingsChanged(self):
-        self.SettingsChanged = True
+        self.settingsChanged = True
+        print 'callmonitor: settings changed'
 
+    '''
     def onScreensaverActivated(self):
         self.ScreensaverActive = True
 
     def onScreensaverDeactivated(self):
         self.ScreensaverActive = False
+    '''
 
-
-class FritzCallmonitor(PlayerProperties, XBMCMonitor):
+class FritzCallmonitor(PlayerProperties):
     __phoneBookFacade = None
     __phonebook = None
     __klicktel = None
@@ -83,7 +85,6 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     def __init__(self):
 
         self.PlayerProperties = PlayerProperties()
-        XBMCMonitor.__init__(self)
         self.getSettings()
         self.getPhonebook()
 
@@ -409,7 +410,12 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
             # MAIN SERVICE
 
-            while not xbmc.abortRequested:
+            Mon = XBMCMonitor()
+            while not Mon.abortRequested():
+
+                if Mon.settingsChanged:
+                    self.getSettings()
+                    Mon.settingsChanged = False
 
                 try:
                     fbdata = self.__s.recv(512)
@@ -424,20 +430,16 @@ class FritzCallmonitor(PlayerProperties, XBMCMonitor):
 
                 except socket.timeout:
                     pass
-                except IndexError:
-                    self.notifyLog('Communication failure', level=xbmc.LOGERROR)
-                    self.connect()
                 except socket.error as e:
                     self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
+                    self.connect()
+                except IndexError:
+                    self.notifyLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
                 except Exception as e:
                     self.notifyLog('%s' % e, level=xbmc.LOGERROR)
                     break
 
-                if self.SettingsChanged:
-                    self.getSettings()
-                    self.getPhonebook()
-                    self.SettingsChanged = False
             self.__s.close()
 
 # START

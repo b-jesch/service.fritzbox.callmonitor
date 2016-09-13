@@ -67,7 +67,7 @@ msgstr "Live-TV ebenfalls pausieren (Timeshift muss unterstützt werden)"
 
 msgctxt "#30009"
 msgid "Use reverse search for unknown numbers (Powered by klicktel)"
-msgstr "Benutze Rückwärtssuche bei unbekannten Rufnummern (Powered by klicktel)"
+msgstr "Nutze Rückwärtssuche bei unbekannten Rufnummern (Powered by klicktel)"
 
 msgctxt "#30010"
 msgid "Incoming Call"
