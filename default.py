@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket
+import socket, select
 import os
 import re
 
@@ -65,15 +65,6 @@ class XBMCMonitor(xbmc.Monitor):
 
     def onSettingsChanged(self):
         self.settingsChanged = True
-        print 'callmonitor: settings changed'
-
-    '''
-    def onScreensaverActivated(self):
-        self.ScreensaverActive = True
-
-    def onScreensaverDeactivated(self):
-        self.ScreensaverActive = False
-    '''
 
 class FritzCallmonitor(PlayerProperties):
     __phoneBookFacade = None
@@ -389,7 +380,7 @@ class FritzCallmonitor(PlayerProperties):
             self.__s = None
         try:
             self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.__s.settimeout(60)
+            self.__s.settimeout(30)
             self.__s.connect((self.__server, LISTENPORT))
         except socket.error as e:
             if notify: self.notifyOSD(__LS__(30030), __LS__(30031) % (self.__server, LISTENPORT), __IconError__)
@@ -401,7 +392,8 @@ class FritzCallmonitor(PlayerProperties):
             return False
         else:
             self.notifyLog('Connected, listen to %s on port %s' % (self.__server, LISTENPORT))
-            self.__s.settimeout(0.2)
+            # self.__s.settimeout(0.2)
+            self.__s.setblocking(0)
             return True
 
     def start(self):
@@ -417,21 +409,27 @@ class FritzCallmonitor(PlayerProperties):
                     self.getSettings()
                     Mon.settingsChanged = False
 
-                try:
-                    fbdata = self.__s.recv(512)
-                    line = self.CallMonitorLine(fbdata)
+                # ToDo: investigate more from https://pymotw.com/2/select/index.html#module-select
+                # i.e check exception handling
 
-                    {
-                        'CALL': self.handleOutgoingCall,
-                        'RING': self.handleIncomingCall,
-                        'CONNECT': self.handleConnected,
-                        'DISCONNECT': self.handleDisconnected
-                    }.get(line.command, self.error)(line)
+                try:
+                    buffer = select.select([self.__s], [], [], 2)
+                    if buffer[0]:
+                        fbdata = self.__s.recv(512)
+                        line = self.CallMonitorLine(fbdata)
+
+                        {
+                            'CALL': self.handleOutgoingCall,
+                            'RING': self.handleIncomingCall,
+                            'CONNECT': self.handleConnected,
+                            'DISCONNECT': self.handleDisconnected
+                        }.get(line.command, self.error)(line)
 
                 except socket.timeout:
                     pass
                 except socket.error as e:
                     self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
+                    self.notifyLog('%s' % e, level=xbmc.LOGERROR)
                     self.connect()
                 except IndexError:
                     self.notifyLog('Communication failure', level=xbmc.LOGERROR)
