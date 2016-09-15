@@ -7,7 +7,7 @@ import re
 import xbmc
 import xbmcaddon
 import xbmcgui
-import json
+# import json
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import hashlib
@@ -388,12 +388,11 @@ class FritzCallmonitor(PlayerProperties):
             self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
             return False
         except Exception as e:
-            self.notifyLog('%s' % e, level=xbmc.LOGERROR)
+            self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
             return False
         else:
             self.notifyLog('Connected, listen to %s on port %s' % (self.__server, LISTENPORT))
-            # self.__s.settimeout(0.2)
-            self.__s.setblocking(0)
+            self.__s.settimeout(0.2)
             return True
 
     def start(self):
@@ -413,29 +412,27 @@ class FritzCallmonitor(PlayerProperties):
                 # i.e check exception handling
 
                 try:
-                    buffer = select.select([self.__s], [], [], 2)
-                    if buffer[0]:
-                        fbdata = self.__s.recv(512)
-                        line = self.CallMonitorLine(fbdata)
+                    fbdata = self.__s.recv(512)
+                    line = self.CallMonitorLine(fbdata)
 
-                        {
-                            'CALL': self.handleOutgoingCall,
-                            'RING': self.handleIncomingCall,
-                            'CONNECT': self.handleConnected,
-                            'DISCONNECT': self.handleDisconnected
-                        }.get(line.command, self.error)(line)
+                    {
+                        'CALL': self.handleOutgoingCall,
+                        'RING': self.handleIncomingCall,
+                        'CONNECT': self.handleConnected,
+                        'DISCONNECT': self.handleDisconnected
+                    }.get(line.command, self.error)(line)
 
                 except socket.timeout:
                     pass
                 except socket.error as e:
                     self.notifyLog('No connection to %s, try to respawn' % (self.__server), level=xbmc.LOGERROR)
-                    self.notifyLog('%s' % e, level=xbmc.LOGERROR)
+                    self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
                     self.connect()
                 except IndexError:
                     self.notifyLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
                 except Exception as e:
-                    self.notifyLog('%s' % e, level=xbmc.LOGERROR)
+                    self.notifyLog('%s' % (e), level=xbmc.LOGERROR)
                     break
 
             self.__s.close()
