@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.3
+- Reimplement the ability to pause on outgoing calls also
+
 2.0.2
 - Option for pausing audio/video on incoming signaling added. Default is set to false.
 

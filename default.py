@@ -263,6 +263,7 @@ class FritzCallmonitor(PlayerProperties):
                 icon = __IconDefault__ if record['imageBMP'] == '' else record['imageBMP']
                 self.notifyOSD(__LS__(30013), __LS__(30014) % (name, line.number_called), icon)
             self.notifyLog('Outgoing call from %s to %s' % (line.number_used, line.number_called))
+            if self.__optEarlyPause: self.handlePlayerProperties()
 
     def handleIncomingCall(self, line):
         self.PlayerProperties.getConditions()

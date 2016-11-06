@@ -91,7 +91,7 @@ msgstr "%s wird auf %s angerufen"
 
 msgctxt "#30015"
 msgid "Show outgoing calls also"
-msgstr "Ausgehende Anrufe anzeigen"
+msgstr "Ausgehende Anrufe wie eingehende Anrufe behandeln"
 
 msgctxt "#30016"
 msgid "no number"

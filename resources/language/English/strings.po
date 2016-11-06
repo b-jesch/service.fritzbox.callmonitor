@@ -91,7 +91,7 @@ msgid "%s is called by %s"
 msgstr ""
 
 msgctxt "#30015"
-msgid "Show outgoing calls also"
+msgid "Handle outgoing calls same as incoming calls"
 msgstr ""
 
 msgctxt "#30016"

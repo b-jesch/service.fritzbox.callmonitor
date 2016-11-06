@@ -1,4 +1,4 @@
-<h1>Fritz!Box Camm Monitor</h1>
+<h1>Fritz!Box Call Monitor</h1>
 This service addon displays incoming and outgoing calls from the popular german ADSL Router called "Fritz!Box", connecting to port 1012 of the box. This addon also features a number to name and picture resolving against the internal phonebook and external phonebook (Google Contacts) of the Fritz!Box and Apple iCloud. Furthermore, reverse search phone numbers via the API of the company 'klicktel' is implemented. Certain telephone numbers can be excluded from monitoring.
 
 You must enable your Listenport 1012 on the box. To enable or disable this, enter the following code into your telephone:
