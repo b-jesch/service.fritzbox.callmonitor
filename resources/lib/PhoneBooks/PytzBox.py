@@ -102,12 +102,15 @@ class PytzBox(PhoneBookBase):
             imageurl=url,
             sid=self.__sid
         ))
-        caller_image = Image.open(BytesIO(response.content))
-        if caller_image is not None:
-            imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
-            caller_image.save(imagepath)
-            self._imagecount += 1
-            return imagepath
+        try:
+            caller_image = Image.open(BytesIO(response.content))
+            if caller_image is not None:
+                imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
+                caller_image.save(imagepath)
+                self._imagecount += 1
+                return imagepath
+        except IOError:
+            print 'Couldn\'t get image from %s' % (url)
 
     def getPhonebookList(self):
 
