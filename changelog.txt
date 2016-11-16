@@ -1,5 +1,9 @@
 CHANGELOG
 
+2.0.4
+- Bug on initial loading of caller images fixed
+- Location of imagecache changed to userdata/addon_data/service.fritzbox.callmonitor/cache
+
 2.0.3
 - Reimplement the ability to pause on outgoing calls also
 

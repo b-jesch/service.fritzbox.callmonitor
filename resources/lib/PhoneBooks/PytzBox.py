@@ -7,7 +7,7 @@ import re
 import sys
 import socket
 import xml.sax
-from io import StringIO
+from io import BytesIO
 import requests
 from PIL import Image
 from requests.auth import HTTPDigestAuth
@@ -87,50 +87,27 @@ class PytzBox(PhoneBookBase):
                     self.contact_name = content
                     if not self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name] = {'numbers': []}
-                if self.key == "number":
-                    if self.contact_name in self.phone_book:
-                        self.phone_book[self.contact_name]['numbers'].append(content)
-                if self.key == "imageURL":
-                    if self.contact_name in self.phone_book:
-                        self.phone_book[self.contact_name]['imageURL'] = self.parent.getDownloadUrl(content)
-                        self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content,
-                                                                                              self.contact_name)
+                if self.contact_name in self.phone_book:
+                    if self.key == "number": self.phone_book[self.contact_name]['numbers'].append(content)
+                    if self.key == "imageURL": self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content, self.contact_name)
 
         handler = FbAbHandler(self)
-
-        try:
-            xml.sax.parseString(xml_phonebook, handler=handler)
-        except Exception as e:
-            raise ValueError('could not parse phonebook data (are you logged in?): %s' % str(e))
-
+        xml.sax.parseString(xml_phonebook, handler=handler)
         return handler.phone_book
 
-    def getDownloadUrl(self, url):
+    def getImage(self, url, caller_name):
 
-        return self.__url_file_download[self._encrypt].format(
+        response = requests.get(self.__url_file_download[self._encrypt].format(
             host=self._host,
             imageurl=url,
             sid=self.__sid
-        )
-
-    def getImage(self, url, caller_name):
-        if self._imagepath is None: return
-        try:
-            response = requests.get(self.__url_file_download[self._encrypt].format(
-                host=self._host,
-                imageurl=url,
-                sid=self.__sid
-            ))
-            caller_image = Image.open(StringIO(response.content))
-            if caller_image is not None:
-                imagepath = os.path.join(self._imagepath,
-                                         hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
-                caller_image.save(imagepath)
-                self._imagecount += 1
-                return imagepath
-
-        except Exception as e:
-            print(e)
+        ))
+        caller_image = Image.open(BytesIO(response.content))
+        if caller_image is not None:
+            imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
+            caller_image.save(imagepath)
+            self._imagecount += 1
+            return imagepath
 
     def getPhonebookList(self):
 

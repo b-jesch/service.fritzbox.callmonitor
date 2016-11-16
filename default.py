@@ -24,7 +24,7 @@ __IconUnknown__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media'
 __IconKlickTel__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'klicktel.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'default.png'))
 
-__ImageCache__ = xbmc.translatePath(os.path.join('special://temp', __addonname__, 'cache'))
+__ImageCache__ = xbmc.translatePath(os.path.join('special://userdata', 'addon_data',  __addonname__, 'cache'))
 if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__)
 
 # Fritz!Box

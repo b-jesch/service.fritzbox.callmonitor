@@ -90,7 +90,7 @@ msgid "%s is called by %s"
 msgstr "%s word opgeroepen door %s"
 
 msgctxt "#30015"
-msgid "Show outgoing calls also"
+msgid "Handle outgoing calls same way as incoming calls"
 msgstr "Uitgaande oproepen ook tonen"
 
 msgctxt "#30016"
