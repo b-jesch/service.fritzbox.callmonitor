@@ -23,7 +23,7 @@ class PytzBox(PhoneBookBase):
     _phoneBookId = None
 
     __sid = None
-    __sslverify = False
+    # __sslverify = False
     __url_contact = ['https://{host}:49443/upnp/control/x_contact', 'http://{host}:49000/upnp/control/x_contact']
     __url_file_download = ['https://{host}:49443{imageurl}&sid={sid}', 'http://{host}:49000{imageurl}&sid={sid}']
     __soapaction_phonebooklist = 'urn:dslforum-org:service:X_AVM-DE_OnTel:1#GetPhonebookList'
@@ -34,6 +34,9 @@ class PytzBox(PhoneBookBase):
     def __init__(self, imagepath, password=False, host="fritz.box", username=False, encrypt=True):
         PhoneBookBase.__init__(self, imagepath)
         socket.setdefaulttimeout(10)
+
+        # This is not really needed. Remove this if __main__ is not in use
+
         self._password = password
         self._host = host
         self._user = username
@@ -45,7 +48,8 @@ class PytzBox(PhoneBookBase):
         self._password = False if len(settings['fbPasswd']) == 0 else settings['fbPasswd']
         self._host = settings['phoneserver']
         self._user = False if len(settings['fbUsername']) == 0 else settings['fbUsername']
-        self._encrypt = True if settings['fbSSL'].upper() == 'TRUE' else False
+        self._encrypt = 0 if settings['fbSSL'].upper() == 'TRUE' else 1
+        self._sslverify = True if settings['fbSSL'].upper() == 'TRUE' else 1
         self._usePhoneBook = True if settings['usePhonebook'].upper() == 'TRUE' else False
         self._phoneBookId = -1 if settings['phoneBookID'].upper() == 'TRUE' else 0
 
@@ -110,9 +114,11 @@ class PytzBox(PhoneBookBase):
                 self._imagecount += 1
                 return imagepath
         except IOError:
-            print 'Couldn\'t get image from %s' % (url)
+            print 'Couldn\'t get image from %s' % (self.__url_file_download[self._encrypt].format(host=self._host, imageurl=url, sid=self.__sid))
+        '''
         except requests.exceptions.SSLError as e:
             print 'SSL Error: %s' % (e)
+        '''
 
     def getPhonebookList(self):
 
@@ -122,7 +128,7 @@ class PytzBox(PhoneBookBase):
                                      data=self.__soapenvelope_phonebooklist,
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebooklist},
-                                     verify=self.__sslverify)
+                                     verify=self._sslverify)
 
         except socket.error as e:
             raise self.HostUnreachableException(str(e))
@@ -166,7 +172,7 @@ class PytzBox(PhoneBookBase):
                                      data=self.__soapenvelope_phonebook.format(NewPhonebookId=id),
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebook},
-                                     verify=self.__sslverify)
+                                     verify=self._sslverify)
         except socket.error as e:
             raise self.HostUnreachableException(str(e))
         except requests.exceptions.ConnectionError as e:
@@ -189,7 +195,7 @@ class PytzBox(PhoneBookBase):
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
         try:
-            response = requests.get(phonbook_urls[0], verify=self.__sslverify)
+            response = requests.get(phonbook_urls[0], verify=self._sslverify)
         except socket.error as e:
             raise self.HostUnreachableException(str(e))
         except IOError as e:

@@ -20,7 +20,7 @@
         <setting id="phoneBookID" type="bool" label="30018" default="true" enable="eq(-1,true)" />
         <setting id="fbUsername" type="text" label="30005" enable="eq(-2,true)" />
         <setting id="fbPasswd" type="text" option="hidden" label="30006" enable="eq(-3,true)" />
-        <setting id="fbSSL" type="bool" label="30007" default="true" enable="eq(-4,true)" />
+        <setting id="fbSSL" type="bool" label="30007" default="false" enable="eq(-4,true)" />
         <setting type="sep" />
         <setting id="use_icloud" type="bool" label="30050" default="false" />
         <setting id="icloud_user" type="text" label="30051" enable="eq(-1,true)" />
