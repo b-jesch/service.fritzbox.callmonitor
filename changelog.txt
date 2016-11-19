@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.6
+- Code optimizations
+
 2.0.5
 - SSL Bug in PytzBox library fixed
 
