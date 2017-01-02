@@ -146,6 +146,10 @@ msgctxt "#30036"
 msgid "Check Network Settings of Fritz!Box"
 msgstr ""
 
+msgctxt "#30037"
+msgid "Settings changed. In order to take effect, You must restart kodi. Do You wish to restart now?"
+msgstr ""
+
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
 msgstr ""
