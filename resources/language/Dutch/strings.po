@@ -147,7 +147,7 @@ msgstr "Controleer de netwerkinstellingen op de Fritz! Box"
 
 msgctxt "#30037"
 msgid "Settings changed. In order to take effect, You must restart kodi. Do You wish to restart now?"
-msgstr ""
+msgstr "De instellingen zijn gewijzigd. Om de instellingen te activeren, moet Kodi worden hernieuwd. Kodi nu opnieuw opstarten?"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
