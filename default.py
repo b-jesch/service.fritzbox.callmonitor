@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket, select
+import socket
 import os
 import re
 
@@ -24,7 +24,7 @@ __IconUnknown__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media'
 __IconKlickTel__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'klicktel.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'default.png'))
 
-__ImageCache__ = xbmc.translatePath(os.path.join('special://userdata', 'addon_data',  __addonname__, 'cache'))
+__ImageCache__ = xbmc.translatePath(os.path.join('special://userdata', 'addon_data', __addonname__, 'cache'))
 if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__)
 
 # Fritz!Box
@@ -35,6 +35,7 @@ LISTENPORT = 1012
 
 PLAYER = xbmc.Player()
 OSD = xbmcgui.Dialog()
+
 
 # CLASSES
 
@@ -59,14 +60,14 @@ class PlayerProperties:
 
 
 class XBMCMonitor(xbmc.Monitor):
-    def __init__(self, *args, **kwargs):
-        xbmc.Monitor.__init__(self)
+    def __init__(self):
         self.settingsChanged = False
 
     def onSettingsChanged(self):
         self.settingsChanged = True
 
-class FritzCallmonitor(PlayerProperties):
+
+class FritzCallmonitor(PlayerProperties, XBMCMonitor):
     __phoneBookFacade = None
     __phonebook = None
     __klicktel = None
@@ -76,6 +77,7 @@ class FritzCallmonitor(PlayerProperties):
     def __init__(self):
 
         self.PlayerProperties = PlayerProperties()
+        self.Monitor = XBMCMonitor()
         self.getSettings()
         self.getPhonebook()
 
@@ -152,6 +154,7 @@ class FritzCallmonitor(PlayerProperties):
         self.__useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
         self.notifyLog('Settings (re)loaded', level=xbmc.LOGDEBUG)
+        self.Monitor.settingsChanged = False
 
     # Get the Phonebook
 
@@ -226,7 +229,7 @@ class FritzCallmonitor(PlayerProperties):
         # Extra condition: only do this if the user hasn't changed the status of the player
 
         if (
-            self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
+                    self.__optPauseAudio or self.__optPauseVideo) and not self.PlayerProperties.isPause and not self.userActionPlay:
             if self.__optPauseTV and self.PlayerProperties.isPlayTV:
                 self.notifyLog('Player is playing TV, pausing...')
                 xbmc.executebuiltin('PlayerControl(Play)')
@@ -313,7 +316,6 @@ class FritzCallmonitor(PlayerProperties):
 
             self.notifyOSD(__LS__(30010), __LS__(30011) % (name, caller_num), icon, self.__dispMsgTime)
             self.notifyLog('Incoming call from %s (%s)' % (name, caller_num))
-
 
     def handleConnected(self, line):
         self.notifyLog('Line connected')
@@ -402,12 +404,11 @@ class FritzCallmonitor(PlayerProperties):
 
             # MAIN SERVICE
 
-            Mon = XBMCMonitor()
-            while not Mon.abortRequested():
+            while not self.Monitor.abortRequested():
 
-                if Mon.settingsChanged:
+                if self.Monitor.waitForAbort(1): break
+                if self.Monitor.settingsChanged:
                     self.getSettings()
-                    Mon.settingsChanged = False
 
                 # ToDo: investigate more from https://pymotw.com/2/select/index.html#module-select
                 # i.e check exception handling
@@ -437,6 +438,7 @@ class FritzCallmonitor(PlayerProperties):
                     break
 
             self.__s.close()
+
 
 # START
 
