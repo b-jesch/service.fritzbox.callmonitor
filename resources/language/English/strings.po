@@ -147,7 +147,7 @@ msgid "Check Network Settings of Fritz!Box"
 msgstr ""
 
 msgctxt "#30037"
-msgid "Settings changed. In order to take effect, You must restart kodi. Do You wish to restart now?"
+msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
 msgstr ""
 
 msgctxt "#30040"
