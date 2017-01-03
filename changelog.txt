@@ -1,6 +1,6 @@
 CHANGELOG
 
-2.0,8
+2.0.8
 - change volume implemented instead of mute/unmute on calls
 
 2.0.7
