@@ -42,8 +42,8 @@ msgid "Display Time for Message Annotations"
 msgstr "Duur van berichten"
 
 msgctxt "#30003"
-msgid "Mute Audio while incoming Call"
-msgstr "Geluid uit bij binnenkomende oproep"
+msgid "Reduce Volume while incoming Call"
+msgstr "Verminder Volume terwijl de inkomende oproep"
 
 msgctxt "#30004"
 msgid "Use Fritz!Box Phonebook for showing Name of Caller"
@@ -161,6 +161,10 @@ msgctxt "#30042"
 msgid "Stop active Screensaver on incoming Call"
 msgstr "Screensavers uit bij inkomende oproep"
 
+msgctxt "#30043"
+msgid "Reduce Volume to"
+msgstr "Volume verandering tot"
+
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
 msgstr "Gebruik Apple iCloud Telefoonboek om naam van beller te tonen"
@@ -172,3 +176,43 @@ msgstr "Apple iCloud Gebruikersnaam"
 msgctxt "#30052"
 msgid "Apple iCloud Password"
 msgstr "Apple iCloud Wachtwoord"
+
+msgctxt "#30060"
+msgid "off (Mute)"
+msgstr "uit (Mute)"
+
+msgctxt "#30061"
+msgid "10%"
+msgstr "10%"
+
+msgctxt "#30062"
+msgid "20%"
+msgstr "20%"
+
+msgctxt "#30063"
+msgid "30%"
+msgstr "30%"
+
+msgctxt "#30064"
+msgid "40%"
+msgstr "40%"
+
+msgctxt "#30065"
+msgid "50%"
+msgstr "50%"
+
+msgctxt "#30066"
+msgid "60%"
+msgstr "60%"
+
+msgctxt "#30067"
+msgid "70%"
+msgstr "70%"
+
+msgctxt "#30068"
+msgid "80%"
+msgstr "80%"
+
+msgctxt "#30069"
+msgid "90%"
+msgstr "90%"

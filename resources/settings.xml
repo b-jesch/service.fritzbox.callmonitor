@@ -8,6 +8,7 @@
         <setting id="optPauseVideo" type="bool" label="30041" default="false" />
         <setting id="optPauseTV" type="bool" label="30008" default="false" enable="eq(-1,true)" />
         <setting id="optMute" type="bool" label="30003" default="true" />
+        <setting id="volume" type="enum" label="30043" lvalues="30060|30061|30062|30063|30064|30065|30066|30067|30068|30069" default="5" enable="eq(-1,true)" />
         <setting id="optEarlyPause" type="bool" label="30019" default="false" />
     </category>
     <category label="30021">

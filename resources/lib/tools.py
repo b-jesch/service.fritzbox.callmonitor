@@ -5,6 +5,7 @@ import xbmcaddon
 import xbmcgui
 import re
 import os
+import json
 
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
@@ -15,6 +16,9 @@ def writeLog(message, level=xbmc.LOGNOTICE):
 
 def notify(header, message, icon=__IconDefault__, dispTime=5000):
     xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
+
+def jsonrpc(query):
+    return json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
 
 class Monitor(xbmc.Monitor):
 
@@ -41,6 +45,7 @@ class Monitor(xbmc.Monitor):
         self.cCode = __addon__.getSetting('cCode')
         self.optShowOutgoing = True if __addon__.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
         self.optMute = True if __addon__.getSetting('optMute').upper() == 'TRUE' else False
+        self.volume = int(__addon__.getSetting('volume')) * 0.1
         self.optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
         self.optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
@@ -52,7 +57,8 @@ class Monitor(xbmc.Monitor):
         writeLog('Display time:     %s' % (self.dispMsgTime), level=xbmc.LOGDEBUG)
         writeLog('Country code:     %s' % (self.cCode), level=xbmc.LOGDEBUG)
         writeLog('handle outgoings: %s' % (self.optShowOutgoing), level=xbmc.LOGDEBUG)
-        writeLog('Mute:             %s' % (self.optMute), level=xbmc.LOGDEBUG)
+        writeLog('Change Volume:    %s' % (self.optMute), level=xbmc.LOGDEBUG)
+        writeLog('Change to:        %s' % (self.volume), level=xbmc.LOGDEBUG)
         writeLog('Pause audio:      %s' % (self.optPauseAudio), level=xbmc.LOGDEBUG)
         writeLog('Pause video:      %s' % (self.optPauseVideo), level=xbmc.LOGDEBUG)
         writeLog('Pause tv:         %s' % (self.optPauseTV), level=xbmc.LOGDEBUG)

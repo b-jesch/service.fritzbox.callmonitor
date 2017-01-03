@@ -6,7 +6,6 @@ import re
 
 import xbmc
 import xbmcaddon
-import xbmcgui
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import resources.lib.tools as tools
@@ -35,7 +34,7 @@ LISTENPORT = 1012
 
 class PlayerProperties:
     def __init__(self):
-        self.Condition = {'playTV': False, 'playVideo': False, 'playAudio': False, 'paused': False, 'muted': False}
+        self.Condition = {'playTV': False, 'playVideo': False, 'playAudio': False, 'paused': False, 'muted': False, 'volume': 0}
         self.connCondition = {}
         self.discCondition = {}
 
@@ -45,6 +44,19 @@ class PlayerProperties:
         self.Condition['playAudio'] = bool(xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing'))
         self.Condition['paused'] = bool(xbmc.getCondVisibility('Player.Paused'))
         self.Condition['muted'] = bool(xbmc.getCondVisibility('Player.Muted'))
+
+        # Get the Volume
+
+        query = {
+                "jsonrpc": "2.0",
+                "method": "Application.GetProperties",
+                "params": {"properties": ["volume"]},
+                "id": 1
+                }
+        res = tools.jsonrpc(query)
+        if 'result' in res and 'volume' in res['result']:
+            self.Condition['volume'] = int(res['result'].get('volume'))
+
         return self.Condition
 
     def getConnectConditions(self, state):
@@ -54,6 +66,15 @@ class PlayerProperties:
     def getDisconnectConditions(self, state):
         self.discCondition.update(self.getCurrentConditions())
         for cond in self.discCondition: tools.writeLog('actual condition on %s %s: %s' % (state, cond.rjust(10), self.discCondition[cond]), level=xbmc.LOGDEBUG)
+
+    def setVolume(self, volume):
+
+        query =  {"jsonrpc": "2.0",
+                  "method": "Application.SetVolume",
+                  "params": {"volume": volume}, "id": 1}
+
+        res = tools.jsonrpc(query)
+        if 'result' in res: return res['result']
 
 class FritzCallmonitor(object):
     __phoneBookFacade = None
@@ -169,13 +190,15 @@ class FritzCallmonitor(object):
             # handle sound
             #
             if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                tools.writeLog('Muting volume...')
-                xbmc.executebuiltin('Mute')
+                vol = int(self.PlayerProps.connCondition['volume'] * self.Mon.volume)
+                tools.writeLog('Change volume to %s' % (vol))
+                self.PlayerProps.setVolume(vol)
             #
             # handle audio, video & TV
             #
             if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo'] and not self.PlayerProps.connCondition['playTV']) \
+                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                        and not self.PlayerProps.connCondition['playTV']) \
                     or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                 tools.writeLog('Pausing audio, video or tv...')
                 xbmc.executebuiltin('PlayerControl(Play)')
@@ -186,13 +209,15 @@ class FritzCallmonitor(object):
             # handle sound
             #
             if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                tools.writeLog('Muting volume...')
-                xbmc.executebuiltin('Mute')
+                vol = int(self.PlayerProps.connCondition['volume'] * self.Mon.volume)
+                tools.writeLog('Change volume to %s' % (vol))
+                self.PlayerProps.setVolume(vol)
             #
             # handle audio, video & TV
             #
             if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo'] and not self.PlayerProps.connCondition['playTV']) \
+                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                        and not self.PlayerProps.connCondition['playTV']) \
                     or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                 tools.writeLog('Pausing audio, video or tv...')
                 xbmc.executebuiltin('PlayerControl(Play)')
@@ -206,15 +231,19 @@ class FritzCallmonitor(object):
             #
             # handle sound
             #
-            if self.Mon.optMute and not self.PlayerProps.connCondition['muted'] and self.PlayerProps.discCondition['muted']:
-                tools.writeLog('Unmuting volume...')
-                xbmc.executebuiltin('Mute')
+            if self.Mon.optMute and not self.PlayerProps.connCondition['muted'] \
+                    and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
+                vol = self.PlayerProps.setVolume(int(self.PlayerProps.connCondition['volume']))
+                tools.writeLog('Changed volume back to %s' % (vol))
             #
             # handle audio, video & TV
             #
-            if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio'] and not self.PlayerProps.discCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo'] and not self.PlayerProps.discCondition['playVideo']) \
-                    or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV'] and not self.PlayerProps.discCondition['playTV']):
+            if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']
+                and not self.PlayerProps.discCondition['playAudio']) \
+                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                        and not self.PlayerProps.discCondition['playVideo']) \
+                    or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']
+                        and not self.PlayerProps.discCondition['playTV']):
                 tools.writeLog('Resume audio, video or tv...')
                 xbmc.executebuiltin('PlayerControl(Play)')
 
