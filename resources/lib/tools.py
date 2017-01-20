@@ -38,7 +38,7 @@ class Monitor(xbmc.Monitor):
 
         __exnums = __exnums.replace(',', ' ')
         __exnums = __exnums.join(' '.join(line.split()) for line in __exnums.splitlines())
-        
+
         self.exnum_list = __exnums.split(' ')
         self.server = __addon__.getSetting('phoneserver')
         self.dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group()) * 1000
