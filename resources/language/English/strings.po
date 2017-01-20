@@ -43,7 +43,7 @@ msgid "Display Time for Message Annotations"
 msgstr ""
 
 msgctxt "#30003"
-msgid "Mute Audio while incoming Call"
+msgid "Reduce Volume while incoming Call"
 msgstr ""
 
 msgctxt "#30004"
@@ -146,6 +146,10 @@ msgctxt "#30036"
 msgid "Check Network Settings of Fritz!Box"
 msgstr ""
 
+msgctxt "#30037"
+msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
+msgstr ""
+
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
 msgstr ""
@@ -158,6 +162,10 @@ msgctxt "#30042"
 msgid "Stop active Screensaver on incoming Call"
 msgstr ""
 
+msgctxt "#30043"
+msgid "Reduce Volume to"
+msgstr ""
+
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
 msgstr ""
@@ -168,4 +176,44 @@ msgstr ""
 
 msgctxt "#30052"
 msgid "Apple iCloud Password"
+msgstr ""
+
+msgctxt "#30060"
+msgid "off (Mute)"
+msgstr ""
+
+msgctxt "#30061"
+msgid "10%"
+msgstr ""
+
+msgctxt "#30062"
+msgid "20%"
+msgstr ""
+
+msgctxt "#30063"
+msgid "30%"
+msgstr ""
+
+msgctxt "#30064"
+msgid "40%"
+msgstr ""
+
+msgctxt "#30065"
+msgid "50%"
+msgstr ""
+
+msgctxt "#30066"
+msgid "60%"
+msgstr ""
+
+msgctxt "#30067"
+msgid "70%"
+msgstr ""
+
+msgctxt "#30068"
+msgid "80%"
+msgstr ""
+
+msgctxt "#30069"
+msgid "90%"
 msgstr ""

@@ -1,5 +1,12 @@
 CHANGELOG
 
+2.0.8
+- change volume implemented instead of mute/unmute on calls
+
+2.0.7
+- complete rewrite of video/audio property handling on incoming, outgoing and established connections
+- improved handling of addon settings
+
 2.0.6
 - Code optimizations
 
