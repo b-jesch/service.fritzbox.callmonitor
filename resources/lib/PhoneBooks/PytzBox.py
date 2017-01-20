@@ -134,25 +134,25 @@ class PytzBox(PhoneBookBase):
             else:
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
-    def getPhonebook(self, id=None):
+    def getPhonebook(self, pbid=None):
         if not self._usePhoneBook:
             return {}
 
-        if id is None:
-            id = self._phoneBookId
+        if pbid is None:
+            pbid = self._phoneBookId
 
-        if id == -1:
+        if pbid == -1:
             result = dict()
             for this_id in self.getPhonebookList():
                 if this_id < 0:
                     continue
-                result.update(self.getPhonebook(id=this_id))
+                result.update(self.getPhonebook(pbid=this_id))
             return result
 
         try:
             response = requests.post(self.__url_contact[self._encrypt].format(host=self._host),
                                      auth=HTTPDigestAuth(self._user, self._password),
-                                     data=self.__soapenvelope_phonebook.format(NewPhonebookId=id),
+                                     data=self.__soapenvelope_phonebook.format(NewPhonebookId=pbid),
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebook},
                                      verify=False)
