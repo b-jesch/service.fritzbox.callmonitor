@@ -1,9 +1,4 @@
 from __future__ import absolute_import
-import os
-import uuid
-from datetime import datetime
-from calendar import monthrange
-
 
 class Contact(object):
     def __init__(self, contact, session, params):

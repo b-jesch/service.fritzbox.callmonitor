@@ -1,5 +1,4 @@
 import getpass
-import sys
 
 from .exceptions import NoStoredPasswordAvailable
 #import keyring

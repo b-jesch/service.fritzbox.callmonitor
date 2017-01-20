@@ -1,8 +1,6 @@
 from __future__ import absolute_import
-from datetime import datetime, timedelta
+from datetime import datetime
 from calendar import monthrange
-import time
-
 from tzlocal import get_localzone
 
 

@@ -34,7 +34,7 @@ class AppleCloud(PhoneBookBase):
             'icloud_password': None
         }
 
-    def getPhonebook(self):
+    def getPhonebook(self, id=None):
         if not self._useAppleCloud: return {}
         result = {}
         api = PyiCloudService(self._user, self._password)

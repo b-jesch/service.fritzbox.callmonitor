@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import socket, select
+import socket
 import os
 import re
 
 import xbmc
 import xbmcaddon
 import xbmcgui
-# import json
+
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import hashlib

@@ -35,7 +35,7 @@ class PhoneBookBase(with_metaclass(ABCMeta)):
         pass
 
     @abstractmethod
-    def getPhonebook(self):
+    def getPhonebook(self, id=None):
         """resultformat: #
         {'contact name': {'numbers': ['123', '456'], 'imageURL': 'http...', 'imageBMP': 'imagepath'}, ...}
         """

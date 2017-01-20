@@ -1,6 +1,5 @@
 import six
 import uuid
-import hashlib
 import inspect
 import json
 import logging

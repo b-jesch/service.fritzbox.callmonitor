@@ -28,10 +28,6 @@ class PyiCloud2FARequiredError(PyiCloudException):
         super(PyiCloud2FARequiredError, self).__init__(message)
 
 
-class PyiCloudNoDevicesException(Exception):
-    pass
-
-
 class NoStoredPasswordAvailable(PyiCloudException):
     pass
 
