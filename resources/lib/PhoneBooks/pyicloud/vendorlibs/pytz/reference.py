@@ -5,7 +5,7 @@ Used for testing against as they are only correct for the years
 '''
 
 from datetime import tzinfo, timedelta, datetime
-from pytz import utc, UTC, HOUR, ZERO
+from pytz import HOUR, ZERO
 
 # A class building tzinfo objects for fixed-offset time zones.
 # Note that FixedOffset(0, "UTC") is a different way to build a
