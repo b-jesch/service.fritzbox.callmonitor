@@ -14,6 +14,7 @@ import hashlib
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
 __path__ = __addon__.getAddonInfo('path')
+__profiles__ = __addon__.getAddonInfo('profile')
 __version__ = __addon__.getAddonInfo('version')
 __LS__ = __addon__.getLocalizedString
 
@@ -23,8 +24,8 @@ __IconUnknown__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media'
 __IconKlickTel__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'klicktel.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join(__path__, 'resources', 'media', 'default.png'))
 
-__ImageCache__ = xbmc.translatePath(os.path.join('special://userdata', 'addon_data', __addonname__, 'cache'))
-if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__)
+__ImageCache__ = os.path.join(xbmc.translatePath(__profiles__), 'cache')
+if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__, 0755)
 
 # Fritz!Box
 
