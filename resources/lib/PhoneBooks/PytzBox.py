@@ -101,7 +101,7 @@ class PytzBox(PhoneBookBase):
                 self._imagecount += 1
                 return imagepath
         except IOError:
-            print 'Couldn\'t get image from %s' % (self.__url_file_download[self._encrypt].format(host=self._host, imageurl=url, sid=self.__sid))
+            pass
 
     def getPhonebookList(self):
 
@@ -135,17 +135,12 @@ class PytzBox(PhoneBookBase):
                 raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
 
     def getPhonebook(self, pbid=None):
-        if not self._usePhoneBook:
-            return {}
-
-        if pbid is None:
-            pbid = self._phoneBookId
-
+        if not self._usePhoneBook: return {}
+        if pbid == None: pbid = self._phoneBookId
         if pbid == -1:
             result = dict()
             for this_id in self.getPhonebookList():
-                if this_id < 0:
-                    continue
+                if this_id < 0: continue
                 result.update(self.getPhonebook(pbid=this_id))
             return result
 

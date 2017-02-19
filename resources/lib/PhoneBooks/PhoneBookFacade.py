@@ -24,7 +24,7 @@ def _find_phone_book_classes():
                 or module[-3:] != '.py':
             continue
         module_name = 'resources.lib.PhoneBooks.'+module[:-3]
-        notifyLog("Found module %s - try to dynamic import %s" % (module, module_name))
+        notifyLog("Found module file, import %s" % (module_name))
         imported_module = __import__(module_name, locals(), globals(), ['object'])
         for clazz in _find_phone_book_classes_in_module(imported_module):
             yield clazz
@@ -37,7 +37,7 @@ def _find_phone_book_classes_in_module(module):
             if symbol != PhoneBookBase \
                     and issubclass(symbol, PhoneBookBase) \
                     and not inspect.isabstract(symbol):
-                notifyLog("Use phonebook class %s" % name)
+                notifyLog("Yield phonebook module %s" % name)
                 yield symbol
         except TypeError:
             pass

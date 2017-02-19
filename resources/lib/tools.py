@@ -11,7 +11,7 @@ __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
 __IconDefault__ = xbmc.translatePath(os.path.join(__addon__.getAddonInfo('path'), 'resources', 'media', 'default.png'))
 
-def writeLog(message, level=xbmc.LOGNOTICE):
+def writeLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
 
 def notify(header, message, icon=__IconDefault__, dispTime=5000):
@@ -23,7 +23,7 @@ def jsonrpc(query):
 class Monitor(xbmc.Monitor):
 
     def __init__(self):
-        writeLog('Settings loaded')
+        writeLog('Settings loaded', xbmc.LOGNOTICE)
         self.get_settings()
 
     def onSettingsChanged(self):
@@ -52,15 +52,15 @@ class Monitor(xbmc.Monitor):
         self.optEarlyPause = True if __addon__.getSetting('optEarlyPause').upper() == 'TRUE' else False
         self.useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
 
-        writeLog('Server IP/name:   %s' % (self.server), level=xbmc.LOGDEBUG)
-        writeLog('excluded Numbers: %s' % (__exnums), level=xbmc.LOGDEBUG)
-        writeLog('Display time:     %s' % (self.dispMsgTime), level=xbmc.LOGDEBUG)
-        writeLog('Country code:     %s' % (self.cCode), level=xbmc.LOGDEBUG)
-        writeLog('handle outgoings: %s' % (self.optShowOutgoing), level=xbmc.LOGDEBUG)
-        writeLog('Change Volume:    %s' % (self.optMute), level=xbmc.LOGDEBUG)
-        writeLog('Change to:        %s' % (self.volume), level=xbmc.LOGDEBUG)
-        writeLog('Pause audio:      %s' % (self.optPauseAudio), level=xbmc.LOGDEBUG)
-        writeLog('Pause video:      %s' % (self.optPauseVideo), level=xbmc.LOGDEBUG)
-        writeLog('Pause tv:         %s' % (self.optPauseTV), level=xbmc.LOGDEBUG)
-        writeLog('React early:      %s' % (self.optEarlyPause), level=xbmc.LOGDEBUG)
-        writeLog('Use klicktel:     %s' % (self.useKlickTelReverse), level=xbmc.LOGDEBUG)
+        writeLog('Server IP/name:   %s' % (self.server))
+        writeLog('excluded Numbers: %s' % (__exnums))
+        writeLog('Display time:     %s' % (self.dispMsgTime))
+        writeLog('Country code:     %s' % (self.cCode))
+        writeLog('handle outgoings: %s' % (self.optShowOutgoing))
+        writeLog('Change Volume:    %s' % (self.optMute))
+        writeLog('Change to:        %s' % (self.volume))
+        writeLog('Pause audio:      %s' % (self.optPauseAudio))
+        writeLog('Pause video:      %s' % (self.optPauseVideo))
+        writeLog('Pause tv:         %s' % (self.optPauseTV))
+        writeLog('React early:      %s' % (self.optEarlyPause))
+        writeLog('Use klicktel:     %s' % (self.useKlickTelReverse))
