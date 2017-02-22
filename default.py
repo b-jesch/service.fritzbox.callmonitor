@@ -147,10 +147,13 @@ class FritzCallmonitor(object):
                 tools.writeLog('%s entries from %s loaded, %s images cached' % (
                     len(self.__phonebook), self.Mon.server, self.__phoneBookFacade.imagecount()), xbmc.LOGNOTICE)
             except self.__phoneBookFacade.HostUnreachableException:
+                tools.writeLog('Host %s unreachable' % (self.Mon.server), level=xbmc.LOGERROR)
                 tools.notify(__LS__(30030), __LS__(30031) % (self.Mon.server, LISTENPORT), __IconError__)
             except self.__phoneBookFacade.LoginFailedException:
+                tools.writeLog('Login failed. Check username/password', level=xbmc.LOGERROR)
                 tools.notify(__LS__(30033), __LS__(30034), __IconError__)
             except self.__phoneBookFacade.InternalServerErrorException:
+                tools.writeLog('Internal server error', level=xbmc.LOGERROR)
                 tools.notify(__LS__(30035), __LS__(30036), __IconError__)
 
     def getNameByKlickTel(self, request_number):

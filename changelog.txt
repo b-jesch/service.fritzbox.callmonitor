@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.9
+- improved messaging
+
 2.0.8
 - change volume implemented instead of mute/unmute on calls
 
