@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.10
+- bump version due untracked changes
+
 2.0.9
 - improved messaging
 
