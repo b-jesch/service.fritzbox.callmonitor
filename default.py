@@ -37,6 +37,7 @@ class PlayerProperties:
     def __init__(self):
         self.Condition = {'playTV': False, 'playVideo': False, 'playAudio': False, 'paused': False, 'muted': False, 'volume': 0}
         self.connCondition = {}
+        self.callCondition = {}
         self.discCondition = {}
 
     def getCurrentConditions(self):
@@ -63,6 +64,10 @@ class PlayerProperties:
     def getConnectConditions(self, state):
         self.connCondition.update(self.getCurrentConditions())
         for cond in self.connCondition: tools.writeLog('actual condition on %s %s: %s' % (state, cond.rjust(10), self.connCondition[cond]))
+
+    def getCallingConditions(self, state):
+        self.callCondition.update(self.getCurrentConditions())
+        for cond in self.callCondition: tools.writeLog('set condition during call: %s: %s' %(cond.rjust(10), self.callCondition[cond]))
 
     def getDisconnectConditions(self, state):
         self.discCondition.update(self.getCurrentConditions())
@@ -206,6 +211,7 @@ class FritzCallmonitor(object):
                     or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                 tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
                 xbmc.executebuiltin('PlayerControl(Play)')
+            self.PlayerProps.getCallingConditions(state)
 
         elif not self.Mon.optEarlyPause and state == 'connected':
             self.PlayerProps.getConnectConditions(state)
@@ -225,6 +231,7 @@ class FritzCallmonitor(object):
                     or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                 tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
                 xbmc.executebuiltin('PlayerControl(Play)')
+            self.PlayerProps.getCallingConditions(state)
 
         elif state == 'disconnected':
             self.PlayerProps.getDisconnectConditions(state)
@@ -237,8 +244,13 @@ class FritzCallmonitor(object):
             #
             if self.Mon.optMute and not self.PlayerProps.connCondition['muted'] \
                     and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
-                vol = self.PlayerProps.setVolume(int(self.PlayerProps.connCondition['volume']))
-                tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
+                if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
+                    tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
+                    vol = self.PlayerProps.setVolume(int(self.PlayerProps.connCondition['volume']))
+                    tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
+                else:
+                    tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
+
             #
             # handle audio, video & TV
             #
