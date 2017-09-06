@@ -6,9 +6,7 @@ import os
 import re
 import socket
 import xml.sax
-from io import BytesIO
 import requests
-from PIL import Image
 from requests.auth import HTTPDigestAuth
 from PhoneBookBase import PhoneBookBase
 

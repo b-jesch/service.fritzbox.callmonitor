@@ -2,7 +2,6 @@
 
 import socket
 import os
-import re
 
 import xbmc
 import xbmcaddon
