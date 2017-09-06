@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.12
+- PIL dependency removed, code replaced
+
 2.0.11
 - volume handling improved
 

@@ -94,10 +94,10 @@ class PytzBox(PhoneBookBase):
                 imageurl=url,
                 sid=self.__sid
             ))
-            caller_image = Image.open(BytesIO(response.content))
+            caller_image = response.content
             if caller_image is not None:
                 imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
-                caller_image.save(imagepath)
+                with open(imagepath, 'w') as fh: fh.write(caller_image)
                 self._imagecount += 1
                 return imagepath
         except IOError:
