@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.13
+- SSL certificate error fixed (has prevented to download images to cache)
+
 2.0.12
 - PIL dependency removed, code replaced
 

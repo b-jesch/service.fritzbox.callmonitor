@@ -87,19 +87,22 @@ class PytzBox(PhoneBookBase):
     def getImage(self, url, caller_name):
 
         try:
-            response = requests.get(self.__url_file_download[self._encrypt].format(
+            response = requests.post(self.__url_file_download[self._encrypt].format(
                 host=self._host,
                 imageurl=url,
-                sid=self.__sid
-            ))
+                sid=self.__sid),
+                verify=False
+            )
             caller_image = response.content
             if caller_image is not None:
                 imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
                 with open(imagepath, 'w') as fh: fh.write(caller_image)
                 self._imagecount += 1
                 return imagepath
-        except IOError:
-            pass
+        except IOError, e:
+            raise self.RequestFailedException(e.message)
+        except Exception, e:
+            raise self.InternalServerErrorException(e.message)
 
     def getPhonebookList(self):
 

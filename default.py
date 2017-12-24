@@ -2,6 +2,7 @@
 
 import socket
 import os
+import sys
 
 import xbmc
 import xbmcaddon
@@ -166,8 +167,9 @@ class FritzCallmonitor(object):
             if self.__klicktel is None: self.__klicktel = KlickTel.KlickTelReverseSearch()
             try:
                 return self.__klicktel.search(request_number)
-            except Exception as e:
-                tools.writeLog(str(e), level=xbmc.LOGERROR)
+            except Exception, e:
+                tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
+                tools.writeLog(e.message, level=xbmc.LOGERROR)
         return False
 
     def getRecordByNumber(self, request_number):
@@ -323,13 +325,14 @@ class FritzCallmonitor(object):
             self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__s.settimeout(30)
             self.__s.connect((self.Mon.server, LISTENPORT))
-        except socket.error as e:
+        except socket.error, e:
             if notify: tools.notify(__LS__(30030), __LS__(30031) % (self.Mon.server, LISTENPORT), __IconError__)
             tools.writeLog('Could not connect to %s:%s' % (self.Mon.server, LISTENPORT), level=xbmc.LOGERROR)
-            tools.writeLog('%s' % (e), level=xbmc.LOGERROR)
+            tools.writeLog(e.message, level=xbmc.LOGERROR)
             return False
-        except Exception as e:
-            tools.writeLog('%s' % (e), level=xbmc.LOGERROR)
+        except Exception, e:
+            tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
+            tools.writeLog(e.message, level=xbmc.LOGERROR)
             return False
         else:
             tools.writeLog('Connected, listen to %s on port %s' % (self.Mon.server, LISTENPORT), xbmc.LOGNOTICE)
@@ -360,15 +363,16 @@ class FritzCallmonitor(object):
 
                 except socket.timeout:
                     pass
-                except socket.error as e:
+                except socket.error, e:
                     tools.writeLog('No connection to %s, try to respawn' % (self.Mon.server), level=xbmc.LOGERROR)
-                    tools.writeLog('%s' % (e), level=xbmc.LOGERROR)
+                    tools.writeLog(e.message, level=xbmc.LOGERROR)
                     self.connect()
                 except IndexError:
                     tools.writeLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
-                except Exception as e:
-                    tools.writeLog('%s' % (e), level=xbmc.LOGERROR)
+                except Exception, e:
+                    tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
+                    tools.writeLog(e.message, level=xbmc.LOGERROR)
                     break
 
                 xbmc.sleep(500)
