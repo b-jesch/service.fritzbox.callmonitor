@@ -371,7 +371,8 @@ class FritzCallmonitor(object):
                     tools.writeLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
                 except Exception, e:
-                    tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
+                    tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
+                    tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
                     tools.writeLog(e.message, level=xbmc.LOGERROR)
                     break
 

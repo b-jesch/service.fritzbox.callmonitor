@@ -87,7 +87,7 @@ class PytzBox(PhoneBookBase):
     def getImage(self, url, caller_name):
 
         try:
-            response = requests.post(self.__url_file_download[self._encrypt].format(
+            response = requests.get(self.__url_file_download[self._encrypt].format(
                 host=self._host,
                 imageurl=url,
                 sid=self.__sid),
