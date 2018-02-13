@@ -35,19 +35,20 @@ LISTENPORT = 1012
 
 class PlayerProperties:
     def __init__(self):
-        self.Condition = {'playTV': False, 'playVideo': False, 'playAudio': False, 'paused': False, 'muted': False, 'volume': 0}
-        self.getCurrentConditions()
+        self.Condition = dict()
+        self.Condition.update(self.getCurrentConditions())
 
-        self.connCondition = {}
-        self.callCondition = {}
-        self.discCondition = {}
+        self.connCondition = dict()
+        self.callCondition = dict()
+        self.discCondition = dict()
 
     def getCurrentConditions(self):
-        self.Condition['playTV'] = bool(xbmc.getCondVisibility('Pvr.isPlayingTv'))
-        self.Condition['playVideo'] = bool(xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing'))
-        self.Condition['playAudio'] = bool(xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing'))
-        self.Condition['paused'] = bool(xbmc.getCondVisibility('Player.Paused'))
-        self.Condition['muted'] = bool(xbmc.getCondVisibility('Player.Muted'))
+        _cond = dict()
+        _cond['playTV'] = bool(xbmc.getCondVisibility('Pvr.isPlayingTv'))
+        _cond['playVideo'] = bool(xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing'))
+        _cond['playAudio'] = bool(xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing'))
+        _cond['paused'] = bool(xbmc.getCondVisibility('Player.Paused'))
+        _cond['muted'] = bool(xbmc.getCondVisibility('Player.Muted'))
 
         # Get the Volume
 
@@ -59,9 +60,9 @@ class PlayerProperties:
                 }
         res = tools.jsonrpc(query)
         if 'result' in res and 'volume' in res['result']:
-            self.Condition['volume'] = int(res['result'].get('volume'))
+            _cond['volume'] = res['result'].get('volume')
 
-        # return self.Condition
+        return _cond
 
     def getConnectConditions(self, state):
         self.connCondition.update(self.getCurrentConditions())
@@ -102,7 +103,7 @@ class FritzCallmonitor(object):
 
     class CallMonitorLine(dict):
 
-        def __init__(self, line, **kwargs):
+        def __init__(self, line):
             if isinstance(line, str):
 
                 token = line.split(';')
