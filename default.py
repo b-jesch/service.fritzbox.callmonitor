@@ -36,6 +36,8 @@ LISTENPORT = 1012
 class PlayerProperties:
     def __init__(self):
         self.Condition = {'playTV': False, 'playVideo': False, 'playAudio': False, 'paused': False, 'muted': False, 'volume': 0}
+        self.getCurrentConditions()
+
         self.connCondition = {}
         self.callCondition = {}
         self.discCondition = {}
@@ -59,7 +61,7 @@ class PlayerProperties:
         if 'result' in res and 'volume' in res['result']:
             self.Condition['volume'] = int(res['result'].get('volume'))
 
-        return self.Condition
+        # return self.Condition
 
     def getConnectConditions(self, state):
         self.connCondition.update(self.getCurrentConditions())
@@ -200,7 +202,7 @@ class FritzCallmonitor(object):
             # handle sound
             #
             if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                vol = int(self.PlayerProps.connCondition['volume'] * self.Mon.volume)
+                vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                 tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
                 self.PlayerProps.setVolume(vol)
             #
@@ -220,7 +222,7 @@ class FritzCallmonitor(object):
             # handle sound
             #
             if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                vol = int(self.PlayerProps.connCondition['volume'] * self.Mon.volume)
+                vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                 tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
                 self.PlayerProps.setVolume(vol)
             #
@@ -247,7 +249,7 @@ class FritzCallmonitor(object):
                     and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
                 if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
                     tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
-                    vol = self.PlayerProps.setVolume(int(self.PlayerProps.connCondition['volume']))
+                    vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'])
                     tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
                 else:
                     tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
