@@ -81,7 +81,7 @@ class PlayerProperties:
 
         query =  {"jsonrpc": "2.0",
                   "method": "Application.SetVolume",
-                  "params": {"volume": volume}, "id": 1}
+                  "params": {"volume": int(volume)}, "id": 1}
 
         res = tools.jsonrpc(query)
         if 'result' in res: return res['result']
@@ -198,75 +198,84 @@ class FritzCallmonitor(object):
     def handlePlayerProps(self, state):
 
         tools.writeLog('Handle Player Properties for state \'%s\'' % (state))
-        if self.Mon.optEarlyPause and (state == 'incoming' or state == 'outgoing'):
-            self.PlayerProps.getConnectConditions(state)
-            #
-            # handle sound
-            #
-            if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
-                self.PlayerProps.setVolume(vol)
-            #
-            # handle audio, video & TV
-            #
-            if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
-                        and not self.PlayerProps.connCondition['playTV']) \
-                    or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
-                tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
-                xbmc.executebuiltin('PlayerControl(Play)')
-            self.PlayerProps.getCallingConditions(state)
+        try:
+            if self.Mon.optEarlyPause and (state == 'incoming' or state == 'outgoing'):
+                self.PlayerProps.getConnectConditions(state)
+                #
+                # handle sound
+                #
+                if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
+                    vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
+                    tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                    self.PlayerProps.setVolume(vol)
+                #
+                # handle audio, video & TV
+                #
+                if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
+                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                            and not self.PlayerProps.connCondition['playTV']) \
+                        or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
+                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
+                    xbmc.executebuiltin('PlayerControl(Play)')
+                self.PlayerProps.getCallingConditions(state)
 
-        elif not self.Mon.optEarlyPause and state == 'connected':
-            self.PlayerProps.getConnectConditions(state)
-            #
-            # handle sound
-            #
-            if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
-                vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
-                self.PlayerProps.setVolume(vol)
-            #
-            # handle audio, video & TV
-            #
-            if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
-                        and not self.PlayerProps.connCondition['playTV']) \
-                    or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
-                tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
-                xbmc.executebuiltin('PlayerControl(Play)')
-            self.PlayerProps.getCallingConditions(state)
+            elif not self.Mon.optEarlyPause and state == 'connected':
+                self.PlayerProps.getConnectConditions(state)
+                #
+                # handle sound
+                #
+                if self.Mon.optMute and not self.PlayerProps.connCondition['muted']:
+                    vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
+                    tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                    self.PlayerProps.setVolume(vol)
+                #
+                # handle audio, video & TV
+                #
+                if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
+                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                            and not self.PlayerProps.connCondition['playTV']) \
+                        or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
+                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
+                    xbmc.executebuiltin('PlayerControl(Play)')
+                self.PlayerProps.getCallingConditions(state)
 
-        elif state == 'disconnected':
-            self.PlayerProps.getDisconnectConditions(state)
-            #
-            # nothing to do, all properties of disconnect are the same as connect properties
-            #
-            if self.PlayerProps.connCondition == self.PlayerProps.discCondition: return
-            #
-            # handle sound
-            #
-            if self.Mon.optMute and not self.PlayerProps.connCondition['muted'] \
-                    and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
-                if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
-                    tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
-                    vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'])
-                    tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
-                else:
-                    tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
+            elif state == 'disconnected':
+                self.PlayerProps.getDisconnectConditions(state)
+                #
+                # nothing to do, all properties of disconnect are the same as connect properties
+                #
+                if self.PlayerProps.connCondition == self.PlayerProps.discCondition: return
+                #
+                # handle sound
+                #
+                if self.Mon.optMute and not self.PlayerProps.connCondition['muted'] \
+                        and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
+                    if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
+                        tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
+                        vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'])
+                        tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
+                    else:
+                        tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
 
-            #
-            # handle audio, video & TV
-            #
-            if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']
-                and not self.PlayerProps.discCondition['playAudio']) \
-                    or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
-                        and not self.PlayerProps.discCondition['playVideo']) \
-                    or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']
-                        and not self.PlayerProps.discCondition['playTV']):
-                tools.writeLog('Resume audio, video or tv...', xbmc.LOGNOTICE)
-                xbmc.executebuiltin('PlayerControl(Play)')
+                #
+                # handle audio, video & TV
+                #
+                if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']
+                    and not self.PlayerProps.discCondition['playAudio']) \
+                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
+                            and not self.PlayerProps.discCondition['playVideo']) \
+                        or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']
+                            and not self.PlayerProps.discCondition['playTV']):
+                    tools.writeLog('Resume audio, video or tv...', xbmc.LOGNOTICE)
+                    xbmc.executebuiltin('PlayerControl(Play)')
+            else:
+                tools.writeLog('unhandled condition for state: %s' % state, xbmc.LOGERROR)
+                self.PlayerProps.getConnectConditions(state)
+        except Exception, e:
+            tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
+            tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
+            tools.writeLog(e.message, level=xbmc.LOGERROR)
+
 
     def handleOutgoingCall(self, line):
 
@@ -378,7 +387,6 @@ class FritzCallmonitor(object):
                     tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
                     tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
                     tools.writeLog(e.message, level=xbmc.LOGERROR)
-                    break
 
                 xbmc.sleep(500)
 

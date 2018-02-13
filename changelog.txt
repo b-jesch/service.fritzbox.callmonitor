@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.14
+- some improvements and fixes
+
 2.0.13
 - SSL certificate error fixed (has prevented to download images to cache)
 
