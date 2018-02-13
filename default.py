@@ -42,7 +42,8 @@ class PlayerProperties:
         self.callCondition = dict()
         self.discCondition = dict()
 
-    def getCurrentConditions(self):
+    @classmethod
+    def getCurrentConditions(cls):
         _cond = dict()
         _cond['playTV'] = bool(xbmc.getCondVisibility('Pvr.isPlayingTv'))
         _cond['playVideo'] = bool(xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing'))
