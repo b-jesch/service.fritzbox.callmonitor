@@ -67,7 +67,7 @@ class PlayerProperties:
 
     def getCallingConditions(self, state):
         self.callCondition.update(self.getCurrentConditions())
-        for cond in self.callCondition: tools.writeLog('set condition during call: %s: %s' %(cond.rjust(10), self.callCondition[cond]))
+        for cond in self.callCondition: tools.writeLog('set condition on %s: %s: %s' % (state, cond.rjust(10), self.callCondition[cond]))
 
     def getDisconnectConditions(self, state):
         self.discCondition.update(self.getCurrentConditions())
