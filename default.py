@@ -6,6 +6,7 @@ import sys
 
 import xbmc
 import xbmcaddon
+import xbmcgui
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 from resources.lib.KlickTel import KlickTel
 import resources.lib.tools as tools
@@ -30,6 +31,7 @@ if not os.path.exists(__ImageCache__): os.makedirs(__ImageCache__, 0755)
 # Fritz!Box
 
 LISTENPORT = 1012
+HOME = xbmcgui.Window(10000)
 
 # CLASSES
 
@@ -101,6 +103,8 @@ class FritzCallmonitor(object):
 
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
         self.screensaver = None
+
+        HOME.setProperty('FritzCallMon.InCall', 'false')
 
     class CallMonitorLine(dict):
 
@@ -324,10 +328,12 @@ class FritzCallmonitor(object):
 
     def handleConnected(self, line):
         tools.writeLog('Line connected', xbmc.LOGNOTICE)
+        HOME.setProperty('FritzCallMon.InCall', 'true')
         if not self.__hide: self.handlePlayerProps('connected')
 
     def handleDisconnected(self, line):
         tools.writeLog('Line disconnected', xbmc.LOGNOTICE)
+        HOME.setProperty('FritzCallMon.InCall', 'false')
         if not self.__hide: self.handlePlayerProps('disconnected')
 
     def connect(self, notify=False):
