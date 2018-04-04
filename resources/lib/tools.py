@@ -32,8 +32,9 @@ class Monitor(xbmc.Monitor):
     def __init__(self):
         self.get_settings()
         writeLog('Settings loaded', xbmc.LOGNOTICE)
-        
-    def onSettingsChanged(self):
+
+    @classmethod
+    def onSettingsChanged(cls):
         dialog = xbmcgui.Dialog()
         if dialog.yesno(ADDONNAME, ADDON.getLocalizedString(30037)): xbmc.executebuiltin('RestartApp()')
 

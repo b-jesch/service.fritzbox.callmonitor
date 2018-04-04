@@ -38,7 +38,7 @@ HOME = xbmcgui.Window(10000)
 
 # CLASSES
 
-class PlayerProperties:
+class PlayerProperties(object):
     def __init__(self):
 
         self.connCondition = dict()
@@ -76,7 +76,8 @@ class PlayerProperties:
         self.discCondition.update(self.getCurrentConditions())
         for cond in self.discCondition: tools.writeLog('act property on %s: %s: %s' % (state, cond.rjust(10), self.discCondition[cond]))
 
-    def setVolume(self, volume):
+    @classmethod
+    def setVolume(cls, volume):
 
         query = {
                 "method": "Application.SetVolume",
