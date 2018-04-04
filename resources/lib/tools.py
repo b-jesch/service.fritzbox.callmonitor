@@ -8,7 +8,7 @@ import json
 
 ADDON = sys.modules['__main__'].ADDON
 ADDONNAME = sys.modules['__main__'].ADDONNAME
-ICON_DEFAULT = sys.modules['__main__'].ICON_DEFAULT
+ICON_OK = sys.modules['__main__'].ICON_OK
 
 def writeLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s] %s' % (ADDONNAME, message.encode('utf-8')), level)
@@ -23,7 +23,7 @@ def jsonrpc(query):
         writeLog('Error executing JSON RPC: %s' % (e.message), xbmc.LOGERROR)
     return None
 
-def notify(header, message, icon=ICON_DEFAULT, dispTime=5000, deactivateSS=False):
+def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
     if deactivateSS and xbmc.getCondVisibility('System.ScreenSaverActive'):
         query = {
             "method": "Input.Select"

@@ -24,9 +24,8 @@ ADDONVERSION = ADDON.getAddonInfo('version')
 LOC = ADDON.getLocalizedString
 
 ICON_OK = os.path.join(ADDONPATH, 'resources', 'media', 'incoming.png')
-ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'error.png')
-ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
-ICON_DEFAULT = os.path.join(ADDONPATH, 'resources', 'media', 'default.png')
+ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
+ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'blue.png')
 
 IMAGECACHE = os.path.join(ADDONPROFILES, 'cache')
 if not os.path.exists(IMAGECACHE): os.makedirs(IMAGECACHE, 0755)
@@ -278,7 +277,7 @@ class FritzCallmonitor(object):
 
             record = self.getRecordByNumber(line.number_called)
             name = LOC(30012) if record['name'] == '' else record['name']
-            icon = ICON_DEFAULT if record['imageBMP'] == '' else record['imageBMP']
+            icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
             tools.notify(LOC(30013), LOC(30014) % (name, line.number_called), icon, deactivateSS=True)
             tools.writeLog('Outgoing call from %s to %s' % (line.number_used, line.number_called), xbmc.LOGNOTICE)
 
