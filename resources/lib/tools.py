@@ -32,6 +32,9 @@ def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
 
     xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
 
+def mask(string):
+    if len(string) > 4: return '%s%s%s' % (string[0], '*' * (len(string) - 3), string[-2:])
+    return '*' * len(string)
 
 class Monitor(xbmc.Monitor):
 

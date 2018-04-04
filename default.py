@@ -12,6 +12,7 @@ import hashlib
 ADDON = xbmcaddon.Addon()
 ADDONNAME = ADDON.getAddonInfo('id')
 ADDONPATH = xbmc.translatePath(ADDON.getAddonInfo('path'))
+ICON_OK = os.path.join(ADDONPATH, 'resources', 'media', 'incoming.png')
 
 LIBS = os.path.join(ADDONPATH, 'resources', 'lib')
 sys.path.append(LIBS)
@@ -23,7 +24,6 @@ ADDONPROFILES = xbmc.translatePath(ADDON.getAddonInfo('profile'))
 ADDONVERSION = ADDON.getAddonInfo('version')
 LOC = ADDON.getLocalizedString
 
-ICON_OK = os.path.join(ADDONPATH, 'resources', 'media', 'incoming.png')
 ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
 ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'blue.png')
 
@@ -173,7 +173,7 @@ class FritzCallmonitor(object):
             for item in self.__phonebook:
                 for number in self.__phonebook[item]['numbers']:
                     if self.__phoneBookFacade.compareNumbers(number, request_number, ccode=self.Mon.cCode):
-                        tools.writeLog('Match an entry in database for %s: %s' % (request_number, item), xbmc.LOGNOTICE)
+                        tools.writeLog('Match an entry in database for %s: %s' % (tools.mask(request_number), tools.mask(item)), xbmc.LOGNOTICE)
                         name = item
                         fname = os.path.join(IMAGECACHE, hashlib.md5(item.encode('utf-8')).hexdigest() + '.jpg')
                         if os.path.isfile(fname):
@@ -279,7 +279,8 @@ class FritzCallmonitor(object):
             name = LOC(30012) if record['name'] == '' else record['name']
             icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
             tools.notify(LOC(30013), LOC(30014) % (name, line.number_called), icon, deactivateSS=True)
-            tools.writeLog('Outgoing call from %s to %s' % (line.number_used, line.number_called), xbmc.LOGNOTICE)
+            tools.writeLog('Outgoing call from %s to %s' % (tools.mask(line.number_used),
+                                                            tools.mask(line.number_called)), xbmc.LOGNOTICE)
 
     def handleIncomingCall(self, line):
 
@@ -291,7 +292,7 @@ class FritzCallmonitor(object):
 
         if len(line.number_caller) > 0:
             caller_num = line.number_caller
-            tools.writeLog('trying to resolve name from incoming number %s' % (caller_num), xbmc.LOGNOTICE)
+            tools.writeLog('trying to resolve name from incoming number %s' % (tools.mask(caller_num)), xbmc.LOGNOTICE)
             record = self.getRecordByNumber(caller_num)
             name = record['name']
             icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
@@ -303,7 +304,7 @@ class FritzCallmonitor(object):
             name = LOC(30012)
             icon = ICON_UNKNOWN
 
-        tools.writeLog('Incoming call from %s (%s)' % (name, caller_num), xbmc.LOGNOTICE)
+        tools.writeLog('Incoming call from %s (%s)' % (tools.mask(name), tools.mask(caller_num)), xbmc.LOGNOTICE)
         tools.notify(LOC(30010), LOC(30011) % (name, caller_num), icon, self.Mon.dispMsgTime, deactivateSS=True)
 
     def handleConnected(self, line):
