@@ -1,37 +1,44 @@
 # -*- coding: utf-8 -*-
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import re
-import os
+import sys
 import json
 
-__addon__ = xbmcaddon.Addon()
-__addonname__ = __addon__.getAddonInfo('id')
-__IconDefault__ = xbmc.translatePath(os.path.join(__addon__.getAddonInfo('path'), 'resources', 'media', 'default.png'))
+ADDON = sys.modules['__main__'].ADDON
+ADDONNAME = sys.modules['__main__'].ADDONNAME
+ICON_DEFAULT = sys.modules['__main__'].ICON_DEFAULT
 
 def writeLog(message, level=xbmc.LOGDEBUG):
-    xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
+    xbmc.log('[%s] %s' % (ADDONNAME, message.encode('utf-8')), level)
 
-def notify(header, message, icon=__IconDefault__, dispTime=5000):
+def notify(header, message, icon=ICON_DEFAULT, dispTime=5000):
     xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
 
 def jsonrpc(query):
-    return json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+    querystring = {"jsonrpc": "2.0", "id": 1}
+    querystring.update(query)
+    try:
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(querystring, encoding='utf-8')))
+        if 'result' in response: return response['result']
+    except TypeError, e:
+        writeLog('Error executing JSON RPC: %s' % (e.message), xbmc.LOGERROR)
+    return None
+
 
 class Monitor(xbmc.Monitor):
 
     def __init__(self):
-        writeLog('Settings loaded', xbmc.LOGNOTICE)
         self.get_settings()
-
+        writeLog('Settings loaded', xbmc.LOGNOTICE)
+        
     def onSettingsChanged(self):
         dialog = xbmcgui.Dialog()
-        if dialog.yesno(__addonname__, __addon__.getLocalizedString(30037)): xbmc.executebuiltin('RestartApp()')
+        if dialog.yesno(ADDONNAME, ADDON.getLocalizedString(30037)): xbmc.executebuiltin('RestartApp()')
 
     def get_settings(self):
-        __exnums = __addon__.getSetting('excludeNums')
+        __exnums = ADDON.getSetting('excludeNums')
 
         # transform possible userinput from e.g. 'p1, p2,,   p3 p4  '
         # to a list like this: ['p1','p2','p3','p4']
@@ -40,17 +47,16 @@ class Monitor(xbmc.Monitor):
         __exnums = __exnums.join(' '.join(line.split()) for line in __exnums.splitlines())
 
         self.exnum_list = __exnums.split(' ')
-        self.server = __addon__.getSetting('phoneserver')
-        self.dispMsgTime = int(re.match('\d+', __addon__.getSetting('dispTime')).group()) * 1000
-        self.cCode = __addon__.getSetting('cCode')
-        self.optShowOutgoing = True if __addon__.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
-        self.optMute = True if __addon__.getSetting('optMute').upper() == 'TRUE' else False
-        self.volume = int(__addon__.getSetting('volume')) * 0.1
-        self.optPauseAudio = True if __addon__.getSetting('optPauseAudio').upper() == 'TRUE' else False
-        self.optPauseVideo = True if __addon__.getSetting('optPauseVideo').upper() == 'TRUE' else False
-        self.optPauseTV = True if __addon__.getSetting('optPauseTV').upper() == 'TRUE' else False
-        self.optEarlyPause = True if __addon__.getSetting('optEarlyPause').upper() == 'TRUE' else False
-        self.useKlickTelReverse = True if __addon__.getSetting('useKlickTelReverse').upper() == 'TRUE' else False
+        self.server = ADDON.getSetting('phoneserver')
+        self.dispMsgTime = int(re.match('\d+', ADDON.getSetting('dispTime')).group()) * 1000
+        self.cCode = ADDON.getSetting('cCode')
+        self.optShowOutgoing = True if ADDON.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
+        self.optMute = True if ADDON.getSetting('optMute').upper() == 'TRUE' else False
+        self.volume = int(ADDON.getSetting('volume')) * 0.1
+        self.optPauseAudio = True if ADDON.getSetting('optPauseAudio').upper() == 'TRUE' else False
+        self.optPauseVideo = True if ADDON.getSetting('optPauseVideo').upper() == 'TRUE' else False
+        self.optPauseTV = True if ADDON.getSetting('optPauseTV').upper() == 'TRUE' else False
+        self.optEarlyPause = True if ADDON.getSetting('optEarlyPause').upper() == 'TRUE' else False
 
         writeLog('Server IP/name:   %s' % (self.server))
         writeLog('excluded Numbers: %s' % (__exnums))
@@ -62,5 +68,4 @@ class Monitor(xbmc.Monitor):
         writeLog('Pause audio:      %s' % (self.optPauseAudio))
         writeLog('Pause video:      %s' % (self.optPauseVideo))
         writeLog('Pause tv:         %s' % (self.optPauseTV))
-        writeLog('React early:      %s' % (self.optEarlyPause))
-        writeLog('Use klicktel:     %s' % (self.useKlickTelReverse))
+        writeLog('React on ring:    %s' % (self.optEarlyPause))

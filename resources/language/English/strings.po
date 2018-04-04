@@ -59,15 +59,11 @@ msgid "Fritz!Box Password"
 msgstr ""
 
 msgctxt "#30007"
-msgid "Use SSL Encryption for Information Interchange"
+msgid "Use SSL Encryption for Data Exchange"
 msgstr ""
 
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
-msgstr ""
-
-msgctxt "#30009"
-msgid "Use reverse search for unknown numbers (Powered by klicktel)"
 msgstr ""
 
 msgctxt "#30010"

@@ -1,5 +1,9 @@
 CHANGELOG
 
+2.0.16
+- Reverse search by klicktel removed (service no longer available)
+- some improvements of video/audio handling on calling activities
+
 2.0.14
 - some improvements and fixes
 

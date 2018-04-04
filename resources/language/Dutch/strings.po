@@ -58,16 +58,12 @@ msgid "Fritz!Box Password"
 msgstr "Fritz!Box Wachtwoord"
 
 msgctxt "#30007"
-msgid "Use SSL Encryption for Information Interchange"
+msgid "Use SSL Encryption for Data Exchange"
 msgstr "Versleutelen gegevensuitwisseling (SSL)"
 
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
 msgstr "Live-TV ook pauzeren (alleen als Timeshift beschikbaar)"
-
-msgctxt "#30009"
-msgid "Use reverse search for unknown numbers (Powered by klicktel)"
-msgstr "Gebruik omgekeerd zoeken bij onbekende nummers (Powered by klicktel)"
 
 msgctxt "#30010"
 msgid "Incoming Call"
