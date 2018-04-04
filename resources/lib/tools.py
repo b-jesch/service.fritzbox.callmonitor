@@ -13,9 +13,6 @@ ICON_DEFAULT = sys.modules['__main__'].ICON_DEFAULT
 def writeLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s] %s' % (ADDONNAME, message.encode('utf-8')), level)
 
-def notify(header, message, icon=ICON_DEFAULT, dispTime=5000):
-    xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
-
 def jsonrpc(query):
     querystring = {"jsonrpc": "2.0", "id": 1}
     querystring.update(query)
@@ -25,6 +22,15 @@ def jsonrpc(query):
     except TypeError, e:
         writeLog('Error executing JSON RPC: %s' % (e.message), xbmc.LOGERROR)
     return None
+
+def notify(header, message, icon=ICON_DEFAULT, dispTime=5000, deactivateSS=False):
+    if deactivateSS and xbmc.getCondVisibility('System.ScreenSaverActive'):
+        query = {
+            "method": "Input.Select"
+        }
+        jsonrpc(query)
+
+    xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
 
 
 class Monitor(xbmc.Monitor):

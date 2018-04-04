@@ -279,7 +279,7 @@ class FritzCallmonitor(object):
             record = self.getRecordByNumber(line.number_called)
             name = LOC(30012) if record['name'] == '' else record['name']
             icon = ICON_DEFAULT if record['imageBMP'] == '' else record['imageBMP']
-            tools.notify(LOC(30013), LOC(30014) % (name, line.number_called), icon)
+            tools.notify(LOC(30013), LOC(30014) % (name, line.number_called), icon, deactivateSS=True)
             tools.writeLog('Outgoing call from %s to %s' % (line.number_used, line.number_called), xbmc.LOGNOTICE)
 
     def handleIncomingCall(self, line):
@@ -305,7 +305,7 @@ class FritzCallmonitor(object):
             icon = ICON_UNKNOWN
 
         tools.writeLog('Incoming call from %s (%s)' % (name, caller_num), xbmc.LOGNOTICE)
-        tools.notify(LOC(30010), LOC(30011) % (name, caller_num), icon, self.Mon.dispMsgTime)
+        tools.notify(LOC(30010), LOC(30011) % (name, caller_num), icon, self.Mon.dispMsgTime, deactivateSS=True)
 
     def handleConnected(self, line):
         tools.writeLog('Line connected', xbmc.LOGNOTICE)
