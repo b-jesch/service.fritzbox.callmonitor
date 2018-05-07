@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import hashlib
 import os
 import re
 import socket
@@ -95,7 +94,7 @@ class PytzBox(PhoneBookBase):
             )
             caller_image = response.content
             if caller_image is not None:
-                imagepath = os.path.join(self._imagepath, hashlib.md5(caller_name.encode('utf-8')).hexdigest() + '.jpg')
+                imagepath = os.path.join(self._imagepath, re.sub('\D', '', caller_name.replace('+', '00')) + '.jpg')
                 with open(imagepath, 'w') as fh: fh.write(caller_image)
                 self._imagecount += 1
                 return imagepath

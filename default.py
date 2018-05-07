@@ -7,7 +7,7 @@ import sys
 import xbmc
 import xbmcaddon
 import xbmcgui
-import hashlib
+import re
 
 ADDON = xbmcaddon.Addon()
 ADDONNAME = ADDON.getAddonInfo('id')
@@ -175,7 +175,7 @@ class FritzCallmonitor(object):
                     if self.__phoneBookFacade.compareNumbers(number, request_number, ccode=self.Mon.cCode):
                         tools.writeLog('Match an entry in database for %s: %s' % (tools.mask(request_number), tools.mask(item)), xbmc.LOGNOTICE)
                         name = item
-                        fname = os.path.join(IMAGECACHE, hashlib.md5(item.encode('utf-8')).hexdigest() + '.jpg')
+                        fname = os.path.join(IMAGECACHE, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
                         if os.path.isfile(fname):
                             tools.writeLog('Load image from cache: %s' % (os.path.basename(fname)), xbmc.LOGNOTICE)
                             imageBMP = fname

@@ -1,5 +1,9 @@
 CHANGELOG
 
+2.0.17
+- Image handling renewed. Caller images can now stored directly in userdata/addon_data/service.fritzbox.callmonitor/cache
+  with this scheme (named by callernumber): "+49 0815 4711" --> 004908154711.jpg.
+   
 2.0.16
 - Reverse search by klicktel removed (service no longer available)
 - some improvements of video/audio handling on calling activities
