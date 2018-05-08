@@ -76,14 +76,19 @@ class PytzBox(PhoneBookBase):
                     if not self.contact_name in self.phone_book:
                         self.phone_book[self.contact_name] = {'numbers': []}
                 if self.contact_name in self.phone_book:
-                    if self.key == "number": self.phone_book[self.contact_name]['numbers'].append(content)
-                    if self.key == "imageURL": self.phone_book[self.contact_name]['imageBMP'] = self.parent.getImage(content, self.contact_name)
+                    if self.key == "number":
+                        self.phone_book[self.contact_name]['numbers'].append(content)
+                    if self.key == "imageURL":
+                        self.phone_book[self.contact_name]['imageBMP'] = content
 
         handler = FbAbHandler(self)
         xml.sax.parseString(xml_phonebook, handler=handler)
+        for item in handler.phone_book:
+            if handler.phone_book[item].get('imageBMP', False):
+                self.cacheImages(handler.phone_book[item]['imageBMP'], handler.phone_book[item]['numbers'])
         return handler.phone_book
 
-    def getImage(self, url, caller_name):
+    def cacheImages(self, url, numbers):
 
         try:
             response = requests.get(self.__url_file_download[self._encrypt].format(
@@ -92,12 +97,12 @@ class PytzBox(PhoneBookBase):
                 sid=self.__sid),
                 verify=False
             )
-            caller_image = response.content
-            if caller_image is not None:
-                imagepath = os.path.join(self._imagepath, re.sub('\D', '', caller_name.replace('+', '00')) + '.jpg')
-                with open(imagepath, 'w') as fh: fh.write(caller_image)
-                self._imagecount += 1
-                return imagepath
+            pb_image = response.content
+            if pb_image is not None:
+                for number in numbers:
+                    imagepath = os.path.join(self._imagepath, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
+                    with open(imagepath, 'w') as fh: fh.write(pb_image)
+                    self._imagecount += 1
         except IOError, e:
             raise self.RequestFailedException(e.message)
         except Exception, e:

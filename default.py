@@ -177,7 +177,7 @@ class FritzCallmonitor(object):
                         name = item
                         fname = os.path.join(IMAGECACHE, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
                         if os.path.isfile(fname):
-                            tools.writeLog('Load image from cache: %s' % (os.path.basename(fname)), xbmc.LOGNOTICE)
+                            tools.writeLog('Load image from cache', xbmc.LOGNOTICE)
                             imageBMP = fname
                             break
 
