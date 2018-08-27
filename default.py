@@ -52,6 +52,7 @@ class PlayerProperties(object):
         _cond['playAudio'] = bool(xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing'))
         _cond['paused'] = bool(xbmc.getCondVisibility('Player.Paused'))
         _cond['muted'] = bool(xbmc.getCondVisibility('Player.Muted'))
+        _cond['volChanged'] = False
 
         # Get the Volume
 
@@ -192,10 +193,13 @@ class FritzCallmonitor(object):
                 #
                 # handle sound
                 #
-                if self.Mon.optMute and not self.PlayerProps.connCondition.get('muted', False):
+                if self.Mon.optMute and \
+                        not self.PlayerProps.connCondition.get('muted', False) and \
+                        not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                     tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
                     self.PlayerProps.setVolume(vol)
+                    self.PlayerProps.connCondition['volChanged'] = True
                 #
                 # handle audio, video & TV
                 #
@@ -212,10 +216,13 @@ class FritzCallmonitor(object):
                 #
                 # handle sound
                 #
-                if self.Mon.optMute and not self.PlayerProps.connCondition.get('muted', False):
+                if self.Mon.optMute and \
+                        not self.PlayerProps.connCondition.get('muted', False) and \
+                        not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                     tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
                     self.PlayerProps.setVolume(vol)
+                    self.PlayerProps.connCondition['volChanged'] = True
                 #
                 # handle audio, video & TV
                 #
@@ -244,6 +251,7 @@ class FritzCallmonitor(object):
                         tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
                     else:
                         tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
+                    self.PlayerProps.connCondition['volChanged'] = False
 
                 #
                 # handle audio, video & TV
