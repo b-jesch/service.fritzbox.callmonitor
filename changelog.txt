@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.19
+- changing of volume several times with simultaneous incoming calls fixed
+
 2.0.18
 - Bugfix
 
