@@ -64,11 +64,14 @@ class PytzBox(PhoneBookBase):
             def startElement(self, name, args):
                 if name == "contact":
                     self.contact_name = ""
+                if name == "imageURL":
+                    self.phone_book[self.contact_name]['imageBMP'] = ''
                 self.key = name
 
             # noinspection PyUnusedLocal
             def endElement(self, name):
                 self.key = None
+                self.imageURL = None
 
             def characters(self, content):
                 if self.key == "realName":
@@ -79,17 +82,18 @@ class PytzBox(PhoneBookBase):
                     if self.key == "number":
                         self.phone_book[self.contact_name]['numbers'].append(content)
                     if self.key == "imageURL":
-                        self.phone_book[self.contact_name]['imageBMP'] = content
+                        self.phone_book[self.contact_name]['imageBMP'] += content
 
         handler = FbAbHandler(self)
         xml.sax.parseString(xml_phonebook, handler=handler)
         for item in handler.phone_book:
             if handler.phone_book[item].get('imageBMP', False):
-                self.cacheImages(handler.phone_book[item]['imageBMP'], handler.phone_book[item]['numbers'])
+                self.cacheImages(handler.phone_book[item]['imageBMP'].replace('"', '&quot;'), handler.phone_book[item]['numbers'])
         return handler.phone_book
 
     def cacheImages(self, url, numbers):
 
+        print url
         try:
             response = requests.get(self.__url_file_download[self._encrypt].format(
                 host=self._host,
@@ -97,12 +101,13 @@ class PytzBox(PhoneBookBase):
                 sid=self.__sid),
                 verify=False
             )
-            pb_image = response.content
-            if pb_image is not None:
-                for number in numbers:
-                    imagepath = os.path.join(self._imagepath, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
-                    with open(imagepath, 'w') as fh: fh.write(pb_image)
-                    self._imagecount += 1
+            if response.status_code == 200:
+                pb_image = response.content
+                if pb_image is not None:
+                    for number in numbers:
+                        imagepath = os.path.join(self._imagepath, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
+                        with open(imagepath, 'w') as fh: fh.write(pb_image)
+                        self._imagecount += 1
         except IOError, e:
             raise self.RequestFailedException(e.message)
         except Exception, e:
