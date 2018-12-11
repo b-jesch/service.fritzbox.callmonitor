@@ -1,7 +1,7 @@
 CHANGELOG
 
 2.0.20
-- Crash fixed while loading images from external phonebooks (e.g. Google Phonebook) and FritzOS 7.01,
+- Crash fixed while processing external phonebooks (e.g. Google Phonebook) and FritzOS 7.01,
   but online images will not be loaded yet - sorry.
 
 2.0.19
