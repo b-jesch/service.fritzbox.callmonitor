@@ -80,9 +80,30 @@ class PlayerProperties(object):
     def setVolume(cls, volume):
 
         query = {
+                "method": "Application.GetProperties",
+                "params": {"properties": ["volume"]}
+                }
+
+        currVolume = tools.jsonrpc(query).get('volume', 0)
+        _d = -2 if currVolume - int(volume) > 0 else 2
+        steps = abs(currVolume - int(volume)) / 2
+        if steps > 0:
+            delay = 2000 / steps
+            while steps > 0:
+                currVolume += _d
+                query = {
+                        "method": "Application.SetVolume",
+                        "params": {"volume": currVolume}
+                        }
+                res = tools.jsonrpc(query)
+                steps -= 1
+                xbmc.sleep(delay)
+            return res
+        else:
+            query = {
                 "method": "Application.SetVolume",
                 "params": {"volume": int(volume)}
-                }
+            }
         return tools.jsonrpc(query)
 
 
@@ -91,6 +112,7 @@ class FritzCallmonitor(object):
     __phonebook = None
     __hide = False
     __s = None
+    __connects = 0
 
     def __init__(self):
 
@@ -196,10 +218,12 @@ class FritzCallmonitor(object):
                 if self.Mon.optMute and \
                         not self.PlayerProps.connCondition.get('muted', False) and \
                         not self.PlayerProps.connCondition.get('volChanged', False):
-                    vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                    tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
-                    self.PlayerProps.setVolume(vol)
-                    self.PlayerProps.connCondition['volChanged'] = True
+                    if self.__connects == 0:
+                        vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
+                        tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                        self.PlayerProps.setVolume(vol)
+                        self.PlayerProps.connCondition['volChanged'] = True
+                    self.__connects += 1
                 #
                 # handle audio, video & TV
                 #
@@ -266,7 +290,7 @@ class FritzCallmonitor(object):
                     xbmc.executebuiltin('PlayerControl(Play)')
             else:
                 tools.writeLog('don\'t handle properties for state %s' % state, xbmc.LOGERROR)
-                # self.PlayerProps.getConnectConditions(state)
+                self.PlayerProps.getConnectConditions(state)
         except Exception, e:
             tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
             tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
@@ -322,8 +346,12 @@ class FritzCallmonitor(object):
 
     def handleDisconnected(self, line):
         tools.writeLog('Line disconnected', xbmc.LOGNOTICE)
-        HOME.setProperty('FritzCallMon.InCall', 'false')
-        if not self.__hide: self.handlePlayerProps('disconnected')
+        if self.__connects > 0: self.__connects -= 1
+        if self.__connects == 0:
+            HOME.setProperty('FritzCallMon.InCall', 'false')
+            if not self.__hide: self.handlePlayerProps('disconnected')
+        else:
+            tools.writeLog('still hold %s connection(s)' % (self.__connects), xbmc.LOGNOTICE)
 
     def connect(self, notify=False):
         if self.__s is not None:
