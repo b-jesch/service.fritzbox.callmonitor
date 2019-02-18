@@ -61,13 +61,13 @@ from .compat import wrap_ord
 # "[last word of first line spelled backwards] [whole line ordered backwards
 # and spelled backwards] [first word of first line spelled backwards]
 # [end of line] [last word of second line] ... etc' "
-# adding punctuation marks, numbers and English text to visual text is
+# adding punctuation marks, numbers and resource.language.en_gb text to visual text is
 # naturally also "visual" and from left to right.
 #
 # "Logical" directionality means the text is ordered "naturally" according to
 # the order it is read. It is the responsibility of the renderer to display
 # the text from right to left. A BIDI algorithm is used to place general
-# punctuation marks, numbers and English text in the text.
+# punctuation marks, numbers and resource.language.en_gb text in the text.
 #
 # Texts in x-mac-hebrew are almost impossible to find on the Internet. From
 # what little evidence I could find, it seems that its general directionality
@@ -100,7 +100,7 @@ from .compat import wrap_ord
 # with the scores of the two SBCharSetProbers to produce a final answer.
 #
 # The SBCSGroupProber is responsible for stripping the original text of HTML
-# tags, English characters, numbers, low-ASCII punctuation characters, spaces
+# tags, resource.language.en_gb characters, numbers, low-ASCII punctuation characters, spaces
 # and new lines. It reduces any sequence of such characters to a single space.
 # The buffer fed to each prober in the SBCS group prober is pure text in
 # high-ASCII.

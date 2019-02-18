@@ -14,202 +14,205 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 msgctxt "Addon Summary"
 msgid "Fritzbox Callmonitor"
-msgstr ""
+msgstr "Fritzbox Anrufmonitor"
 
 msgctxt "Addon Description"
 msgid "This addon displays incoming and outgoing calls from a Fritzbox connecting on port 1012. To enable the listen port in your Fritzbox enter the following code into your telephone.\n\n#96*5* Callmonitor-Support enabled.\n#96*4* Callmonitor-Support disabled."
-msgstr ""
+msgstr "Dieses Addon zeigt eingehende/ausgehende Anrufe auf der Fritzbox an. Dazu muss der Port 1012 auf der Fritzbox freigeschaltet sein. Geben Sie dazu auf dem Telefon folgenden Telefoncode ein.\n\n#96*5* Anrufmonitor-Support aktivieren.\n#96*4* Anrufmonitor-Support deaktivieren."
 
 msgctxt "Addon Disclaimer"
 msgid "Use at your own risk"
-msgstr ""
-
+msgstr "Benutzung auf eigene Gefahr"
 
 msgctxt "#30000"
 msgid "Fritz!Box Callmonitor IP or Name"
-msgstr ""
+msgstr "Fritz!Box Anrufmonitor IP oder Name"
 
 msgctxt "#30001"
 msgid "Exlcude these number(s) from monitoring (separated by comma or space)"
-msgstr ""
+msgstr "Diese Nummer(n) vom Monitoring ausschliessen (kommagetrennt)"
 
 msgctxt "#30002"
 msgid "Display Time for Message Annotations"
-msgstr ""
+msgstr "Anzeigedauer für Nachrichten"
 
 msgctxt "#30003"
 msgid "Reduce Volume while incoming Call"
-msgstr ""
+msgstr "Bei Anruf Lautstärke reduzieren"
 
 msgctxt "#30004"
 msgid "Use Fritz!Box Phonebook for showing Name of Caller"
-msgstr ""
+msgstr "Fritz!Box Telefonbuch zur Anzeige des Anrufers benutzen"
 
 msgctxt "#30005"
 msgid "Fritz!Box Username"
-msgstr ""
+msgstr "Fritz!Box Nutzername"
 
 msgctxt "#30006"
 msgid "Fritz!Box Password"
-msgstr ""
+msgstr "Fritz!Box Passwort"
 
 msgctxt "#30007"
 msgid "Use SSL Encryption for Data Exchange"
-msgstr ""
+msgstr "Datenaustausch verschlüsseln (SSL)"
 
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
-msgstr ""
+msgstr "Live-TV ebenfalls pausieren (Timeshift muss unterstützt werden)"
 
 msgctxt "#30010"
 msgid "Incoming Call"
-msgstr ""
+msgstr "Eingehender Anruf"
 
 msgctxt "#30011"
 msgid "Recieving Call from %s (%s)"
-msgstr ""
+msgstr "Anruf von %s (%s)"
 
 msgctxt "#30012"
 msgid "unknown"
-msgstr ""
+msgstr "unbekannt"
 
 msgctxt "#30013"
 msgid "Outgoing Call"
-msgstr ""
+msgstr "Ausgehender Anruf"
 
 msgctxt "#30014"
 msgid "%s is called by %s"
-msgstr ""
+msgstr "%s wird auf %s angerufen"
 
 msgctxt "#30015"
 msgid "Handle outgoing calls same way as incoming calls"
-msgstr ""
+msgstr "Ausgehende Anrufe wie eingehende Anrufe behandeln"
 
 msgctxt "#30016"
 msgid "no number"
-msgstr ""
+msgstr "keine Nummer"
 
 msgctxt "#30017"
 msgid "Country code (four digits)"
-msgstr ""
+msgstr "Landesvorwahl (vierstellig)"
 
 msgctxt "#30018"
 msgid "Use all available Phonebooks of Fritz!Box"
-msgstr ""
+msgstr "Verwende alle verfügbaren Telefonbücher der Fritz!Box"
 
 msgctxt "#30019"
 msgid "Already pause/mute in Call Signaling"
-msgstr ""
+msgstr "Bereits bei Anrufsignalisierung anhalten/stummschalten"
 
 msgctxt "#30020"
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
 msgctxt "#30021"
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 msgctxt "#30030"
 msgid "Connection Error"
-msgstr ""
+msgstr "Verbindungsfehler"
 
 msgctxt "#30031"
 msgid "Fritz!Box not available on %s:%s"
-msgstr ""
+msgstr "Fritz!Box unter %s:%s nicht erreichbar"
 
 msgctxt "#30032"
 msgid "klicktel.de not available"
-msgstr ""
+msgstr "klicktel.de nicht erreichbar"
 
 msgctxt "#30033"
 msgid "Login failed"
-msgstr ""
+msgstr "Anmeldung fehlgeschlagen"
 
 msgctxt "#30034"
 msgid "Check Username and/or Password Settings"
-msgstr ""
+msgstr "Überprüfe Nutzername und/oder Passwort Einstellungen"
 
 msgctxt "#30035"
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Interner Server Fehler"
 
 msgctxt "#30036"
 msgid "Check Network Settings of Fritz!Box"
-msgstr ""
+msgstr "Überprüfe die Netzwerkeinstellungen der Fritz!Box"
 
 msgctxt "#30037"
 msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
-msgstr ""
+msgstr "Die Einstellungen wurden geändert. Damit die Einstellungen übernommen werden, muss Kodi neu gestartet werden. Kodi jetzt neu starten?"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
-msgstr ""
+msgstr "Audio während des Telefonats anhalten"
 
 msgctxt "#30041"
 msgid "Pause Video while Calling"
-msgstr ""
+msgstr "Video während des Telefonats anhalten"
 
 msgctxt "#30042"
 msgid "Stop active Screensaver on incoming Call"
-msgstr ""
+msgstr "Bei eingehendem Anruf Bildschirmschoner abschalten"
 
 msgctxt "#30043"
 msgid "Reduce Volume to"
-msgstr ""
+msgstr "Reduziere Lautstärke auf"
+
+msgctxt "#30044"
+msgid "Fading Volume"
+msgstr "Weiche Lautstärkeänderung"
 
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
-msgstr ""
+msgstr "Apple iCloud Telefonbuch zur Anzeige des Anrufers benutzen"
 
 msgctxt "#30051"
 msgid "Apple iCloud Username"
-msgstr ""
+msgstr "Apple iCloud Nutzername"
 
 msgctxt "#30052"
 msgid "Apple iCloud Password"
-msgstr ""
+msgstr "Apple iCloud Passwort"
 
 msgctxt "#30060"
 msgid "off (Mute)"
-msgstr ""
+msgstr "aus (Mute)"
 
 msgctxt "#30061"
 msgid "10%"
-msgstr ""
+msgstr "10%"
 
 msgctxt "#30062"
 msgid "20%"
-msgstr ""
+msgstr "20%"
 
 msgctxt "#30063"
 msgid "30%"
-msgstr ""
+msgstr "30%"
 
 msgctxt "#30064"
 msgid "40%"
-msgstr ""
+msgstr "40%"
 
 msgctxt "#30065"
 msgid "50%"
-msgstr ""
+msgstr "50%"
 
 msgctxt "#30066"
 msgid "60%"
-msgstr ""
+msgstr "60%"
 
 msgctxt "#30067"
 msgid "70%"
-msgstr ""
+msgstr "70%"
 
 msgctxt "#30068"
 msgid "80%"
-msgstr ""
+msgstr "80%"
 
 msgctxt "#30069"
 msgid "90%"
-msgstr ""
+msgstr "90%"

@@ -14,168 +14,172 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 msgctxt "Addon Summary"
 msgid "Fritzbox Callmonitor"
-msgstr "Fritzbox Anrufmonitor"
+msgstr "Fritzbox Aanroepmonitor"
 
 msgctxt "Addon Description"
 msgid "This addon displays incoming and outgoing calls from a Fritzbox connecting on port 1012. To enable the listen port in your Fritzbox enter the following code into your telephone.\n\n#96*5* Callmonitor-Support enabled.\n#96*4* Callmonitor-Support disabled."
-msgstr "Dieses Addon zeigt eingehende/ausgehende Anrufe auf der Fritzbox an. Dazu muss der Port 1012 auf der Fritzbox freigeschaltet sein. Geben Sie dazu auf dem Telefon folgenden Telefoncode ein.\n\n#96*5* Anrufmonitor-Support aktivieren.\n#96*4* Anrufmonitor-Support deaktivieren."
+msgstr "Deze Addon toont de binnenkomende/uitgaande oproepen van een Fritzbox op port 1012. Om de port aan te zetten, toets de volgende code in op je telefoon.\n\n#96*5* Oproepmonitor-Support activeren.\n#96*4* Oproepmonitor-Support deactivieren."
 
 msgctxt "Addon Disclaimer"
 msgid "Use at your own risk"
-msgstr "Benutzung auf eigene Gefahr"
+msgstr "Gebruik op eigen risico"
 
 msgctxt "#30000"
 msgid "Fritz!Box Callmonitor IP or Name"
-msgstr "Fritz!Box Anrufmonitor IP oder Name"
+msgstr "Fritz!Box Oproepmonitor IP of Naam"
 
 msgctxt "#30001"
 msgid "Exlcude these number(s) from monitoring (separated by comma or space)"
-msgstr "Diese Nummer(n) vom Monitoring ausschliessen (kommagetrennt)"
+msgstr "Deze nummers van monitoren uitsluiten (door komma's gescheiden)"
 
 msgctxt "#30002"
 msgid "Display Time for Message Annotations"
-msgstr "Anzeigedauer für Nachrichten"
+msgstr "Duur van berichten"
 
 msgctxt "#30003"
 msgid "Reduce Volume while incoming Call"
-msgstr "Bei Anruf Lautstärke reduzieren"
+msgstr "Verminder Volume terwijl de inkomende oproep"
 
 msgctxt "#30004"
 msgid "Use Fritz!Box Phonebook for showing Name of Caller"
-msgstr "Fritz!Box Telefonbuch zur Anzeige des Anrufers benutzen"
+msgstr "Gebruik Fritz!Box Telefoonboek om naam van beller te tonen"
 
 msgctxt "#30005"
 msgid "Fritz!Box Username"
-msgstr "Fritz!Box Nutzername"
+msgstr "Fritz!Box Gebruikersnaam"
 
 msgctxt "#30006"
 msgid "Fritz!Box Password"
-msgstr "Fritz!Box Passwort"
+msgstr "Fritz!Box Wachtwoord"
 
 msgctxt "#30007"
 msgid "Use SSL Encryption for Data Exchange"
-msgstr "Datenaustausch verschlüsseln (SSL)"
+msgstr "Versleutelen gegevensuitwisseling (SSL)"
 
 msgctxt "#30008"
 msgid "Also pause Live-TV (only if Timeshift available)"
-msgstr "Live-TV ebenfalls pausieren (Timeshift muss unterstützt werden)"
+msgstr "Live-TV ook pauzeren (alleen als Timeshift beschikbaar)"
 
 msgctxt "#30010"
 msgid "Incoming Call"
-msgstr "Eingehender Anruf"
+msgstr "Binnenkomende oproep"
 
 msgctxt "#30011"
 msgid "Recieving Call from %s (%s)"
-msgstr "Anruf von %s (%s)"
+msgstr "Oproep van %s (%s)"
 
 msgctxt "#30012"
 msgid "unknown"
-msgstr "unbekannt"
+msgstr "onbekend"
 
 msgctxt "#30013"
 msgid "Outgoing Call"
-msgstr "Ausgehender Anruf"
+msgstr "Uitgaande oproep"
 
 msgctxt "#30014"
 msgid "%s is called by %s"
-msgstr "%s wird auf %s angerufen"
+msgstr "%s word opgeroepen door %s"
 
 msgctxt "#30015"
 msgid "Handle outgoing calls same way as incoming calls"
-msgstr "Ausgehende Anrufe wie eingehende Anrufe behandeln"
+msgstr "Uitgaande oproepen ook tonen"
 
 msgctxt "#30016"
 msgid "no number"
-msgstr "keine Nummer"
+msgstr "geen nummer"
 
 msgctxt "#30017"
 msgid "Country code (four digits)"
-msgstr "Landesvorwahl (vierstellig)"
+msgstr "Viercijferige landcode"
 
 msgctxt "#30018"
 msgid "Use all available Phonebooks of Fritz!Box"
-msgstr "Verwende alle verfügbaren Telefonbücher der Fritz!Box"
+msgstr "Gebruik alle bestaande telefoonboeken van de Fritz!Box"
 
 msgctxt "#30019"
 msgid "Already pause/mute in Call Signaling"
-msgstr "Bereits bei Anrufsignalisierung anhalten/stummschalten"
+msgstr "Pauze/mute vroeg in call signalering"
 
 msgctxt "#30020"
 msgid "General"
-msgstr "Allgemein"
+msgstr "Algemeen"
 
 msgctxt "#30021"
 msgid "Phone"
-msgstr "Telefon"
+msgstr "Telefoon"
 
 msgctxt "#30030"
 msgid "Connection Error"
-msgstr "Verbindungsfehler"
+msgstr "Verbindingsfout"
 
 msgctxt "#30031"
 msgid "Fritz!Box not available on %s:%s"
-msgstr "Fritz!Box unter %s:%s nicht erreichbar"
+msgstr "Fritz!Box niet beschikbaar op %s:%s"
 
 msgctxt "#30032"
 msgid "klicktel.de not available"
-msgstr "klicktel.de nicht erreichbar"
+msgstr "klicktel.de niet beschikbaar"
 
 msgctxt "#30033"
 msgid "Login failed"
-msgstr "Anmeldung fehlgeschlagen"
+msgstr "Aanmelden mislukt"
 
 msgctxt "#30034"
 msgid "Check Username and/or Password Settings"
-msgstr "Überprüfe Nutzername und/oder Passwort Einstellungen"
+msgstr "Controleer gebruikersnaam en/of wachtwoord Settings"
 
 msgctxt "#30035"
 msgid "Internal Server Error"
-msgstr "Interner Server Fehler"
+msgstr "Interne Server Fout"
 
 msgctxt "#30036"
 msgid "Check Network Settings of Fritz!Box"
-msgstr "Überprüfe die Netzwerkeinstellungen der Fritz!Box"
+msgstr "Controleer de netwerkinstellingen op de Fritz! Box"
 
 msgctxt "#30037"
 msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
-msgstr "Die Einstellungen wurden geändert. Damit die Einstellungen übernommen werden, muss Kodi neu gestartet werden. Kodi jetzt neu starten?"
+msgstr "De instellingen zijn gewijzigd. Om de instellingen te activeren, moet Kodi worden hernieuwd. Kodi nu opnieuw opstarten?"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
-msgstr "Audio während des Telefonats anhalten"
+msgstr "Audio pauzeren tijdens gesprek"
 
 msgctxt "#30041"
 msgid "Pause Video while Calling"
-msgstr "Video während des Telefonats anhalten"
+msgstr "Video pauzeren tijdens gesprek"
 
 msgctxt "#30042"
 msgid "Stop active Screensaver on incoming Call"
-msgstr "Bei eingehendem Anruf Bildschirmschoner abschalten"
+msgstr "Screensavers uit bij inkomende oproep"
 
 msgctxt "#30043"
 msgid "Reduce Volume to"
-msgstr "Reduziere Lautstärke auf"
+msgstr "Volume verandering tot"
+
+msgctxt "#30044"
+msgid "Fading Volume"
+msgstr "Zachte Volumewijziging"
 
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"
-msgstr "Apple iCloud Telefonbuch zur Anzeige des Anrufers benutzen"
+msgstr "Gebruik Apple iCloud Telefoonboek om naam van beller te tonen"
 
 msgctxt "#30051"
 msgid "Apple iCloud Username"
-msgstr "Apple iCloud Nutzername"
+msgstr "Apple iCloud Gebruikersnaam"
 
 msgctxt "#30052"
 msgid "Apple iCloud Password"
-msgstr "Apple iCloud Passwort"
+msgstr "Apple iCloud Wachtwoord"
 
 msgctxt "#30060"
 msgid "off (Mute)"
-msgstr "aus (Mute)"
+msgstr "uit (Mute)"
 
 msgctxt "#30061"
 msgid "10%"

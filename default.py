@@ -77,7 +77,7 @@ class PlayerProperties(object):
         for cond in self.discCondition: tools.writeLog('act property on %s: %s: %s' % (state, cond.rjust(10), self.discCondition[cond]))
 
     @classmethod
-    def setVolume(cls, volume):
+    def setVolume(cls, volume, fade):
 
         query = {
                 "method": "Application.GetProperties",
@@ -87,8 +87,8 @@ class PlayerProperties(object):
         currVolume = tools.jsonrpc(query).get('volume', 0)
         _d = -2 if currVolume - int(volume) > 0 else 2
         steps = abs(currVolume - int(volume)) / 2
-        if steps > 0:
-            delay = 2000 / steps
+        if steps > 0 and fade:
+            delay = 1200 / steps
             while steps > 0:
                 currVolume += _d
                 query = {
@@ -221,7 +221,7 @@ class FritzCallmonitor(object):
                     if self.__connects == 0:
                         vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                         tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
-                        self.PlayerProps.setVolume(vol)
+                        self.PlayerProps.setVolume(vol, self.Mon.optFade)
                         self.PlayerProps.connCondition['volChanged'] = True
                     self.__connects += 1
                 #
@@ -245,7 +245,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                     tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
-                    self.PlayerProps.setVolume(vol)
+                    self.PlayerProps.setVolume(vol, self.Mon.optFade)
                     self.PlayerProps.connCondition['volChanged'] = True
                 #
                 # handle audio, video & TV
@@ -271,7 +271,7 @@ class FritzCallmonitor(object):
                         and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
                     if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
                         tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
-                        vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'])
+                        vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
                         tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
                     else:
                         tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)

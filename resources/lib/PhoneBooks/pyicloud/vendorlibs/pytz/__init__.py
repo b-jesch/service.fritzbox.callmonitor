@@ -347,7 +347,7 @@ country_timezones = _CountryTimezoneDict()
 
 
 class _CountryNameDict(LazyDict):
-    '''Dictionary proving ISO3166 code -> English name.
+    '''Dictionary proving ISO3166 code -> resource.language.en_gb name.
 
     >>> print(country_names['au'])
     Australia

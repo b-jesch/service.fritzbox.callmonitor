@@ -63,6 +63,7 @@ class Monitor(xbmc.Monitor):
         self.optShowOutgoing = True if ADDON.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
         self.optMute = True if ADDON.getSetting('optMute').upper() == 'TRUE' else False
         self.volume = int(ADDON.getSetting('volume')) * 0.1
+        self.optFade = True if ADDON.getSetting('optFade').upper() == 'TRUE' else False
         self.optPauseAudio = True if ADDON.getSetting('optPauseAudio').upper() == 'TRUE' else False
         self.optPauseVideo = True if ADDON.getSetting('optPauseVideo').upper() == 'TRUE' else False
         self.optPauseTV = True if ADDON.getSetting('optPauseTV').upper() == 'TRUE' else False
