@@ -162,8 +162,8 @@ msgid "Reduce Volume to"
 msgstr "Reduziere Lautstärke auf"
 
 msgctxt "#30044"
-msgid "Fading Volume"
-msgstr "Weiche Lautstärkeänderung"
+msgid "soft fade in/out"
+msgstr "weich ein-/ausblenden"
 
 msgctxt "#30050"
 msgid "Use Apple iCloud Phonebook for showing Name of Caller"

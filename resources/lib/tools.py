@@ -76,6 +76,7 @@ class Monitor(xbmc.Monitor):
         writeLog('handle outgoings: %s' % (self.optShowOutgoing))
         writeLog('Change Volume:    %s' % (self.optMute))
         writeLog('Change to:        %s' % (self.volume))
+        writeLog('Volume fading:    %s' % (self.optFade))
         writeLog('Pause audio:      %s' % (self.optPauseAudio))
         writeLog('Pause video:      %s' % (self.optPauseVideo))
         writeLog('Pause tv:         %s' % (self.optPauseTV))

@@ -66,7 +66,7 @@ class PlayerProperties(object):
 
     def getConnectConditions(self, state):
         self.connCondition.update(self.getCurrentConditions())
-        for cond in self.connCondition: tools.writeLog('act property on %s: %s: %s' % (state, cond.rjust(10), self.connCondition[cond]))
+        for cond in self.connCondition: tools.writeLog('cur property on %s: %s: %s' % (state, cond.rjust(10), self.connCondition[cond]))
 
     def getCallingConditions(self, state):
         self.callCondition.update(self.getCurrentConditions())
@@ -74,7 +74,7 @@ class PlayerProperties(object):
 
     def getDisconnectConditions(self, state):
         self.discCondition.update(self.getCurrentConditions())
-        for cond in self.discCondition: tools.writeLog('act property on %s: %s: %s' % (state, cond.rjust(10), self.discCondition[cond]))
+        for cond in self.discCondition: tools.writeLog('cur property on %s: %s: %s' % (state, cond.rjust(10), self.discCondition[cond]))
 
     @classmethod
     def setVolume(cls, volume, fade):
@@ -118,7 +118,6 @@ class FritzCallmonitor(object):
 
         self.PlayerProps = PlayerProperties()
         self.Mon = tools.Monitor()
-        self.getPhonebook()
 
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
 
@@ -177,14 +176,15 @@ class FritzCallmonitor(object):
                 self.__phonebook = self.__phoneBookFacade.getPhonebook()
                 tools.writeLog('%s entries from %s loaded, %s images cached' % (
                     len(self.__phonebook), self.Mon.server, self.__phoneBookFacade.imagecount()), xbmc.LOGNOTICE)
-            except self.__phoneBookFacade.HostUnreachableException:
-                tools.writeLog('Host %s unreachable' % (self.Mon.server), level=xbmc.LOGERROR)
+            except self.__phoneBookFacade.HostUnreachableException, e:
+                tools.writeLog('Host %s unreachable: %s' % (self.Mon.server, str(e)), level=xbmc.LOGERROR)
                 tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
-            except self.__phoneBookFacade.LoginFailedException:
+            except self.__phoneBookFacade.LoginFailedException, e:
                 tools.writeLog('Login failed. Check username/password', level=xbmc.LOGERROR)
+                tools.writeLog(str(e), level=xbmc.LOGERROR)
                 tools.notify(LOC(30033), LOC(30034), ICON_ERROR)
-            except self.__phoneBookFacade.InternalServerErrorException:
-                tools.writeLog('Internal server error', level=xbmc.LOGERROR)
+            except self.__phoneBookFacade.InternalServerErrorException, e:
+                tools.writeLog('Internal server error: %s' % (str(e)), level=xbmc.LOGERROR)
                 tools.notify(LOC(30035), LOC(30036), ICON_ERROR)
 
     def getRecordByNumber(self, request_number):
@@ -289,8 +289,8 @@ class FritzCallmonitor(object):
                     tools.writeLog('Resume audio, video or tv...', xbmc.LOGNOTICE)
                     xbmc.executebuiltin('PlayerControl(Play)')
             else:
-                tools.writeLog('don\'t handle properties for state %s' % state, xbmc.LOGERROR)
-                self.PlayerProps.getConnectConditions(state)
+                tools.writeLog('unhandled condition for state %s, ignore' % state, xbmc.LOGERROR)
+                # self.PlayerProps.getConnectConditions(state)
         except Exception, e:
             tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
             tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
@@ -364,7 +364,7 @@ class FritzCallmonitor(object):
         except socket.error, e:
             if notify: tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
             tools.writeLog('Could not connect to %s:%s' % (self.Mon.server, LISTENPORT), level=xbmc.LOGERROR)
-            tools.writeLog(e.message, level=xbmc.LOGERROR)
+            tools.writeLog(str(e), level=xbmc.LOGERROR)
             return False
         except Exception, e:
             tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
@@ -378,6 +378,7 @@ class FritzCallmonitor(object):
     def start(self):
 
         if self.connect(notify=True):
+            self.getPhonebook()
 
             # MAIN SERVICE
 

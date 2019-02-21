@@ -162,7 +162,7 @@ msgid "Reduce Volume to"
 msgstr "Volume verandering tot"
 
 msgctxt "#30044"
-msgid "Fading Volume"
+msgid "soft fade in/out"
 msgstr "Zachte Volumewijziging"
 
 msgctxt "#30050"

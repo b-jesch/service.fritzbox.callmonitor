@@ -163,7 +163,7 @@ msgid "Reduce Volume to"
 msgstr ""
 
 msgctxt "#30044"
-msgid "Fading Volume"
+msgid "soft fade in/out"
 msgstr ""
 
 msgctxt "#30050"
