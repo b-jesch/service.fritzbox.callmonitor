@@ -8,6 +8,8 @@ import xml.sax
 import requests
 from requests.auth import HTTPDigestAuth
 from PhoneBookBase import PhoneBookBase
+from .. import tools
+import xbmc
 
 class PytzBox(PhoneBookBase):
     _password = False
@@ -108,9 +110,11 @@ class PytzBox(PhoneBookBase):
                         imagepath = os.path.join(self._imagepath, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
                         with open(imagepath, 'w') as fh: fh.write(pb_image)
                         self._imagecount += 1
-        except IOError, e:
-            raise self.RequestFailedException(e.message)
-        except Exception, e:
+        except IOError as e:
+            tools.writeLog('IOError: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.IOErrorException()
+        except Exception as e:
+            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
             raise self.InternalServerErrorException(e.message)
 
     def getPhonebookList(self):
@@ -124,11 +128,14 @@ class PytzBox(PhoneBookBase):
                                      verify=False)
 
         except socket.error as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except requests.exceptions.ConnectionError as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('Connection error: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except Exception as e:
-            raise self.RequestFailedException(str(e))
+            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.RequestFailedException()
         else:
             if response.status_code == 200:
                 response = response.content
@@ -140,9 +147,11 @@ class PytzBox(PhoneBookBase):
 
                 return list(set(phonbook_ids))
             elif response.status_code == 401:
+                tools.writeLog('401 - Forbidden', xbmc.LOGERROR)
                 raise self.LoginFailedException()
             else:
-                raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
+                tools.writeLog('Request failed with status code: %s' % response.status_code, xbmc.LOGERROR)
+                raise self.RequestFailedException()
 
     def getPhonebook(self, pbid=None):
         if not self._usePhoneBook: return {}
@@ -162,11 +171,14 @@ class PytzBox(PhoneBookBase):
                                               'SOAPACTION': self.__soapaction_phonebook},
                                      verify=False)
         except socket.error as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except requests.exceptions.ConnectionError as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('Connection error: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except Exception as e:
-            raise self.RequestFailedException(str(e))
+            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.RequestFailedException()
         else:
             if response.status_code == 200:
                 response = response.content
@@ -176,20 +188,23 @@ class PytzBox(PhoneBookBase):
                     raise self.LoginFailedException()
                 self.__sid = sids[0]
             elif response.status_code == 401:
+                tools.writeLog('401 - Forbidden', xbmc.LOGERROR)
                 raise self.LoginFailedException()
-            elif response.status_code == 500:
-                raise self.InternalServerErrorException()
             else:
-                raise self.RequestFailedException('Request failed with status code: %s' % response.status_code)
+                tools.writeLog('Request failed with status code: %s' % response.status_code, xbmc.LOGERROR)
+                raise self.RequestFailedException()
 
         try:
             response = requests.get(phonbook_urls[0], verify=False)
         except socket.error as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except IOError as e:
-            raise self.HostUnreachableException(str(e))
+            tools.writeLog('IOError: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.HostUnreachableException()
         except Exception as e:
-            raise self.RequestFailedException(str(e))
+            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            raise self.RequestFailedException()
         else:
             xml_phonebook = response.content
 

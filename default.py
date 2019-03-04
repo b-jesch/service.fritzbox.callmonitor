@@ -176,14 +176,14 @@ class FritzCallmonitor(object):
                 self.__phonebook = self.__phoneBookFacade.getPhonebook()
                 tools.writeLog('%s entries from %s loaded, %s images cached' % (
                     len(self.__phonebook), self.Mon.server, self.__phoneBookFacade.imagecount()), xbmc.LOGNOTICE)
-            except self.__phoneBookFacade.HostUnreachableException, e:
+            except self.__phoneBookFacade.HostUnreachableException as e:
                 tools.writeLog('Host %s unreachable: %s' % (self.Mon.server, str(e)), level=xbmc.LOGERROR)
                 tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
-            except self.__phoneBookFacade.LoginFailedException, e:
+            except self.__phoneBookFacade.LoginFailedException as e:
                 tools.writeLog('Login failed. Check username/password', level=xbmc.LOGERROR)
                 tools.writeLog(str(e), level=xbmc.LOGERROR)
                 tools.notify(LOC(30033), LOC(30034), ICON_ERROR)
-            except self.__phoneBookFacade.InternalServerErrorException, e:
+            except self.__phoneBookFacade.InternalServerErrorException as e:
                 tools.writeLog('Internal server error: %s' % (str(e)), level=xbmc.LOGERROR)
                 tools.notify(LOC(30035), LOC(30036), ICON_ERROR)
 
@@ -291,7 +291,7 @@ class FritzCallmonitor(object):
             else:
                 tools.writeLog('unhandled condition for state %s, ignore' % state, xbmc.LOGERROR)
                 # self.PlayerProps.getConnectConditions(state)
-        except Exception, e:
+        except Exception as e:
             tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
             tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
             tools.writeLog(e.message, level=xbmc.LOGERROR)
@@ -361,12 +361,12 @@ class FritzCallmonitor(object):
             self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__s.settimeout(30)
             self.__s.connect((self.Mon.server, LISTENPORT))
-        except socket.error, e:
+        except socket.error as e:
             if notify: tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
             tools.writeLog('Could not connect to %s:%s' % (self.Mon.server, LISTENPORT), level=xbmc.LOGERROR)
             tools.writeLog(str(e), level=xbmc.LOGERROR)
             return False
-        except Exception, e:
+        except Exception as e:
             tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
             tools.writeLog(e.message, level=xbmc.LOGERROR)
             return False
@@ -407,7 +407,7 @@ class FritzCallmonitor(object):
                 except IndexError:
                     tools.writeLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
-                except Exception, e:
+                except Exception as e:
                     tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
                     tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
                     tools.writeLog(e.message, level=xbmc.LOGERROR)

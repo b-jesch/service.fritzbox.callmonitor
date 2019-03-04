@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from six import with_metaclass
 
-
 class PhoneBookBase(with_metaclass(ABCMeta)):
     _imagepath = None
     _imagecount = None
@@ -20,6 +19,9 @@ class PhoneBookBase(with_metaclass(ABCMeta)):
         pass
 
     class InternalServerErrorException(Exception):
+        pass
+
+    class IOErrorException(Exception):
         pass
 
     @abstractmethod
