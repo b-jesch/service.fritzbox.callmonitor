@@ -95,7 +95,7 @@ class PytzBox(PhoneBookBase):
 
     def cacheImages(self, url, numbers):
 
-        print url
+        tools.writeLog('Cache picture from: %s' % url)
         try:
             response = requests.get(self.__url_file_download[self._encrypt].format(
                 host=self._host,
