@@ -95,7 +95,15 @@ class PytzBox(PhoneBookBase):
 
     def cacheImages(self, url, numbers):
 
-        tools.writeLog('Cache picture from: %s' % url)
+        # mask log output
+        _n = []
+        _mn = []
+
+        for number in numbers:
+            _mn.append(tools.mask(number))
+            _n.append(re.sub('\D', '', number.replace('+', '00')))
+
+        tools.writeLog('Cache picture for %s from %s' % (', '.join(_mn), url))
         try:
             response = requests.get(self.__url_file_download[self._encrypt].format(
                 host=self._host,
@@ -105,17 +113,15 @@ class PytzBox(PhoneBookBase):
             )
             if response.status_code == 200:
                 pb_image = response.content
-                if pb_image is not None:
-                    for number in numbers:
-                        imagepath = os.path.join(self._imagepath, re.sub('\D', '', number.replace('+', '00')) + '.jpg')
-                        with open(imagepath, 'w') as fh: fh.write(pb_image)
-                        self._imagecount += 1
+                for number in _mn:
+                    with open(os.path.join(self._imagepath, number), 'w') as fh: fh.write(pb_image)
+                    self._imagecount += 1
         except IOError as e:
-            tools.writeLog('IOError: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.IOErrorException()
+            tools.writeLog('IOError: %s' % str(e), xbmc.LOGERROR)
+            raise self.IOErrorException(e)
         except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.InternalServerErrorException(e.message)
+            tools.writeLog('unhandled global Exception: %s' % str(e), xbmc.LOGERROR)
+            raise self.InternalServerErrorException(e)
 
     def getPhonebookList(self):
 
