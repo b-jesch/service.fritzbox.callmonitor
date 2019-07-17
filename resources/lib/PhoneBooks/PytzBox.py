@@ -113,7 +113,7 @@ class PytzBox(PhoneBookBase):
             )
             if response.status_code == 200:
                 pb_image = response.content
-                for number in _mn:
+                for number in _n:
                     with open(os.path.join(self._imagepath, number), 'w') as fh: fh.write(pb_image)
                     self._imagecount += 1
         except IOError as e:

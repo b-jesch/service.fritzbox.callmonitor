@@ -1,5 +1,8 @@
 CHANGELOG
 
+2.0.24
+- Changing image cache folder to avoid conficts with some cleaning addons
+
 2.0.21
 - Changes suggested by H3nr1 (kodinerds.net) implemented
 - Introduction of volume fading when audio/video is playing

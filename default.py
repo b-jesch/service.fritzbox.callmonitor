@@ -27,7 +27,7 @@ LOC = ADDON.getLocalizedString
 ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
 ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'blue.png')
 
-IMAGECACHE = os.path.join(ADDONPROFILES, 'cache')
+IMAGECACHE = os.path.join(ADDONPROFILES, 'pb_images')
 if not os.path.exists(IMAGECACHE): os.makedirs(IMAGECACHE, 0755)
 
 # Fritz!Box
