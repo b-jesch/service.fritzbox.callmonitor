@@ -28,7 +28,7 @@ ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
 ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'blue.png')
 
 IMAGECACHE = os.path.join(ADDONPROFILES, 'pb_images')
-if not os.path.exists(IMAGECACHE): os.makedirs(IMAGECACHE, 0755)
+if not os.path.exists(IMAGECACHE): os.makedirs(IMAGECACHE, 0o755)
 
 # Fritz!Box
 
@@ -36,6 +36,7 @@ LISTENPORT = 1012
 HOME = xbmcgui.Window(10000)
 
 # CLASSES
+
 
 class PlayerProperties(object):
     def __init__(self):
@@ -60,8 +61,8 @@ class PlayerProperties(object):
                 "method": "Application.GetProperties",
                 "params": {"properties": ["volume"]}
                 }
-        res = tools.jsonrpc(query)
-        if res is not None: _cond['volume'] = res.get('volume', 0)
+
+        _cond['volume'] = int(tools.jsonrpc(query).get('volume', 0))
         return _cond
 
     def getConnectConditions(self, state):
@@ -76,24 +77,24 @@ class PlayerProperties(object):
         self.discCondition.update(self.getCurrentConditions())
         for cond in self.discCondition: tools.writeLog('cur property on %s: %s: %s' % (state, cond.rjust(10), self.discCondition[cond]))
 
-    @classmethod
-    def setVolume(cls, volume, fade):
+    def setVolume(self, volume, fade):
 
         query = {
                 "method": "Application.GetProperties",
                 "params": {"properties": ["volume"]}
                 }
 
-        currVolume = tools.jsonrpc(query).get('volume', 0)
+        currVolume = int(tools.jsonrpc(query).get('volume', 0))
+        res = currVolume
         _d = -2 if currVolume - int(volume) > 0 else 2
         steps = abs(currVolume - int(volume)) / 2
         if steps > 0 and fade:
-            delay = 1200 / steps
+            delay = int(1200 / steps)
             while steps > 0:
                 currVolume += _d
                 query = {
                         "method": "Application.SetVolume",
-                        "params": {"volume": currVolume}
+                        "params": {"volume": int(currVolume)}
                         }
                 res = tools.jsonrpc(query)
                 steps -= 1
@@ -118,48 +119,25 @@ class FritzCallmonitor(object):
 
         self.PlayerProps = PlayerProperties()
         self.Mon = tools.Monitor()
-
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
 
         HOME.setProperty('FritzCallMon.InCall', 'false')
 
-    class CallMonitorLine(dict):
+    def CallMonitorLine(self, line):
 
-        def __init__(self, line):
-            if isinstance(line, str):
-
-                token = line.split(';')
-                self.command = token[1]
-                self['connection_id'] = token[2]
-
-                if self.command == 'CALL':
-                    self['extension'] = token[3]
-                    self['number_used'] = token[4]
-                    self['number_called'] = token[5]
-                    self['sip'] = token[6]
-
-                elif self.command == 'RING':
-                    self['date'] = token[0]
-                    self['number_caller'] = token[3]
-                    self['number_called'] = token[4]
-                    self['sip'] = token[5]
-
-                elif self.command == 'CONNECT':
-                    self['date'] = token[0]
-                    self['extension'] = token[3]
-                    self['number'] = token[4]
-
-                elif self.command == 'DISCONNECT':
-                    self['date'] = token[0]
-                    self['duration'] = token[3]
-
-        def __getattr__(self, item):
-            if item in self:
-                return self[item]
-            else:
-                return False
-
-    # END OF CLASS CallMonitorLine #
+        items = dict()
+        if len(line) > 0:
+            token = line.split(';')
+            items.update({'command': token[1], 'connection_id': token[2]})
+            if items['command'] == 'CALL':
+                items.update({'extension': token[3], 'number_used': token[4], 'number_called': token[5], 'sip': token[6]})
+            elif items['command'] == 'RING':
+                items.update({'date': token[0], 'number_caller': token[3], 'number_called': token[4], 'sip': token[5]})
+            elif items['command'] == 'CONNECT':
+                items.update({'date': token[0], 'extension': token[3], 'number': token[4]})
+            elif items['command'] == 'DISCONNECT':
+                items.update({'date': token[0], 'duration': token[3]})
+        return items
 
     # Get the Phonebook
 
@@ -208,7 +186,7 @@ class FritzCallmonitor(object):
 
     def handlePlayerProps(self, state):
 
-        tools.writeLog('Handle Player Properties for state \'%s\'' % (state))
+        tools.writeLog('Handle Player Properties for state \'%s\'' % state)
         try:
             if self.Mon.optEarlyPause and (state == 'incoming' or state == 'outgoing'):
                 self.PlayerProps.getConnectConditions(state)
@@ -220,7 +198,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     if self.__connects == 0:
                         vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                        tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                        tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
                         self.PlayerProps.setVolume(vol, self.Mon.optFade)
                         self.PlayerProps.connCondition['volChanged'] = True
                     self.__connects += 1
@@ -244,7 +222,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('muted', False) and \
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                    tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                    tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
                     self.PlayerProps.setVolume(vol, self.Mon.optFade)
                     self.PlayerProps.connCondition['volChanged'] = True
                 #
@@ -272,7 +250,7 @@ class FritzCallmonitor(object):
                     if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
                         tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
                         vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
-                        tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
+                        tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGNOTICE)
                     else:
                         tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
                     self.PlayerProps.connCondition['volChanged'] = False
@@ -292,14 +270,13 @@ class FritzCallmonitor(object):
                 tools.writeLog('unhandled condition for state %s, ignore' % state, xbmc.LOGERROR)
                 # self.PlayerProps.getConnectConditions(state)
         except Exception as e:
-            tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
-            tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
-            tools.writeLog(e.message, level=xbmc.LOGERROR)
-
+            tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), level=xbmc.LOGERROR)
+            tools.writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
+            tools.writeLog(e.args, level=xbmc.LOGERROR)
 
     def handleOutgoingCall(self, line):
 
-        if line.number_used in self.Mon.exnum_list:
+        if line['number_used'] in self.Mon.exnum_list:
             self.__hide = True
             return
 
@@ -307,23 +284,23 @@ class FritzCallmonitor(object):
 
             self.handlePlayerProps('outgoing')
 
-            record = self.getRecordByNumber(line.number_called)
+            record = self.getRecordByNumber(line['number_called'])
             name = LOC(30012) if record['name'] == '' else record['name']
             icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
-            tools.notify(LOC(30013), LOC(30014) % (name, line.number_called), icon, deactivateSS=True)
-            tools.writeLog('Outgoing call from %s to %s' % (tools.mask(line.number_used),
-                                                            tools.mask(line.number_called)), xbmc.LOGNOTICE)
+            tools.notify(LOC(30013), LOC(30014) % (name, line['number_called']), icon, deactivateSS=True)
+            tools.writeLog('Outgoing call from %s to %s' % (tools.mask(line['number_used']),
+                                                            tools.mask(line['number_called'])), xbmc.LOGNOTICE)
 
     def handleIncomingCall(self, line):
 
-        if line.number_called in self.Mon.exnum_list:
+        if line['number_called'] in self.Mon.exnum_list:
             self.__hide = True
             return
 
         self.handlePlayerProps('incoming')
 
-        if len(line.number_caller) > 0:
-            caller_num = line.number_caller
+        if len(line['number_caller']) > 0:
+            caller_num = line['number_caller']
             tools.writeLog('trying to resolve name from incoming number %s' % (tools.mask(caller_num)), xbmc.LOGNOTICE)
             record = self.getRecordByNumber(caller_num)
             name = record['name']
@@ -351,7 +328,7 @@ class FritzCallmonitor(object):
             HOME.setProperty('FritzCallMon.InCall', 'false')
             if not self.__hide: self.handlePlayerProps('disconnected')
         else:
-            tools.writeLog('still hold %s connection(s)' % (self.__connects), xbmc.LOGNOTICE)
+            tools.writeLog('still hold %s connection(s)' % self.__connects, xbmc.LOGNOTICE)
 
     def connect(self, notify=False):
         if self.__s is not None:
@@ -364,11 +341,12 @@ class FritzCallmonitor(object):
         except socket.error as e:
             if notify: tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
             tools.writeLog('Could not connect to %s:%s' % (self.Mon.server, LISTENPORT), level=xbmc.LOGERROR)
-            tools.writeLog(str(e), level=xbmc.LOGERROR)
+            tools.writeLog(e, level=xbmc.LOGERROR)
             return False
         except Exception as e:
-            tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
-            tools.writeLog(e.message, level=xbmc.LOGERROR)
+            tools.writeLog('Error at line %s' % sys.exc_info()[-1].tb_lineno, xbmc.LOGERROR)
+            tools.writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
+            tools.writeLog(e.args, level=xbmc.LOGERROR)
             return False
         else:
             tools.writeLog('Connected, listen to %s on port %s' % (self.Mon.server, LISTENPORT), xbmc.LOGNOTICE)
@@ -382,35 +360,29 @@ class FritzCallmonitor(object):
 
             # MAIN SERVICE
 
-            while not xbmc.abortRequested:
-
-                # ToDo: investigate more from https://pymotw.com/2/select/index.html#module-select
-                # i.e check exception handling
-
+            while not self.Mon.abortRequested():
                 try:
                     fbdata = self.__s.recv(512)
-                    line = self.CallMonitorLine(fbdata)
-
-                    {
-                        'CALL': self.handleOutgoingCall,
-                        'RING': self.handleIncomingCall,
-                        'CONNECT': self.handleConnected,
-                        'DISCONNECT': self.handleDisconnected
-                    }.get(line.command)(line)
+                    line = self.CallMonitorLine(str(fbdata))
+                    if line['command'] == 'CALL': self.handleOutgoingCall(line)
+                    elif line['command'] == 'RING': self.handleIncomingCall(line)
+                    elif line['command'] == 'CONNECT': self.handleConnected(line)
+                    elif line['command'] == 'DISCONNECT': self.handleDisconnected(line)
+                    else: pass
 
                 except socket.timeout:
                     pass
-                except socket.error, e:
-                    tools.writeLog('No connection to %s, try to respawn' % (self.Mon.server), level=xbmc.LOGERROR)
-                    tools.writeLog(e.message, level=xbmc.LOGERROR)
+                except socket.error as e:
+                    tools.writeLog('No connection to %s, try to respawn' % self.Mon.server, level=xbmc.LOGERROR)
+                    tools.writeLog(e.strerror, level=xbmc.LOGERROR)
                     self.connect()
-                except IndexError:
+                except KeyError:
                     tools.writeLog('Communication failure', level=xbmc.LOGERROR)
                     self.connect()
                 except Exception as e:
-                    tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
-                    tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
-                    tools.writeLog(e.message, level=xbmc.LOGERROR)
+                    tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), level=xbmc.LOGERROR)
+                    tools.writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
+                    tools.writeLog(e.args, level=xbmc.LOGERROR)
 
                 xbmc.sleep(500)
 
@@ -422,4 +394,4 @@ if __name__ == '__main__':
     CallMon = FritzCallmonitor()
     CallMon.start()
     del CallMon
-tools.writeLog('Monitoring finished', xbmc.LOGNOTICE)
+tools.writeLog('Monitoring finished', level=xbmc.LOGNOTICE)
