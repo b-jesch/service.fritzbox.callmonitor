@@ -7,7 +7,7 @@ import socket
 import xml.sax
 import requests
 from requests.auth import HTTPDigestAuth
-from PhoneBookBase import PhoneBookBase
+from .PhoneBookBase import PhoneBookBase
 from .. import tools
 import xbmc
 
@@ -111,6 +111,7 @@ class PytzBox(PhoneBookBase):
                 sid=self.__sid),
                 verify=False
             )
+
             if response.status_code == 200:
                 pb_image = response.content
                 for number in _n:
@@ -134,13 +135,13 @@ class PytzBox(PhoneBookBase):
                                      verify=False)
 
         except socket.error as e:
-            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Socket error: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except requests.exceptions.ConnectionError as e:
-            tools.writeLog('Connection error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Connection error: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('unhandled global Exception: %s' % e.args, xbmc.LOGERROR)
             raise self.RequestFailedException()
         else:
             if response.status_code == 200:
@@ -176,14 +177,15 @@ class PytzBox(PhoneBookBase):
                                      headers={'Content-Type': 'text/xml; charset="utf-8"',
                                               'SOAPACTION': self.__soapaction_phonebook},
                                      verify=False)
+
         except socket.error as e:
-            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Socket error: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except requests.exceptions.ConnectionError as e:
-            tools.writeLog('Connection error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Connection error: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('unhandled global Exception: %s' % e.args, xbmc.LOGERROR)
             raise self.RequestFailedException()
         else:
             if response.status_code == 200:
@@ -203,13 +205,13 @@ class PytzBox(PhoneBookBase):
         try:
             response = requests.get(phonbook_urls[0], verify=False)
         except socket.error as e:
-            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Socket error: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except IOError as e:
-            tools.writeLog('IOError: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('IOError: %s' % e.strerror, xbmc.LOGERROR)
             raise self.HostUnreachableException()
         except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('unhandled global Exception: %s' % e.args, xbmc.LOGERROR)
             raise self.RequestFailedException()
         else:
             xml_phonebook = response.content

@@ -7,13 +7,13 @@ import re
 import xbmc
 import xbmcaddon
 
-from PhoneBookBase import PhoneBookBase
+from .PhoneBookBase import PhoneBookBase
 
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
 
 def notifyLog(message, level=xbmc.LOGNOTICE):
-    xbmc.log('[%s] %s' % (__addonname__, message.encode('utf-8')), level)
+    xbmc.log('[%s] %s' % (__addonname__, message), level)
 
 def _find_phone_book_classes():
     directory = os.path.dirname(os.path.abspath(__file__))

@@ -11,16 +11,16 @@ ADDONNAME = sys.modules['__main__'].ADDONNAME
 ICON_OK = sys.modules['__main__'].ICON_OK
 
 def writeLog(message, level=xbmc.LOGDEBUG):
-    xbmc.log('[%s] %s' % (ADDONNAME, message.encode('utf-8')), level)
+    xbmc.log('[%s] %s' % (ADDONNAME, message), level)
 
 def jsonrpc(query):
     querystring = {"jsonrpc": "2.0", "id": 1}
     querystring.update(query)
     try:
-        response = json.loads(xbmc.executeJSONRPC(json.dumps(querystring, encoding='utf-8')))
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(querystring)))
         if 'result' in response: return response['result']
-    except TypeError, e:
-        writeLog('Error executing JSON RPC: %s' % (e.message), xbmc.LOGERROR)
+    except TypeError as e:
+        writeLog('Error executing JSON RPC: %s' % (e.args), xbmc.LOGERROR)
     return None
 
 def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
@@ -30,7 +30,7 @@ def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
         }
         jsonrpc(query)
 
-    xbmcgui.Dialog().notification(header.encode('utf-8'), message.encode('utf-8'), icon, dispTime)
+    xbmcgui.Dialog().notification(header, message, icon, dispTime)
 
 def mask(string):
     if len(string) > 4: return '%s%s%s' % (string[0], '*' * (len(string) - 3), string[-2:])

@@ -10,8 +10,8 @@ sys.path.append(os.path.join(base_dir, "pyicloud", "vendorlibs"))
 
 import hashlib
 
-from PhoneBookBase import PhoneBookBase
-from pyicloud import PyiCloudService
+from .PhoneBookBase import PhoneBookBase
+from .pyicloud import PyiCloudService
 
 
 class AppleCloud(PhoneBookBase):
