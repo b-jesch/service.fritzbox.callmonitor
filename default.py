@@ -349,7 +349,7 @@ class FritzCallmonitor(object):
             HOME.setProperty('FritzCallMon.InCall', 'false')
             if not self.__hide:
                 self.handlePlayerProps('disconnected')
-                tools.notify(LOC(30038), LOC(30032) % (divmod(line.duration, 60)[0], divmod(line.duration, 60)[1]),
+                tools.notify(LOC(30038), LOC(30032) % (divmod(int(line.duration), 60)[0], divmod(int(line.duration), 60)[1]),
                              self.callerImage, self.Mon.dispMsgTime, deactivateSS=True)
         else:
             tools.writeLog('still hold %s connection(s)' % (self.__connects), xbmc.LOGNOTICE)
