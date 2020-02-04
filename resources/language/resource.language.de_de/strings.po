@@ -123,7 +123,7 @@ msgstr "Fritz!Box unter %s:%s nicht erreichbar"
 
 msgctxt "#30032"
 msgid "Call took %s minute(s) and %s seconds"
-msgstr "Telefonat dauerte %s Minute(n) und % Sekunden"
+msgstr "Telefonat dauerte %s Min. und %s Sek."
 
 msgctxt "#30033"
 msgid "Login failed"
