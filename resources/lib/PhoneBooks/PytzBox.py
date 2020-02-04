@@ -169,6 +169,7 @@ class PytzBox(PhoneBookBase):
                 result.update(self.getPhonebook(pbid=this_id))
             return result
 
+
         try:
             response = requests.post(self.__url_contact[self._encrypt].format(host=self._host),
                                      auth=HTTPDigestAuth(self._user, self._password),
@@ -177,41 +178,29 @@ class PytzBox(PhoneBookBase):
                                               'SOAPACTION': self.__soapaction_phonebook},
                                      verify=False)
         except socket.error as e:
-            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
+            tools.writeLog('Socket error: %s' % str(e), xbmc.LOGERROR)
             raise self.HostUnreachableException()
-        except requests.exceptions.ConnectionError as e:
-            tools.writeLog('Connection error: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.HostUnreachableException()
+        except requests.RequestException as e:
+            tools.writeLog('Request Exception: %s' % str(e), xbmc.LOGERROR)
+            raise self.RequestFailedException
         except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.RequestFailedException()
-        else:
-            if response.status_code == 200:
-                response = response.content
-                phonbook_urls = re.findall(r'<NewPhonebookURL>(.*)</NewPhonebookURL>', response.decode('utf-8'))
-                sids = re.findall(r'sid=([0-9a-fA-F]*)', response.decode('utf-8'))
-                if not len(sids):
-                    raise self.LoginFailedException()
-                self.__sid = sids[0]
-            elif response.status_code == 401:
-                tools.writeLog('401 - Forbidden', xbmc.LOGERROR)
+            tools.writeLog('unhandled Exception: %s' % str(e), xbmc.LOGERROR)
+            raise self.InternalServerErrorException
+
+        tools.writeLog('Response status from FB: %s' % response.status_code)
+        if response.status_code == 200:
+            response = response.content
+            phonbook_urls = re.findall(r'<NewPhonebookURL>(.*)</NewPhonebookURL>', response.decode('utf-8'))
+            sids = re.findall(r'sid=([0-9a-fA-F]*)', response.decode('utf-8'))
+            if not len(sids):
+                tools.writeLog(response)
+                tools.writeLog('No SIDs found: %s' % str(sids))
                 raise self.LoginFailedException()
-            else:
-                tools.writeLog('Request failed with status code: %s' % response.status_code, xbmc.LOGERROR)
-                raise self.RequestFailedException()
-
-        try:
-            response = requests.get(phonbook_urls[0], verify=False)
-        except socket.error as e:
-            tools.writeLog('Socket error: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.HostUnreachableException()
-        except IOError as e:
-            tools.writeLog('IOError: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.HostUnreachableException()
-        except Exception as e:
-            tools.writeLog('unhandled global Exception: %s' % str(e.message), xbmc.LOGERROR)
-            raise self.RequestFailedException()
+            self.__sid = sids[0]
         else:
-            xml_phonebook = response.content
+            tools.writeLog('Request failed with status code: %s' % response.status_code, xbmc.LOGERROR)
+            raise self.RequestFailedException()
 
+        response = requests.get(phonbook_urls[0], verify=False)
+        xml_phonebook = response.content
         return self.__analyzeFritzboxPhonebook(xml_phonebook)

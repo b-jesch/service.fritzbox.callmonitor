@@ -1,4 +1,6 @@
 CHANGELOG
+2.0.26
+- Display of call duration after end of call implemented
 
 2.0.20
 - Crash fixed while processing external phonebooks (e.g. Google Phonebook) and FritzOS 7.01,

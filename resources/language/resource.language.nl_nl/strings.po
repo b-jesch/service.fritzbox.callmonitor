@@ -122,8 +122,8 @@ msgid "Fritz!Box not available on %s:%s"
 msgstr "Fritz!Box niet beschikbaar op %s:%s"
 
 msgctxt "#30032"
-msgid "klicktel.de not available"
-msgstr "klicktel.de niet beschikbaar"
+msgid "Call took %s"
+msgstr "Oproep duurde %s"
 
 msgctxt "#30033"
 msgid "Login failed"
@@ -144,6 +144,10 @@ msgstr "Controleer de netwerkinstellingen op de Fritz! Box"
 msgctxt "#30037"
 msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
 msgstr "De instellingen zijn gewijzigd. Om de instellingen te activeren, moet Kodi worden hernieuwd. Kodi nu opnieuw opstarten?"
+
+msgctxt "#30038"
+msgid "Call finished"
+msgstr "Oproep werd beëindigd"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
