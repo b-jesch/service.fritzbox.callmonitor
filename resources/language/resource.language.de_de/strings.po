@@ -122,8 +122,8 @@ msgid "Fritz!Box not available on %s:%s"
 msgstr "Fritz!Box unter %s:%s nicht erreichbar"
 
 msgctxt "#30032"
-msgid "klicktel.de not available"
-msgstr "klicktel.de nicht erreichbar"
+msgid "Call took %s"
+msgstr "Anruf dauerte %s"
 
 msgctxt "#30033"
 msgid "Login failed"
@@ -144,6 +144,10 @@ msgstr "Überprüfe die Netzwerkeinstellungen der Fritz!Box"
 msgctxt "#30037"
 msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
 msgstr "Die Einstellungen wurden geändert. Damit die Einstellungen übernommen werden, muss Kodi neu gestartet werden. Kodi jetzt neu starten?"
+
+msgctxt "#30038"
+msgid "Call finished"
+msgstr "Anruf wurde beendet"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"

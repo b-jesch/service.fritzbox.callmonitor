@@ -123,7 +123,7 @@ msgid "Fritz!Box not available on %s:%s"
 msgstr ""
 
 msgctxt "#30032"
-msgid "klicktel.de not available"
+msgid "Call took %s"
 msgstr ""
 
 msgctxt "#30033"
@@ -144,6 +144,10 @@ msgstr ""
 
 msgctxt "#30037"
 msgid "Settings changed. In order to take them effect, You must restart kodi. Do You wish to restart now?"
+msgstr ""
+
+msgctxt "#30038"
+msgid "Call finished"
 msgstr ""
 
 msgctxt "#30040"
