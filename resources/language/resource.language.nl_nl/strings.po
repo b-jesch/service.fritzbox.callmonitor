@@ -122,8 +122,8 @@ msgid "Fritz!Box not available on %s:%s"
 msgstr "Fritz!Box niet beschikbaar op %s:%s"
 
 msgctxt "#30032"
-msgid "Call took %s"
-msgstr "Oproep duurde %s"
+msgid "Call took %s minute(s) and %s seconds"
+msgstr "Oproep duurde %s minuten en %s seconden"
 
 msgctxt "#30033"
 msgid "Login failed"
@@ -146,8 +146,8 @@ msgid "Settings changed. In order to take them effect, You must restart kodi. Do
 msgstr "De instellingen zijn gewijzigd. Om de instellingen te activeren, moet Kodi worden hernieuwd. Kodi nu opnieuw opstarten?"
 
 msgctxt "#30038"
-msgid "Call finished"
-msgstr "Oproep werd beëindigd"
+msgid "Phone Call was ended"
+msgstr "Telefoongesprek is beëindigd"
 
 msgctxt "#30040"
 msgid "Pause Audio while Calling"
