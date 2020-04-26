@@ -217,3 +217,43 @@ msgstr ""
 msgctxt "#30069"
 msgid "90%"
 msgstr ""
+
+msgctxt "#30070"
+msgid "3 seconds"
+msgstr ""
+
+msgctxt "#30071"
+msgid "4 seconds"
+msgstr ""
+
+msgctxt "#30072"
+msgid "5 seconds"
+msgstr ""
+
+msgctxt "#30073"
+msgid "6 seconds"
+msgstr ""
+
+msgctxt "#30074"
+msgid "7 seconds"
+msgstr ""
+
+msgctxt "#30075"
+msgid "8 seconds"
+msgstr ""
+
+msgctxt "#30076"
+msgid "9 seconds"
+msgstr ""
+
+msgctxt "#30077"
+msgid "10 seconds"
+msgstr ""
+
+msgctxt "#30078"
+msgid "15 seconds"
+msgstr ""
+
+msgctxt "#30079"
+msgid "20 seconds"
+msgstr ""
