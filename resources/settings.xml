@@ -13,7 +13,7 @@
 			</group>
 			<group id="2">
 				<setting help="" id="dispTime" label="30002" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default>5 sec</default>
 					<constraints>
 						<options>
@@ -47,7 +47,7 @@
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="optPauseTV" label="30008" type="boolean">
-					<level>0</level>
+					<level>2</level>
 					<default>false</default>
 					<dependencies>
 						<dependency type="enable">
@@ -57,12 +57,12 @@
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="optMute" label="30003" type="boolean">
-					<level>0</level>
+					<level>1</level>
 					<default>true</default>
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="volume" label="30043" type="integer">
-					<level>0</level>
+					<level>2</level>
 					<default>5</default>
 					<constraints>
 						<options>
@@ -86,7 +86,7 @@
 					<control format="string" type="spinner"/>
 				</setting>
 				<setting help="" id="optFade" label="30044" type="boolean">
-					<level>0</level>
+					<level>2</level>
 					<default>false</default>
 					<dependencies>
 						<dependency type="enable">
@@ -96,7 +96,7 @@
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="optEarlyPause" label="30019" type="boolean">
-					<level>0</level>
+					<level>1</level>
 					<default>false</default>
 					<control type="toggle"/>
 				</setting>
@@ -112,7 +112,7 @@
 					</control>
 				</setting>
 				<setting help="" id="excludeNums" label="30001" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default/>
 					<constraints>
 						<allowempty>true</allowempty>
@@ -124,12 +124,12 @@
 			</group>
 			<group id="2">
 				<setting help="" id="usePhonebook" label="30004" type="boolean">
-					<level>0</level>
+					<level>1</level>
 					<default>false</default>
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="phoneBookID" label="30018" type="boolean">
-					<level>0</level>
+					<level>1</level>
 					<default>true</default>
 					<dependencies>
 						<dependency type="enable">
@@ -139,7 +139,7 @@
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="fbUsername" label="30005" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default/>
 					<constraints>
 						<allowempty>true</allowempty>
@@ -154,7 +154,7 @@
 					</control>
 				</setting>
 				<setting help="" id="fbPasswd" label="30006" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default/>
 					<constraints>
 						<allowempty>true</allowempty>
@@ -170,7 +170,7 @@
 					</control>
 				</setting>
 				<setting help="" id="fbSSL" label="30007" type="boolean">
-					<level>0</level>
+					<level>2</level>
 					<default>false</default>
 					<dependencies>
 						<dependency type="enable">
@@ -182,12 +182,12 @@
 			</group>
 			<group id="3">
 				<setting help="" id="use_icloud" label="30050" type="boolean">
-					<level>0</level>
+					<level>1</level>
 					<default>false</default>
 					<control type="toggle"/>
 				</setting>
 				<setting help="" id="icloud_user" label="30051" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default/>
 					<constraints>
 						<allowempty>true</allowempty>
@@ -202,7 +202,7 @@
 					</control>
 				</setting>
 				<setting help="" id="icloud_password" label="30052" type="string">
-					<level>0</level>
+					<level>1</level>
 					<default/>
 					<constraints>
 						<allowempty>true</allowempty>
