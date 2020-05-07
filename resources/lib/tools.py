@@ -48,29 +48,25 @@ class Monitor(xbmc.Monitor):
         if dialog.yesno(ADDONNAME, ADDON.getLocalizedString(30037)): xbmc.executebuiltin('RestartApp()')
 
     def get_settings(self):
-        __exnums = ADDON.getSetting('excludeNums')
 
         # transform possible userinput from e.g. 'p1, p2,,   p3 p4  '
         # to a list like this: ['p1','p2','p3','p4']
+        self.exnum_list = ' '.join(ADDON.getSettingString('excludeNums').replace(',', ' ').split()).split()
 
-        __exnums = __exnums.replace(',', ' ')
-        __exnums = __exnums.join(' '.join(line.split()) for line in __exnums.splitlines())
-
-        self.exnum_list = __exnums.split(' ')
-        self.server = ADDON.getSetting('phoneserver')
+        self.server = ADDON.getSettingString('phoneserver')
         self.dispMsgTime = int(re.match('\d+', ADDON.getSetting('dispTime')).group()) * 1000
-        self.cCode = ADDON.getSetting('cCode')
-        self.optShowOutgoing = True if ADDON.getSetting('showOutgoingCalls').upper() == 'TRUE' else False
-        self.optMute = True if ADDON.getSetting('optMute').upper() == 'TRUE' else False
+        self.cCode = ADDON.getSettingString('cCode')
+        self.optShowOutgoing = ADDON.getSettingBool('showOutgoingCalls')
+        self.optMute = ADDON.getSettingBool('optMute')
         self.volume = int(ADDON.getSetting('volume')) * 0.1
-        self.optFade = True if ADDON.getSetting('optFade').upper() == 'TRUE' else False
-        self.optPauseAudio = True if ADDON.getSetting('optPauseAudio').upper() == 'TRUE' else False
-        self.optPauseVideo = True if ADDON.getSetting('optPauseVideo').upper() == 'TRUE' else False
-        self.optPauseTV = True if ADDON.getSetting('optPauseTV').upper() == 'TRUE' else False
-        self.optEarlyPause = True if ADDON.getSetting('optEarlyPause').upper() == 'TRUE' else False
+        self.optFade = ADDON.getSettingBool('optFade')
+        self.optPauseAudio = ADDON.getSettingBool('optPauseAudio')
+        self.optPauseVideo = ADDON.getSettingBool('optPauseVideo')
+        self.optPauseTV = ADDON.getSettingBool('optPauseTV')
+        self.optEarlyPause = ADDON.getSettingBool('optEarlyPause')
 
         writeLog('Server IP/name:   %s' % (self.server))
-        writeLog('excluded Numbers: %s' % (__exnums))
+        writeLog('excluded Numbers: %s' % (', '.join(self.exnum_list)))
         writeLog('Display time:     %s' % (self.dispMsgTime))
         writeLog('Country code:     %s' % (self.cCode))
         writeLog('handle outgoings: %s' % (self.optShowOutgoing))

@@ -1,5 +1,11 @@
 CHANGELOG
 
+3.0.4+matrix
+- Changes in toollib, Introducing settings level
+
+3.0.x
+- Matrix compatible
+
 2.0.20
 - Crash fixed while processing external phonebooks (e.g. Google Phonebook) and FritzOS 7.01,
   but online images will not be loaded yet - sorry.
