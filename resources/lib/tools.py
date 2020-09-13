@@ -40,7 +40,7 @@ class Monitor(xbmc.Monitor):
 
     def __init__(self):
         self.get_settings()
-        writeLog('Settings loaded', xbmc.LOGNOTICE)
+        writeLog('Settings loaded', xbmc.LOGINFO)
 
     @classmethod
     def onSettingsChanged(cls):

@@ -153,7 +153,7 @@ class FritzCallmonitor(object):
             try:
                 self.__phonebook = self.__phoneBookFacade.getPhonebook()
                 tools.writeLog('%s entries from %s loaded, %s images cached' % (
-                    len(self.__phonebook), self.Mon.server, self.__phoneBookFacade.imagecount()), xbmc.LOGNOTICE)
+                    len(self.__phonebook), self.Mon.server, self.__phoneBookFacade.imagecount()), xbmc.LOGINFO)
             except self.__phoneBookFacade.HostUnreachableException as e:
                 tools.writeLog('Host %s unreachable: %s' % (self.Mon.server, str(e)), level=xbmc.LOGERROR)
                 tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
@@ -174,11 +174,11 @@ class FritzCallmonitor(object):
             for item in self.__phonebook:
                 for number in self.__phonebook[item]['numbers']:
                     if self.__phoneBookFacade.compareNumbers(number, request_number, ccode=self.Mon.cCode):
-                        tools.writeLog('Match an entry in database for %s: %s' % (tools.mask(request_number), tools.mask(item)), xbmc.LOGNOTICE)
+                        tools.writeLog('Match an entry in database for %s: %s' % (tools.mask(request_number), tools.mask(item)), xbmc.LOGINFO)
                         name = item
                         fname = os.path.join(IMAGECACHE, re.sub('\D', '', number.replace('+', '00')))
                         if os.path.isfile(fname):
-                            tools.writeLog('Load image from cache', xbmc.LOGNOTICE)
+                            tools.writeLog('Load image from cache', xbmc.LOGINFO)
                             imageBMP = fname
                             break
 
@@ -198,7 +198,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     if self.__connects == 0:
                         vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                        tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
+                        tools.writeLog('Change volume to %s' % vol, xbmc.LOGINFO)
                         self.PlayerProps.setVolume(vol, self.Mon.optFade)
                         self.PlayerProps.connCondition['volChanged'] = True
                     self.__connects += 1
@@ -209,7 +209,7 @@ class FritzCallmonitor(object):
                         or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
                             and not self.PlayerProps.connCondition['playTV']) \
                         or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
-                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
+                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')
                 self.PlayerProps.getCallingConditions(state)
 
@@ -222,7 +222,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('muted', False) and \
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                    tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
+                    tools.writeLog('Change volume to %s' % vol, xbmc.LOGINFO)
                     self.PlayerProps.setVolume(vol, self.Mon.optFade)
                     self.PlayerProps.connCondition['volChanged'] = True
                 #
@@ -232,7 +232,7 @@ class FritzCallmonitor(object):
                         or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
                             and not self.PlayerProps.connCondition['playTV']) \
                         or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
-                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGNOTICE)
+                    tools.writeLog('Pausing audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')
                 self.PlayerProps.getCallingConditions(state)
 
@@ -248,11 +248,11 @@ class FritzCallmonitor(object):
                 if self.Mon.optMute and not self.PlayerProps.connCondition.get('muted', False) \
                         and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
                     if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
-                        tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
+                        tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGINFO)
                         vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
-                        tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGNOTICE)
+                        tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGINFO)
                     else:
-                        tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
+                        tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGINFO)
                     self.PlayerProps.connCondition['volChanged'] = False
 
                 #
@@ -264,7 +264,7 @@ class FritzCallmonitor(object):
                             and not self.PlayerProps.discCondition['playVideo']) \
                         or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']
                             and not self.PlayerProps.discCondition['playTV']):
-                    tools.writeLog('Resume audio, video or tv...', xbmc.LOGNOTICE)
+                    tools.writeLog('Resume audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')
             else:
                 tools.writeLog('unhandled condition for state %s, ignore' % state, xbmc.LOGERROR)
@@ -289,7 +289,7 @@ class FritzCallmonitor(object):
             icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
             tools.notify(LOC(30013), LOC(30014) % (name, line['number_called']), icon, deactivateSS=True)
             tools.writeLog('Outgoing call from %s to %s' % (tools.mask(line['number_used']),
-                                                            tools.mask(line['number_called'])), xbmc.LOGNOTICE)
+                                                            tools.mask(line['number_called'])), xbmc.LOGINFO)
 
     def handleIncomingCall(self, line):
 
@@ -301,7 +301,7 @@ class FritzCallmonitor(object):
 
         if len(line['number_caller']) > 0:
             caller_num = line['number_caller']
-            tools.writeLog('trying to resolve name from incoming number %s' % (tools.mask(caller_num)), xbmc.LOGNOTICE)
+            tools.writeLog('trying to resolve name from incoming number %s' % (tools.mask(caller_num)), xbmc.LOGINFO)
             record = self.getRecordByNumber(caller_num)
             name = record['name']
             icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
@@ -313,22 +313,22 @@ class FritzCallmonitor(object):
             name = LOC(30012)
             icon = ICON_UNKNOWN
 
-        tools.writeLog('Incoming call from %s (%s)' % (tools.mask(name), tools.mask(caller_num)), xbmc.LOGNOTICE)
+        tools.writeLog('Incoming call from %s (%s)' % (tools.mask(name), tools.mask(caller_num)), xbmc.LOGINFO)
         tools.notify(LOC(30010), LOC(30011) % (name, caller_num), icon, self.Mon.dispMsgTime, deactivateSS=True)
 
     def handleConnected(self, line):
-        tools.writeLog('Line connected', xbmc.LOGNOTICE)
+        tools.writeLog('Line connected', xbmc.LOGINFO)
         HOME.setProperty('FritzCallMon.InCall', 'true')
         if not self.__hide: self.handlePlayerProps('connected')
 
     def handleDisconnected(self, line):
-        tools.writeLog('Line disconnected', xbmc.LOGNOTICE)
+        tools.writeLog('Line disconnected', xbmc.LOGINFO)
         if self.__connects > 0: self.__connects -= 1
         if self.__connects == 0:
             HOME.setProperty('FritzCallMon.InCall', 'false')
             if not self.__hide: self.handlePlayerProps('disconnected')
         else:
-            tools.writeLog('still hold %s connection(s)' % self.__connects, xbmc.LOGNOTICE)
+            tools.writeLog('still hold %s connection(s)' % self.__connects, xbmc.LOGINFO)
 
     def connect(self, notify=False):
         if self.__s is not None:
@@ -338,20 +338,22 @@ class FritzCallmonitor(object):
             self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__s.settimeout(30)
             self.__s.connect((self.Mon.server, LISTENPORT))
+            tools.writeLog('Connected, listen to %s on port %s' % (self.Mon.server, LISTENPORT), xbmc.LOGINFO)
+            self.__s.settimeout(1.0)
+            return True
+
         except socket.error as e:
             if notify: tools.notify(LOC(30030), LOC(30031) % (self.Mon.server, LISTENPORT), ICON_ERROR)
             tools.writeLog('Could not connect to %s:%s' % (self.Mon.server, LISTENPORT), level=xbmc.LOGERROR)
             tools.writeLog(e, level=xbmc.LOGERROR)
-            return False
+
         except Exception as e:
             tools.writeLog('Error at line %s' % sys.exc_info()[-1].tb_lineno, xbmc.LOGERROR)
             tools.writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
             tools.writeLog(e.args, level=xbmc.LOGERROR)
-            return False
-        else:
-            tools.writeLog('Connected, listen to %s on port %s' % (self.Mon.server, LISTENPORT), xbmc.LOGNOTICE)
-            self.__s.settimeout(0.2)
-            return True
+
+        return False
+
 
     def start(self):
 
@@ -394,4 +396,4 @@ if __name__ == '__main__':
     CallMon = FritzCallmonitor()
     CallMon.start()
     del CallMon
-tools.writeLog('Monitoring finished', level=xbmc.LOGNOTICE)
+tools.writeLog('Monitoring finished', level=xbmc.LOGINFO)
