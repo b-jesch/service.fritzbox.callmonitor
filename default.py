@@ -7,11 +7,12 @@ import sys
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 import re
 
 ADDON = xbmcaddon.Addon()
 ADDONNAME = ADDON.getAddonInfo('id')
-ADDONPATH = xbmc.translatePath(ADDON.getAddonInfo('path'))
+ADDONPATH = xbmcvfs.translatePath(ADDON.getAddonInfo('path'))
 ICON_OK = os.path.join(ADDONPATH, 'resources', 'media', 'incoming.png')
 
 LIBS = os.path.join(ADDONPATH, 'resources', 'lib')
@@ -20,7 +21,7 @@ sys.path.append(LIBS)
 from resources.lib.PhoneBooks.PhoneBookFacade import PhoneBookFacade
 import resources.lib.tools as tools
 
-ADDONPROFILES = xbmc.translatePath(ADDON.getAddonInfo('profile'))
+ADDONPROFILES = xbmcvfs.translatePath(ADDON.getAddonInfo('profile'))
 ADDONVERSION = ADDON.getAddonInfo('version')
 LOC = ADDON.getLocalizedString
 
