@@ -224,7 +224,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
                     tools.writeLog('Change volume to %s' % vol, xbmc.LOGINFO)
-                    self.PlayerProps.setVolume(vol, self.Mon.optFade)
+                    self.PlayerProps.setVolume(int(vol), self.Mon.optFade)
                     self.PlayerProps.connCondition['volChanged'] = True
                 #
                 # handle audio, video & TV
@@ -248,12 +248,15 @@ class FritzCallmonitor(object):
                 #
                 if self.Mon.optMute and not self.PlayerProps.connCondition.get('muted', False) \
                         and self.PlayerProps.discCondition['volume'] != self.PlayerProps.connCondition['volume']:
-                    if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
-                        tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGINFO)
-                        vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
-                        tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGINFO)
-                    else:
-                        tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGINFO)
+                    try:
+                        if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
+                            tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGINFO)
+                            vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
+                            tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGINFO)
+                        else:
+                            tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGINFO)
+                    except KeyError:
+                        pass
                     self.PlayerProps.connCondition['volChanged'] = False
 
                 #
