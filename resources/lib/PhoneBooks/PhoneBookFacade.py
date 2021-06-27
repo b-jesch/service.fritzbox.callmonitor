@@ -12,8 +12,10 @@ from .PhoneBookBase import PhoneBookBase
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('id')
 
+
 def notifyLog(message, level=xbmc.LOGINFO):
     xbmc.log('[%s] %s' % (__addonname__, message), level)
+
 
 def _find_phone_book_classes():
     directory = os.path.dirname(os.path.abspath(__file__))

@@ -2,16 +2,28 @@
 
 import xbmc
 import xbmcgui
+import xbmcaddon
+import xbmcvfs
+import os
 import re
-import sys
 import json
 
-ADDON = sys.modules['__main__'].ADDON
-ADDONNAME = sys.modules['__main__'].ADDONNAME
-ICON_OK = sys.modules['__main__'].ICON_OK
+ADDON = xbmcaddon.Addon()
+ADDONNAME = ADDON.getAddonInfo('id')
+ADDONPATH = xbmcvfs.translatePath(ADDON.getAddonInfo('path'))
+ADDONPROFILES = xbmcvfs.translatePath(ADDON.getAddonInfo('profile'))
+ADDONVERSION = ADDON.getAddonInfo('version')
+LOC = ADDON.getLocalizedString
+
+ICON_OK = os.path.join(ADDONPATH, 'resources', 'media', 'incoming.png')
+ICON_ERROR = os.path.join(ADDONPATH, 'resources', 'media', 'unknown.png')
+ICON_UNKNOWN = os.path.join(ADDONPATH, 'resources', 'media', 'blue.png')
+IMAGECACHE = os.path.join(ADDONPROFILES, 'pb_images')
+
 
 def writeLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s] %s' % (ADDONNAME, message), level)
+
 
 def jsonrpc(query):
     querystring = {"jsonrpc": "2.0", "id": 1}
@@ -23,6 +35,7 @@ def jsonrpc(query):
         writeLog('Error executing JSON RPC: %s' % (e.args), xbmc.LOGERROR)
     return None
 
+
 def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
     if deactivateSS and xbmc.getCondVisibility('System.ScreenSaverActive'):
         query = {
@@ -32,9 +45,11 @@ def notify(header, message, icon=ICON_OK, dispTime=5000, deactivateSS=False):
 
     xbmcgui.Dialog().notification(header, message, icon, dispTime)
 
+
 def mask(string):
     if len(string) > 4: return '%s%s%s' % (string[0], '*' * (len(string) - 3), string[-2:])
     return '*' * len(string)
+
 
 class Monitor(xbmc.Monitor):
 

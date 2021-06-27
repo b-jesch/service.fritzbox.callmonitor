@@ -11,6 +11,7 @@ from .PhoneBookBase import PhoneBookBase
 from .. import tools
 import xbmc
 
+
 class PytzBox(PhoneBookBase):
     _password = False
     _host = False
