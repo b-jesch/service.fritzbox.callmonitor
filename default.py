@@ -92,6 +92,7 @@ class FritzCallmonitor(object):
     __hide = False
     __s = None
     __connects = 0
+    __icon = ICON_UNKNOWN
 
     def __init__(self):
 
@@ -100,6 +101,10 @@ class FritzCallmonitor(object):
         self.ScreensaverActive = xbmc.getCondVisibility('System.ScreenSaverActive')
 
         HOME.setProperty('FritzCallMon.InCall', 'false')
+
+    def calculate_duration(self, duration):
+        if duration < 60: return '%s %s' % (duration, LOC(30055))
+        return '%s %s %s %s' % (duration // 60, LOC(30056), duration % 60, LOC(30055))
 
     def CallMonitorLine(self, line):
 
@@ -267,10 +272,10 @@ class FritzCallmonitor(object):
 
             record = self.getRecordByNumber(line['number_called'])
             name = LOC(30012) if record['name'] == '' else record['name']
-            icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
-            notify(LOC(30013), LOC(30014) % (name, line['number_called']), icon, deactivateSS=True)
+            self.__icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
             writeLog('Outgoing call from %s to %s' % (mask(line['number_used']),
                                                             mask(line['number_called'])), xbmc.LOGINFO)
+            notify(LOC(30013), LOC(30014) % (name, line['number_called']), self.__icon, deactivateSS=True)
 
     def handleIncomingCall(self, line):
 
@@ -285,17 +290,17 @@ class FritzCallmonitor(object):
             writeLog('trying to resolve name from incoming number %s' % (mask(caller_num)), xbmc.LOGINFO)
             record = self.getRecordByNumber(caller_num)
             name = record['name']
-            icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
+            self.__icon = ICON_OK if record['imageBMP'] == '' else record['imageBMP']
             if not name:
                 name = LOC(30012)
-                icon = ICON_UNKNOWN
+                self.__icon = ICON_UNKNOWN
         else:
             caller_num = LOC(30016)
             name = LOC(30012)
-            icon = ICON_UNKNOWN
+            self.__icon = ICON_UNKNOWN
 
         writeLog('Incoming call from %s (%s)' % (mask(name), mask(caller_num)), xbmc.LOGINFO)
-        notify(LOC(30010), LOC(30011) % (name, caller_num), icon, self.Mon.dispMsgTime, deactivateSS=True)
+        notify(LOC(30010), LOC(30011) % (name, caller_num), self.__icon, self.Mon.dispMsgTime, deactivateSS=True)
 
     def handleConnected(self, line):
         writeLog('Line connected', xbmc.LOGINFO)
@@ -306,8 +311,12 @@ class FritzCallmonitor(object):
         writeLog('Line disconnected', xbmc.LOGINFO)
         if self.__connects > 0: self.__connects -= 1
         if self.__connects == 0:
+            writeLog('Caller duration: %s secs' % line['duration'], xbmc.LOGINFO)
             HOME.setProperty('FritzCallMon.InCall', 'false')
-            if not self.__hide: self.handlePlayerProps('disconnected')
+            if not self.__hide:
+                self.handlePlayerProps('disconnected')
+                notify(LOC(30038), LOC(30032) % self.calculate_duration(line['duration']), self.__icon, self.Mon.dispMsgTime,
+                       deactivateSS=True)
         else:
             writeLog('still hold %s connection(s)' % self.__connects, xbmc.LOGINFO)
 
