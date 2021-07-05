@@ -103,8 +103,8 @@ class FritzCallmonitor(object):
         HOME.setProperty('FritzCallMon.InCall', 'false')
 
     def calculate_duration(self, duration):
-        if duration < 60: return '%s %s' % (duration, LOC(30055))
-        return '%s %s %s %s' % (duration // 60, LOC(30056), duration % 60, LOC(30055))
+        if int(duration) < 60: return '%s %s' % (duration, LOC(30056))
+        return '%s %s %s %s' % (str(int(duration) // 60), LOC(30055), str(int(duration) % 60), LOC(30056))
 
     def CallMonitorLine(self, line):
 
