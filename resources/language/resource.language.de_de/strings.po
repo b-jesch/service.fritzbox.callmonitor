@@ -182,12 +182,12 @@ msgid "Apple iCloud Password"
 msgstr "Apple iCloud Passwort"
 
 msgctxt "#30055"
-msgid "mins"
-msgstr "min"
+msgid "minutes"
+msgstr "Minuten"
 
 msgctxt "#30056"
-msgid "secs"
-msgstr "sec"
+msgid "seconds"
+msgstr "Sekunden"
 
 msgctxt "#30060"
 msgid "off (Mute)"

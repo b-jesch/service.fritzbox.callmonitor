@@ -253,8 +253,8 @@ class FritzCallmonitor(object):
                     writeLog('Resume audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')
             else:
+                # maybe another connect condition has already handled during processing
                 writeLog('unhandled condition for state %s, ignore' % state, xbmc.LOGERROR)
-                # self.PlayerProps.getConnectConditions(state)
         except Exception as e:
             writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), level=xbmc.LOGERROR)
             writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
