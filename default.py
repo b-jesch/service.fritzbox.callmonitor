@@ -363,20 +363,14 @@ class FritzCallmonitor(object):
 
                 except socket.timeout:
                     pass
-                except socket.error as e:
-                    writeLog('No connection to %s, try to respawn' % self.Mon.server, level=xbmc.LOGERROR)
-                    writeLog(e.strerror, level=xbmc.LOGERROR)
-                    self.connect()
-                except KeyError:
-                    writeLog('Communication failure', level=xbmc.LOGERROR)
-                    self.connect()
-                except Exception as e:
-                    writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), level=xbmc.LOGERROR)
-                    writeLog(str(type(e).__name__), level=xbmc.LOGERROR)
+                except (socket.error, KeyError, Exception) as e:
+                    writeLog('Connection error, communication failure or other exception occured', level=xbmc.LOGERROR)
+                    writeLog('At line %s: %s' % (sys.exc_info()[-1].tb_lineno, str(type(e).__name__)), xbmc.LOGERROR)
                     writeLog(e.args, level=xbmc.LOGERROR)
+                    self.Mon.waitForAbort(60)
+                    self.connect()
 
                 xbmc.sleep(500)
-
             self.__s.close()
 
 
