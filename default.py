@@ -37,6 +37,7 @@ HOME = xbmcgui.Window(10000)
 
 # CLASSES
 
+
 class PlayerProperties(object):
     def __init__(self):
 
@@ -113,7 +114,6 @@ class FritzCallmonitor(object):
     __hide = False
     __s = None
     __connects = 0
-
 
     def __init__(self):
 
@@ -300,7 +300,6 @@ class FritzCallmonitor(object):
             tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
             tools.writeLog(e.message, level=xbmc.LOGERROR)
 
-
     def handleOutgoingCall(self, line):
 
         if line.number_used in self.Mon.exnum_list:
@@ -382,7 +381,7 @@ class FritzCallmonitor(object):
 
             # MAIN SERVICE
 
-            while not xbmc.abortRequested:
+            while not xbmc.Monitor.abortRequested:
 
                 # ToDo: investigate more from https://pymotw.com/2/select/index.html#module-select
                 # i.e check exception handling
@@ -400,17 +399,12 @@ class FritzCallmonitor(object):
 
                 except socket.timeout:
                     pass
-                except socket.error, e:
-                    tools.writeLog('No connection to %s, try to respawn' % (self.Mon.server), level=xbmc.LOGERROR)
-                    tools.writeLog(e.message, level=xbmc.LOGERROR)
+                except (socket.error, KeyError, Exception)as e:
+                    tools.writeLog('Connection error, communication failure or other exception occured', level=xbmc.LOGERROR)
+                    tools.writeLog('At line %s: %s' % (sys.exc_info()[-1].tb_lineno, str(type(e).__name__)), xbmc.LOGERROR)
+                    tools.writeLog(e.args, level=xbmc.LOGERROR)
+                    self.Mon.waitForAbort(60)
                     self.connect()
-                except IndexError:
-                    tools.writeLog('Communication failure', level=xbmc.LOGERROR)
-                    self.connect()
-                except Exception as e:
-                    tools.writeLog('Error at line %s' % (str(sys.exc_info()[-1].tb_lineno)), xbmc.LOGERROR)
-                    tools.writeLog(str(type(e).__name__), xbmc.LOGERROR)
-                    tools.writeLog(e.message, level=xbmc.LOGERROR)
 
                 xbmc.sleep(500)
 
