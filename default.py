@@ -399,7 +399,7 @@ class FritzCallmonitor(object):
 
                 except socket.timeout:
                     pass
-                except (socket.error, KeyError, Exception)as e:
+                except (socket.error, KeyError, Exception) as e:
                     tools.writeLog('Connection error, communication failure or other exception occured', level=xbmc.LOGERROR)
                     tools.writeLog('At line %s: %s' % (sys.exc_info()[-1].tb_lineno, str(type(e).__name__)), xbmc.LOGERROR)
                     tools.writeLog(e.args, level=xbmc.LOGERROR)
