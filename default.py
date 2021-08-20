@@ -127,6 +127,10 @@ class FritzCallmonitor(object):
 
         HOME.setProperty('FritzCallMon.InCall', 'false')
 
+    def calculate_duration(self, duration):
+        if int(duration) < 60: return '%s %s' % (duration, LOC(30056))
+        return '%s %s %s %s' % (str(int(duration) // 60), LOC(30055), str(int(duration) % 60), LOC(30056))
+
     class CallMonitorLine(dict):
 
         def __init__(self, line):
@@ -212,7 +216,7 @@ class FritzCallmonitor(object):
 
     def handlePlayerProps(self, state):
 
-        tools.writeLog('Handle Player Properties for state \'%s\'' % (state))
+        tools.writeLog('Handle Player Properties for state \'%s\'' % state)
         try:
             if self.Mon.optEarlyPause and (state == 'incoming' or state == 'outgoing'):
                 self.PlayerProps.getConnectConditions(state)
@@ -224,7 +228,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     if self.__connects == 0:
                         vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                        tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                        tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
                         self.PlayerProps.setVolume(vol, self.Mon.optFade)
                         self.PlayerProps.connCondition['volChanged'] = True
                     self.__connects += 1
@@ -248,7 +252,7 @@ class FritzCallmonitor(object):
                         not self.PlayerProps.connCondition.get('muted', False) and \
                         not self.PlayerProps.connCondition.get('volChanged', False):
                     vol = self.PlayerProps.connCondition['volume'] * self.Mon.volume
-                    tools.writeLog('Change volume to %s' % (vol), xbmc.LOGNOTICE)
+                    tools.writeLog('Change volume to %s' % vol, xbmc.LOGNOTICE)
                     self.PlayerProps.setVolume(vol, self.Mon.optFade)
                     self.PlayerProps.connCondition['volChanged'] = True
                 #
@@ -276,7 +280,7 @@ class FritzCallmonitor(object):
                     if self.PlayerProps.callCondition['volume'] == self.PlayerProps.discCondition['volume']:
                         tools.writeLog('Volume hasn\'t changed during call', xbmc.LOGNOTICE)
                         vol = self.PlayerProps.setVolume(self.PlayerProps.connCondition['volume'], self.Mon.optFade)
-                        tools.writeLog('Changed volume back to %s' % (vol), xbmc.LOGNOTICE)
+                        tools.writeLog('Changed volume back to %s' % vol, xbmc.LOGNOTICE)
                     else:
                         tools.writeLog('Volume has changed during call, don\'t change it back', xbmc.LOGNOTICE)
                     self.PlayerProps.connCondition['volChanged'] = False
@@ -348,9 +352,10 @@ class FritzCallmonitor(object):
             HOME.setProperty('FritzCallMon.InCall', 'false')
             if not self.__hide:
                 self.handlePlayerProps('disconnected')
-                tools.notify(LOC(30038), LOC(30032) % line.duration, self.callerImage, self.Mon.dispMsgTime, deactivateSS=True)
+                tools.notify(LOC(30038), LOC(30032) % self.calculate_duration(line.duration),
+                             self.callerImage, self.Mon.dispMsgTime, deactivateSS=True)
         else:
-            tools.writeLog('still hold %s connection(s)' % (self.__connects), xbmc.LOGNOTICE)
+            tools.writeLog('still hold %s connection(s)' % self.__connects, xbmc.LOGNOTICE)
 
     def connect(self, notify=False):
         if self.__s is not None:
@@ -366,7 +371,7 @@ class FritzCallmonitor(object):
             tools.writeLog(str(e), level=xbmc.LOGERROR)
             return False
         except Exception as e:
-            tools.writeLog('Error at line %s' % (sys.exc_info()[-1].tb_lineno), xbmc.LOGERROR)
+            tools.writeLog('Error at line %s' % sys.exc_info()[-1].tb_lineno, xbmc.LOGERROR)
             tools.writeLog(e.message, level=xbmc.LOGERROR)
             return False
         else:
@@ -381,7 +386,7 @@ class FritzCallmonitor(object):
 
             # MAIN SERVICE
 
-            while not xbmc.Monitor.abortRequested:
+            while not self.Mon.abortRequested():
 
                 # ToDo: investigate more from https://pymotw.com/2/select/index.html#module-select
                 # i.e check exception handling
