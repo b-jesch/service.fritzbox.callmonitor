@@ -1,4 +1,6 @@
 CHANGELOG
+3.0.9+matrix
+- Fix import error (module collection has changed to collections.abc in Python 3.11+)
 
 3.0.4+matrix
 - Changes in toollib, Introducing settings level
