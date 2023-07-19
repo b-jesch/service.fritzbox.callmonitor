@@ -27,7 +27,7 @@ class PlayerProperties(object):
     def getCurrentConditions(cls):
         _cond = dict()
         _cond.update(
-            {'playTV': bool(xbmc.getCondVisibility('Pvr.isPlayingTv')),
+            {'playTV': bool(xbmc.getCondVisibility('Pvr.isPlayingTv') and xbmc.getCondVisibility('Player.Playing')),
              'playVideo': bool(xbmc.getCondVisibility('Player.HasVideo') and xbmc.getCondVisibility('Player.Playing')),
              'playAudio': bool(xbmc.getCondVisibility('Player.HasAudio') and xbmc.getCondVisibility('Player.Playing')),
              'paused': bool(xbmc.getCondVisibility('Player.Paused')),
@@ -189,8 +189,7 @@ class FritzCallmonitor(object):
                 # handle audio, video & TV
                 #
                 if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
-                            and not self.PlayerProps.connCondition['playTV']) \
+                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']) \
                         or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                     writeLog('Pausing audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')
@@ -212,8 +211,7 @@ class FritzCallmonitor(object):
                 # handle audio, video & TV
                 #
                 if (self.Mon.optPauseAudio and self.PlayerProps.connCondition['playAudio']) \
-                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']
-                            and not self.PlayerProps.connCondition['playTV']) \
+                        or (self.Mon.optPauseVideo and self.PlayerProps.connCondition['playVideo']) \
                         or (self.Mon.optPauseTV and self.PlayerProps.connCondition['playTV']):
                     writeLog('Pausing audio, video or tv...', xbmc.LOGINFO)
                     xbmc.executebuiltin('PlayerControl(Play)')

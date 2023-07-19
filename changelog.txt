@@ -1,4 +1,8 @@
 CHANGELOG
+
+3.0.10+matrix
+- Fix issue when liveTV is paused and incoming call is detected (starts liveTV instead hold pause)
+
 3.0.9+matrix
 - Fix import error (module collection has changed to collections.abc in Python 3.11+)
 
