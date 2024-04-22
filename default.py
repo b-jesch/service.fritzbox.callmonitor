@@ -359,14 +359,15 @@ class FritzCallmonitor(object):
                     elif line['command'] == 'DISCONNECT': self.handleDisconnected(line)
                     else: pass
 
-                except socket.timeout:
-                    pass
-                except (socket.error, KeyError, Exception) as e:
-                    writeLog('Connection error, communication failure or other exception occured', level=xbmc.LOGERROR)
-                    writeLog('At line %s: %s' % (sys.exc_info()[-1].tb_lineno, str(type(e).__name__)), xbmc.LOGERROR)
-                    writeLog(e.args, level=xbmc.LOGERROR)
-                    self.Mon.waitForAbort(60)
-                    self.connect()
+                except socket.error as e: pass
+                except (OSError, KeyError, Exception) as e:
+                    if 'timed out' in str(e): pass
+                    else:
+                        writeLog('Connection error or communication failure occured', level=xbmc.LOGERROR)
+                        writeLog('At line %s: %s' % (sys.exc_info()[-1].tb_lineno, str(type(e).__name__)), xbmc.LOGERROR)
+                        writeLog(e.args, level=xbmc.LOGERROR)
+                        self.Mon.waitForAbort(60)
+                        self.connect()
 
                 xbmc.sleep(500)
             self.__s.close()
