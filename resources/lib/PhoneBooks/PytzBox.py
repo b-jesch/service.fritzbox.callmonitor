@@ -106,12 +106,15 @@ class PytzBox(PhoneBookBase):
 
         tools.writeLog('Cache picture for %s from %s' % (', '.join(_mn), url))
         try:
-            response = requests.get(self.__url_file_download[self._encrypt].format(
-                host=self._host,
-                imageurl=url,
-                sid=self.__sid),
-                verify=False
-            )
+            if url[0:13] == '/download.lua':
+
+                response = requests.get(self.__url_file_download[self._encrypt].format(
+                    host = self._host,
+                    imageurl = url,
+                    sid = self.__sid),
+                    verify = False)
+            else:
+                response = requests.get(url.split(',')[0], verify=False)
 
             if response.status_code == 200:
                 pb_image = response.content
